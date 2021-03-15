@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/out/
+docker-publish/
+
+# files
+Dockerfile*
+**/*.trx
+**/*.md
+**/*.ps1
+**/*.cmd
+**/*.sh
+!docker-entrypoint.sh

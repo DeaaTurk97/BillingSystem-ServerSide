@@ -1,0 +1,16 @@
+version: "3.3"
+services:
+  db:
+    image: 'mcr.microsoft.com/mssql/server:latest'
+    restart: always
+    ports:
+      - '${DB_PORT}'
+    environment:
+      ACCEPT_EULA: '${DB_ACCEPT_EULA}'
+      SA_PASSWORD: '${DB_PASSWORD}'
+    volumes:
+      - data:/var/opt/mssql
+networks:
+  backend:
+volumes:
+  data: {}
