@@ -2,10 +2,14 @@
 name: Feature request
 about: Suggest an idea for this project
 title: ''
-labels: ''
+labels: feature
 assignees: ''
 
 ---
+
+## Desired Use Case
+
+_Describe what this **should** implement._
 
 ## Actual/Current Behavior
 
