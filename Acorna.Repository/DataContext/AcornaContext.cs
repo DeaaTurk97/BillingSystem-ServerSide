@@ -13,6 +13,7 @@ using Acorna.Core.Entity;
 using Acorna.Core.Entity.Notification;
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Entity.SystemDefinition;
+using Acorna.Core.Entity.Project.BillingSystem;
 
 namespace Acorna.Repository.DataContext
 {
@@ -267,6 +268,7 @@ namespace Acorna.Repository.DataContext
         }
 
         public DbSet<Job> Job { get; set; }
+        public DbSet<Group> Group { get; set; }
         public DbSet<GeneralSetting> GeneralSetting { get; set; }
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Language> Language { get; set; }

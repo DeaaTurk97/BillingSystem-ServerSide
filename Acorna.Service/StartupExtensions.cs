@@ -9,6 +9,8 @@ using Acorna.Service.Chatting;
 using Acorna.Service.Notification;
 using Acorna.Service.Project;
 using Acorna.Service.SystemDefinition;
+using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Service.Project.BillingSystem;
 
 namespace Acorna.Service.DependencyInjection
 {
@@ -23,6 +25,7 @@ namespace Acorna.Service.DependencyInjection
             services.AddTransient<IChatService, ChatService>();
             services.AddTransient<ILanguageService, LanguageService>();
             services.AddTransient<INotificationService, NotificationService>();
+            services.AddTransient<IGroupService, GroupService>();
 
         }
     }
