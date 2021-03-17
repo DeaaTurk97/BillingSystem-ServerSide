@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.IServices.Project;
+using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Repository;
+using Acorna.Core.Sheard;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Acorna.Core.Entity;
-using Acorna.Core.IServices.Project;
-using Acorna.Core.Models.Project;
-using Acorna.Core.Repository;
-using Acorna.Core.Sheard;
 
 namespace Acorna.Service.Project
 {
@@ -21,13 +21,12 @@ namespace Acorna.Service.Project
             _mapper = mapper;
         }
 
-        public async Task<List<JobModel>> GetAllAsync()
+        public async Task<List<JobModel>> GetAllJobs()
         {
             try
             {
                 List<Job> job = await _jobRepository.GetAllAsync();
-                List<JobModel> jobModelList = _mapper.Map<List<JobModel>>(job);
-                return jobModelList;
+                return _mapper.Map<List<JobModel>>(job); ;
             }
             catch (Exception ex)
             {
@@ -36,7 +35,7 @@ namespace Acorna.Service.Project
             }
         }
 
-        public async Task<PaginationRecord<JobModel>> GetAllAsync(int pageIndex, int pageSize)
+        public async Task<PaginationRecord<JobModel>> GetJobs(int pageIndex, int pageSize)
         {
             try
             {
@@ -54,6 +53,19 @@ namespace Acorna.Service.Project
             }
         }
 
+        public async Task<JobModel> GetJobId(int jobId)
+        {
+            try
+            {
+                Job jobModel = await _jobRepository.GetSingleAsync(jobId);
+                return _mapper.Map<JobModel>(jobModel);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public int GetCountRecord()
         {
             try
@@ -66,16 +78,15 @@ namespace Acorna.Service.Project
             }
         }
 
-        public int Insert(JobModel jobModel)
+        public int AddJob(JobModel jobModel)
         {
-            int id = 0;
             try
             {
                 Job job = _mapper.Map<Job>(jobModel);
                 if (job != null)
                     _jobRepository.Insert(job);
-                id = job.Id;
-                return id;
+
+                return job.Id;
             }
             catch (Exception ex)
             {
@@ -83,17 +94,20 @@ namespace Acorna.Service.Project
             }
         }
 
-        public void Update(JobModel jobModel)
+        public bool UpdateJob(JobModel jobModel)
         {
             try
             {
                 Job job = _jobRepository.GetSingle(jobModel.Id);
+                job.JobNameAr = jobModel.JobNameAr;
+                job.JobNameEn = jobModel.JobNameEn;
 
                 if (job != null)
                 {
-                    job.JobName = jobModel.JobName;
                     _jobRepository.Update(job);
                 }
+
+                return true;
             }
             catch (Exception ex)
             {
@@ -101,13 +115,15 @@ namespace Acorna.Service.Project
             }
         }
 
-        public void Delete(int id)
+        public bool DeleteJob(int id)
         {
             try
             {
                 Job job = _jobRepository.GetSingle(id);
                 if (job != null)
                     _jobRepository.Delete(job);
+
+                return true;
             }
             catch (Exception ex)
             {
