@@ -269,6 +269,7 @@ namespace Acorna.Repository.DataContext
 
         public DbSet<Job> Job { get; set; }
         public DbSet<Group> Group { get; set; }
+        public DbSet<Operator> Operator { get; set; }
         public DbSet<GeneralSetting> GeneralSetting { get; set; }
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Language> Language { get; set; }

@@ -1,16 +1,16 @@
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Acorna.Core.IServices.Chat;
 using Acorna.Core.IServices.Notification;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.IServices.SystemDefinition;
+using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Repository.DependencyInjection;
 using Acorna.Service.Chatting;
 using Acorna.Service.Notification;
 using Acorna.Service.Project;
-using Acorna.Service.SystemDefinition;
-using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Service.Project.BillingSystem;
+using Acorna.Service.SystemDefinition;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Acorna.Service.DependencyInjection
 {
@@ -26,6 +26,7 @@ namespace Acorna.Service.DependencyInjection
             services.AddTransient<ILanguageService, LanguageService>();
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IGroupService, GroupService>();
+            services.AddTransient<IOperatorService, OperatorService>();
 
         }
     }
