@@ -26,6 +26,7 @@ namespace Acorna.DTO
             CreateMap<Chat, ChatMessageModel>().ReverseMap();
             CreateMap<Language, LanguageModel>().ReverseMap();
             CreateMap<Group, GroupModel>().ReverseMap();
+            CreateMap<Operator, OperatorModel>().ReverseMap();
 
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
 
