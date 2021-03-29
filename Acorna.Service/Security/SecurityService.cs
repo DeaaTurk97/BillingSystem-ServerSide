@@ -15,11 +15,11 @@ using Acorna.Repository.DataContext;
 
 public class SecurityService : ISecurityService
 {
-    protected readonly AcornaContext _teamDataContext;
+    protected readonly AcornaDbContext _teamDataContext;
     private readonly IMapper _imapper;
     private readonly UserManager<User> _userManager;
 
-    public SecurityService(IMapper imapper, AcornaContext teamDataContext, UserManager<User> userManager)
+    public SecurityService(IMapper imapper, AcornaDbContext teamDataContext, UserManager<User> userManager)
     {
         try
         {

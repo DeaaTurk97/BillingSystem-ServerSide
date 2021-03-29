@@ -40,7 +40,6 @@ namespace Acorna.Service.SystemDefinition
             {
                 try
                 {
-                    _repository.BeginTransaction();
                     //Delete old records...
                     List<GeneralSetting> generalSettingsExisting = await _repository.GetAllAsync();
                     _repository.DeleteRange(generalSettingsExisting);
@@ -55,11 +54,10 @@ namespace Acorna.Service.SystemDefinition
                         listOfGeneralSettings.Add(generalSetting);
                     }
                     _repository.InsertRange(listOfGeneralSettings);
-                    _repository.CommitTransaction();
                 }
                 catch (Exception)
                 {
-                    _repository.RollBackTransaction();
+                    //_repository.RollBackTransaction();
                     return false;
                 }
                 return true;

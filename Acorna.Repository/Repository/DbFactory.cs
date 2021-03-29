@@ -8,14 +8,14 @@ namespace Acorna.Repository.Repository
 {
     public class DbFactory : IDbFactory,IDisposable
     {
-        private readonly AcornaContext _dbContext;
+        private readonly AcornaDbContext _dbContext;
 
-        public DbFactory(AcornaContext teamDataContext)
+        public DbFactory(AcornaDbContext teamDataContext)
         {
             _dbContext = teamDataContext;
         }
 
-        public AcornaContext GetDataContext
+        public AcornaDbContext GetDataContext
         {
             get
             {

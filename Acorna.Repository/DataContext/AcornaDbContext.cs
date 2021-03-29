@@ -17,11 +17,11 @@ using Acorna.Core.Entity.Project.BillingSystem;
 
 namespace Acorna.Repository.DataContext
 {
-    public class AcornaContext : IdentityDbContext<User, Role, int, IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>,
+    public class AcornaDbContext : IdentityDbContext<User, Role, int, IdentityUserClaim<int>, UserRole, IdentityUserLogin<int>,
                                      IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public AcornaContext(DbContextOptions<AcornaContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+        public AcornaDbContext(DbContextOptions<AcornaDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             this._httpContextAccessor = httpContextAccessor;
         }

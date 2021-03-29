@@ -19,10 +19,10 @@ namespace Acorna.Service.Chatting
     {
         private readonly IMapper _imapper;
         private readonly IRepository<Chat> _chatRepository;
-        private readonly AcornaContext _teamDataContext;
+        private readonly AcornaDbContext _teamDataContext;
         private readonly INotificationService _notificationService;
 
-        public ChatService(IMapper imapper, IRepository<Chat> chatRepository, AcornaContext teamDataContext, INotificationService notificationService)
+        public ChatService(IMapper imapper, IRepository<Chat> chatRepository, AcornaDbContext teamDataContext, INotificationService notificationService)
         {
             _imapper = imapper;
             _chatRepository = chatRepository;
@@ -34,7 +34,7 @@ namespace Acorna.Service.Chatting
         {
             try
             {
-                _chatRepository.BeginTransaction();
+                //_chatRepository.BeginTransaction();
 
                 Chat chat = _imapper.Map<Chat>(chatMessageModel);
                 _chatRepository.Insert(chat);
@@ -52,7 +52,7 @@ namespace Acorna.Service.Chatting
                         NotificationTypeId = (int)SystemEnum.NotificationType.Chatting,
                     });
                 }
-                _chatRepository.CommitTransaction();
+                //_chatRepository.CommitTransaction();
 
                 return chatMessage;
 
