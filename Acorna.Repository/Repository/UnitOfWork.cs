@@ -1,5 +1,4 @@
 ﻿using Acorna.Core.Entity;
-using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Repository.DataContext;
 using System;
@@ -11,15 +10,11 @@ namespace Acorna.Repository.Repository
     {
         private readonly AcornaDbContext _acornaDbContext;
         private Hashtable _repositories;
-        //public IRepository<Group> _groupRepository;
 
         public UnitOfWork(AcornaDbContext acornaDbContext)
         {
             _acornaDbContext = acornaDbContext;
         }
-
-       // public IRepository<Group> GroupRepository => _groupRepository = _groupRepository ??  new Repository<Group>(_acornaDbContext);
-
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
@@ -40,8 +35,6 @@ namespace Acorna.Repository.Repository
 
             return (IRepository<T>)_repositories[type];
         }
-
-
 
         public void SaveChanges()
         {

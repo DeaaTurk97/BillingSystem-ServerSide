@@ -17,18 +17,6 @@ namespace Acorna.Repository.Repository
 
         private bool _disposed;
 
-        //public Repository(IDbFactory dbFactory)
-        //{
-        //    try
-        //    {
-        //        _dbContext = dbFactory.GetDataContext;
-        //    }
-        //    catch (Exception)
-        //    {
-
-        //        throw;
-        //    }
-        //}
         public Repository(AcornaDbContext dbContext)
         {
             _dbContext = dbContext;
@@ -178,8 +166,6 @@ namespace Acorna.Repository.Repository
                 if (entity != null)
                 {
                     _dbContext.Set<T>().Add(entity);
-                    //_unitOfWork.SaveChanges();
-
                     return entity.Id;
                 }
                 else
@@ -199,8 +185,6 @@ namespace Acorna.Repository.Repository
                 if (listEntities != null)
                 {
                     _dbContext.Set<T>().AddRange(listEntities);
-                    //_unitOfWork.SaveChanges();
-
                     return true;
                 }
                 else
@@ -222,7 +206,7 @@ namespace Acorna.Repository.Repository
                 {
                     _dbContext.Set<T>().Attach(entity);
                     _dbContext.Entry(entity).State = EntityState.Modified;
-                    //_unitOfWork.SaveChanges();
+                   
 
                     return true;
                 }
@@ -245,8 +229,7 @@ namespace Acorna.Repository.Repository
                 {
                     _dbContext.Set<T>().AttachRange(entity);
                     _dbContext.UpdateRange(entity);
-                    //_unitOfWork.SaveChanges();
-
+                 
                     return true;
                 }
                 else
@@ -267,7 +250,7 @@ namespace Acorna.Repository.Repository
                 if (entity != null)
                 {
                     _dbContext.Set<T>().Remove(entity);
-                    //_unitOfWork.SaveChanges();
+                 
                 }
 
                 return true;
@@ -285,7 +268,6 @@ namespace Acorna.Repository.Repository
                 if (listEntities != null)
                 {
                     _dbContext.Set<T>().RemoveRange(listEntities);
-                    //_unitOfWork.SaveChanges();
 
                     return true;
                 }
@@ -376,20 +358,5 @@ namespace Acorna.Repository.Repository
             }
             return entities.ToList();
         }
-
-        //public void BeginTransaction()
-        //{
-        //    _unitOfWork.BeginTransaction();
-        //}
-
-        //public void RollBackTransaction()
-        //{
-        //    _unitOfWork.RollBackTransaction();
-        //}
-
-        //public void CommitTransaction()
-        //{
-        //    _unitOfWork.CommitTransaction();
-        //}
     }
 }
