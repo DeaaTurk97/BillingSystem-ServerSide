@@ -12,12 +12,12 @@ namespace Acorna.Service.Project.BillingSystem
 {
     public class GroupService : IGroupService
     {
-        private readonly IUnitOfWork _iUnitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GroupService(IUnitOfWork iUnitOfWork, IMapper mapper)
+        public GroupService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _iUnitOfWork = iUnitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +25,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                List<Group> groups = await _iUnitOfWork.GetRepository<Group>().GetAllAsync();
+                List<Group> groups = await _unitOfWork.GetRepository<Group>().GetAllAsync();
                 return _mapper.Map<List<GroupModel>>(groups);
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                PaginationRecord<Group> group = await _iUnitOfWork.GetRepository<Group>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
+                PaginationRecord<Group> group = await _unitOfWork.GetRepository<Group>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
                 PaginationRecord<GroupModel> paginationRecordModel = new PaginationRecord<GroupModel>
                 {
                     DataRecord = _mapper.Map<IEnumerable<GroupModel>>(group.DataRecord),
@@ -56,7 +56,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group = await _iUnitOfWork.GetRepository<Group>().GetSingleAsync(groupId);
+                Group group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(groupId);
                 return _mapper.Map<GroupModel>(group);
             }
             catch (Exception)
@@ -69,7 +69,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                return _iUnitOfWork.GetRepository<Group>().GetTotalCount();
+                return _unitOfWork.GetRepository<Group>().GetTotalCount();
             }
             catch (Exception ex)
             {
@@ -85,8 +85,8 @@ namespace Acorna.Service.Project.BillingSystem
 
                 if (group != null)
                 {
-                    _iUnitOfWork.GetRepository<Group>().Insert(group);
-                    _iUnitOfWork.SaveChanges();
+                    _unitOfWork.GetRepository<Group>().Insert(group);
+                    _unitOfWork.SaveChanges();
                 }
 
                 return group.Id;
@@ -101,15 +101,16 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group = _iUnitOfWork.GetRepository<Group>().GetSingle(groupModel.Id);
+                Group group = _unitOfWork.GetRepository<Group>().GetSingle(groupModel.Id);
 
 
                 if (group != null)
                 {
                     group.GroupNameAr = groupModel.GroupNameAr;
                     group.GroupNameEn = groupModel.GroupNameEn;
-                    _iUnitOfWork.GetRepository<Group>().Update(group);
-                    _iUnitOfWork.SaveChanges();
+
+                    _unitOfWork.GetRepository<Group>().Update(group);
+                    _unitOfWork.SaveChanges();
                 }
 
                 return true;
@@ -124,12 +125,12 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group = _iUnitOfWork.GetRepository<Group>().GetSingle(id);
+                Group group = _unitOfWork.GetRepository<Group>().GetSingle(id);
 
                 if (group != null)
                 {
-                    _iUnitOfWork.GetRepository<Group>().Delete(group);
-                    _iUnitOfWork.SaveChanges();
+                    _unitOfWork.GetRepository<Group>().Delete(group);
+                    _unitOfWork.SaveChanges();
                 }
 
                 return true;

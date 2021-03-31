@@ -12,12 +12,12 @@ namespace Acorna.Service.Project.BillingSystem
 {
     public class OperatorService : IOperatorService
     {
-        private readonly IUnitOfWork _iUnitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public OperatorService(IUnitOfWork iUnitOfWork, IMapper mapper)
+        public OperatorService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _iUnitOfWork = iUnitOfWork;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +25,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                List<Operator> operators = await _iUnitOfWork.GetRepository<Operator>().GetAllAsync();
+                List<Operator> operators = await _unitOfWork.GetRepository<Operator>().GetAllAsync();
                 return _mapper.Map<List<OperatorModel>>(operators); ;
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                PaginationRecord<Operator> operators = await _iUnitOfWork.GetRepository<Operator>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
+                PaginationRecord<Operator> operators = await _unitOfWork.GetRepository<Operator>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
                 PaginationRecord<OperatorModel> paginationRecordModel = new PaginationRecord<OperatorModel>
                 {
                     DataRecord = _mapper.Map<IEnumerable<OperatorModel>>(operators.DataRecord),
@@ -57,7 +57,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Operator operators = await _iUnitOfWork.GetRepository<Operator>().GetSingleAsync(groupId);
+                Operator operators = await _unitOfWork.GetRepository<Operator>().GetSingleAsync(groupId);
                 return _mapper.Map<OperatorModel>(operators);
             }
             catch (Exception)
@@ -70,7 +70,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                return _iUnitOfWork.GetRepository<Operator>().GetTotalCount();
+                return _unitOfWork.GetRepository<Operator>().GetTotalCount();
             }
             catch (Exception ex)
             {
@@ -85,7 +85,11 @@ namespace Acorna.Service.Project.BillingSystem
                 Operator operators = _mapper.Map<Operator>(operatorModel);
 
                 if (operators != null)
-                    _iUnitOfWork.GetRepository<Operator>().Insert(operators);
+                {
+                    _unitOfWork.GetRepository<Operator>().Insert(operators);
+                    _unitOfWork.SaveChanges();
+                }
+
 
                 return operators.Id;
             }
@@ -99,7 +103,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Operator operators = _iUnitOfWork.GetRepository<Operator>().GetSingle(operatorModel.Id);
+                Operator operators = _unitOfWork.GetRepository<Operator>().GetSingle(operatorModel.Id);
 
                 if (operators != null)
                 {
@@ -107,8 +111,9 @@ namespace Acorna.Service.Project.BillingSystem
                     operators.OperatorNameEn = operatorModel.OperatorNameEn;
                     operators.OperatorKey = operatorModel.OperatorKey;
 
-                    _iUnitOfWork.GetRepository<Operator>().Update(operators);
-                }                    
+                    _unitOfWork.GetRepository<Operator>().Update(operators);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return true;
             }
@@ -122,10 +127,13 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Operator operators = _iUnitOfWork.GetRepository<Operator>().GetSingle(id);
+                Operator operators = _unitOfWork.GetRepository<Operator>().GetSingle(id);
 
                 if (operators != null)
-                    _iUnitOfWork.GetRepository<Operator>().Delete(operators);
+                {
+                    _unitOfWork.GetRepository<Operator>().Delete(operators);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return true;
             }
