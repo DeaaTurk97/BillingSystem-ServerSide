@@ -12,12 +12,12 @@ namespace Acorna.Service.Project
 {
     public class JobService : IJobService
     {
-        private readonly IRepository<Job> _jobRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public JobService(IRepository<Job> jobRepository, IMapper mapper)
+        public JobService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _jobRepository = jobRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,7 +25,7 @@ namespace Acorna.Service.Project
         {
             try
             {
-                List<Job> job = await _jobRepository.GetAllAsync();
+                List<Job> job = await _unitOfWork.GetRepository<Job>().GetAllAsync();
                 return _mapper.Map<List<JobModel>>(job); ;
             }
             catch (Exception ex)
@@ -39,7 +39,7 @@ namespace Acorna.Service.Project
         {
             try
             {
-                PaginationRecord<Job> job = await _jobRepository.GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
+                PaginationRecord<Job> job = await _unitOfWork.GetRepository<Job>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
                 PaginationRecord<JobModel> paginationRecordModel = new PaginationRecord<JobModel>
                 {
                     DataRecord = _mapper.Map<IEnumerable<JobModel>>(job.DataRecord),
@@ -57,7 +57,7 @@ namespace Acorna.Service.Project
         {
             try
             {
-                Job jobModel = await _jobRepository.GetSingleAsync(jobId);
+                Job jobModel = await _unitOfWork.GetRepository<Job>().GetSingleAsync(jobId);
                 return _mapper.Map<JobModel>(jobModel);
             }
             catch (Exception)
@@ -70,7 +70,7 @@ namespace Acorna.Service.Project
         {
             try
             {
-                return _jobRepository.GetTotalCount();
+                return _unitOfWork.GetRepository<Job>().GetTotalCount();
             }
             catch (Exception ex)
             {
@@ -83,8 +83,12 @@ namespace Acorna.Service.Project
             try
             {
                 Job job = _mapper.Map<Job>(jobModel);
+
                 if (job != null)
-                    _jobRepository.Insert(job);
+                {
+                    _unitOfWork.GetRepository<Job>().Insert(job);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return job.Id;
             }
@@ -98,13 +102,15 @@ namespace Acorna.Service.Project
         {
             try
             {
-                Job job = _jobRepository.GetSingle(jobModel.Id);
-                job.JobNameAr = jobModel.JobNameAr;
-                job.JobNameEn = jobModel.JobNameEn;
+                Job job = _unitOfWork.GetRepository<Job>().GetSingle(jobModel.Id);
 
                 if (job != null)
                 {
-                    _jobRepository.Update(job);
+                    job.JobNameAr = jobModel.JobNameAr;
+                    job.JobNameEn = jobModel.JobNameEn;
+
+                    _unitOfWork.GetRepository<Job>().Update(job);
+                    _unitOfWork.SaveChanges();
                 }
 
                 return true;
@@ -119,9 +125,13 @@ namespace Acorna.Service.Project
         {
             try
             {
-                Job job = _jobRepository.GetSingle(id);
+                Job job = _unitOfWork.GetRepository<Job>().GetSingle(id);
+
                 if (job != null)
-                    _jobRepository.Delete(job);
+                {
+                    _unitOfWork.GetRepository<Job>().Delete(job);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return true;
             }

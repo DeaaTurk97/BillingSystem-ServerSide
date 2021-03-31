@@ -6,9 +6,9 @@ using Acorna.Repository.DataContext;
 
 public class SecurityRepository : ISecurityRepository
 {
-    protected readonly AcornaContext _teamDataContext;
+    protected readonly AcornaDbContext _teamDataContext;
 
-    public SecurityRepository(AcornaContext teamDataContext)
+    public SecurityRepository(AcornaDbContext teamDataContext)
     {
         try
         {

@@ -13,29 +13,20 @@ namespace Acorna.Repository.Repository
 {
     public class Repository<T> : IRepository<T> where T : BaseEntity
     {
-        protected readonly AcornaContext _context;
-        private readonly IUnitOfWork _unitOfWork;
+        protected readonly AcornaDbContext _dbContext;
+
         private bool _disposed;
 
-        public Repository(IDbFactory dbFactory, IUnitOfWork unitOfWork)
+        public Repository(AcornaDbContext dbContext)
         {
-            try
-            {
-                _context = dbFactory.GetDataContext;
-                _unitOfWork = unitOfWork;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            _dbContext = dbContext;
         }
 
         public List<T> GetAll()
         {
             try
             {
-                return _context.Set<T>().ToList();
+                return _dbContext.Set<T>().ToList();
             }
             catch (Exception)
             {
@@ -48,7 +39,7 @@ namespace Acorna.Repository.Repository
         {
             try
             {
-                return _context.Set<T>().ToListAsync();
+                return _dbContext.Set<T>().ToListAsync();
             }
             catch (Exception)
             {
@@ -80,7 +71,7 @@ namespace Acorna.Repository.Repository
 
         public Task<T> GetSingleAsync(int id)
         {
-            return _context.Set<T>().FirstOrDefaultAsync(t => t.Id == id);
+            return _dbContext.Set<T>().FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public Task<PaginationRecord<T>> GetAllAsync(int pageIndex, int pageSize)
@@ -130,7 +121,7 @@ namespace Acorna.Repository.Repository
         {
             try
             {
-                IQueryable<T> entities = _context.Set<T>();
+                IQueryable<T> entities = _dbContext.Set<T>();
                 foreach (var predicate in predicateProperties)
                 {
                     entities = entities.Where(predicate);
@@ -145,7 +136,7 @@ namespace Acorna.Repository.Repository
 
         private IQueryable<T> GetAllWhere(params Expression<Func<T, object>>[] includeProperties)
         {
-            IQueryable<T> entities = _context.Set<T>();
+            IQueryable<T> entities = _dbContext.Set<T>();
             foreach (var includeProperty in includeProperties)
             {
                 entities = entities.Include(includeProperty);
@@ -157,7 +148,7 @@ namespace Acorna.Repository.Repository
         {
             try
             {
-                return _context.Set<T>().AsNoTracking().Where(x => x.Id == id).FirstOrDefault();
+                return _dbContext.Set<T>().AsNoTracking().Where(x => x.Id == id).FirstOrDefault();
             }
             catch (Exception)
             {
@@ -165,8 +156,8 @@ namespace Acorna.Repository.Repository
                 throw new Exception("Entity is Null Please Check on Your Data");
             }
         }
-        public T FirstOrDefault(Expression<Func<T, bool>> predicate) => _context.Set<T>().AsNoTracking().FirstOrDefault(predicate);
-        public IEnumerable<T> GetWhere(Expression<Func<T, bool>> predicate) => _context.Set<T>().AsNoTracking().Where(predicate).AsEnumerable();
+        public T FirstOrDefault(Expression<Func<T, bool>> predicate) => _dbContext.Set<T>().AsNoTracking().FirstOrDefault(predicate);
+        public IEnumerable<T> GetWhere(Expression<Func<T, bool>> predicate) => _dbContext.Set<T>().AsNoTracking().Where(predicate).AsEnumerable();
 
         public int Insert(T entity)
         {
@@ -174,9 +165,7 @@ namespace Acorna.Repository.Repository
             {
                 if (entity != null)
                 {
-                    _context.Set<T>().Add(entity);
-                    _unitOfWork.SaveChanges();
-
+                    _dbContext.Set<T>().Add(entity);
                     return entity.Id;
                 }
                 else
@@ -195,9 +184,7 @@ namespace Acorna.Repository.Repository
             {
                 if (listEntities != null)
                 {
-                    _context.Set<T>().AddRange(listEntities);
-                    _unitOfWork.SaveChanges();
-
+                    _dbContext.Set<T>().AddRange(listEntities);
                     return true;
                 }
                 else
@@ -217,9 +204,9 @@ namespace Acorna.Repository.Repository
             {
                 if (entity != null)
                 {
-                    _context.Set<T>().Attach(entity);
-                    _context.Entry(entity).State = EntityState.Modified;
-                    _unitOfWork.SaveChanges();
+                    _dbContext.Set<T>().Attach(entity);
+                    _dbContext.Entry(entity).State = EntityState.Modified;
+                   
 
                     return true;
                 }
@@ -240,10 +227,9 @@ namespace Acorna.Repository.Repository
             {
                 if (entity != null)
                 {
-                    _context.Set<T>().AttachRange(entity);
-                    _context.UpdateRange(entity);
-                    _unitOfWork.SaveChanges();
-
+                    _dbContext.Set<T>().AttachRange(entity);
+                    _dbContext.UpdateRange(entity);
+                 
                     return true;
                 }
                 else
@@ -263,8 +249,8 @@ namespace Acorna.Repository.Repository
             {
                 if (entity != null)
                 {
-                    _context.Set<T>().Remove(entity);
-                    _unitOfWork.SaveChanges();
+                    _dbContext.Set<T>().Remove(entity);
+                 
                 }
 
                 return true;
@@ -281,8 +267,7 @@ namespace Acorna.Repository.Repository
             {
                 if (listEntities != null)
                 {
-                    _context.Set<T>().RemoveRange(listEntities);
-                    _unitOfWork.SaveChanges();
+                    _dbContext.Set<T>().RemoveRange(listEntities);
 
                     return true;
                 }
@@ -301,7 +286,7 @@ namespace Acorna.Repository.Repository
         {
             try
             {
-                return _context.Set<T>().Count();
+                return _dbContext.Set<T>().Count();
             }
             catch (Exception)
             {
@@ -313,7 +298,7 @@ namespace Acorna.Repository.Repository
         {
             try
             {
-                IQueryable<T> entities = _context.Set<T>();
+                IQueryable<T> entities = _dbContext.Set<T>();
 
                 foreach (var predicate in predicateProperties)
                 {
@@ -347,7 +332,7 @@ namespace Acorna.Repository.Repository
             {
                 if (!_disposed && disposing)
                 {
-                    _context.Dispose();
+                    _dbContext.Dispose();
                 }
                 _disposed = true;
             }
@@ -372,21 +357,6 @@ namespace Acorna.Repository.Repository
                 entities = entities.Where(predicate);
             }
             return entities.ToList();
-        }
-
-        public void BeginTransaction()
-        {
-            _unitOfWork.BeginTransaction();
-        }
-
-        public void RollBackTransaction()
-        {
-            _unitOfWork.RollBackTransaction();
-        }
-
-        public void CommitTransaction()
-        {
-            _unitOfWork.CommitTransaction();
         }
     }
 }

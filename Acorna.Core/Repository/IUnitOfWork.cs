@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Acorna.Core.Entity;
 
 namespace Acorna.Core.Repository
 {
     public interface IUnitOfWork
     {
-        void BeginTransaction();
-        void RollBackTransaction();
-        void CommitTransaction();
+        IRepository<T> GetRepository<T>() where T : BaseEntity;
         void SaveChanges();
     }
 }

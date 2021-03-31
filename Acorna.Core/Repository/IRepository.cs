@@ -29,8 +29,5 @@ namespace Acorna.Core.Repository
         Task<List<T>> GetAllIncludingAsync(params Expression<Func<T, object>>[] includeProperties);
         int GetTotalCount();
         bool IsContains(Expression<Func<T, bool>>[] predicateProperties);
-        void BeginTransaction();
-        void RollBackTransaction();
-        void CommitTransaction();
     }
 }

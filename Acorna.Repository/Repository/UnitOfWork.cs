@@ -1,38 +1,58 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using Acorna.Core;
+﻿using Acorna.Core.Entity;
 using Acorna.Core.Repository;
+using Acorna.Repository.DataContext;
+using System;
+using System.Collections;
 
 namespace Acorna.Repository.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly IDbFactory _dbFactory;
+        private readonly AcornaDbContext _acornaDbContext;
+        private Hashtable _repositories;
 
-        public UnitOfWork(IDbFactory dbFactory)
+        public UnitOfWork(AcornaDbContext acornaDbContext)
         {
-            _dbFactory = dbFactory;
-        }
-        public void BeginTransaction()
-        {
-            _dbFactory.GetDataContext.Database.BeginTransaction();
+            _acornaDbContext = acornaDbContext;
         }
 
-        public void CommitTransaction()
+        public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
-            _dbFactory.GetDataContext.Database.CommitTransaction();
-        }
+            if (_repositories == null)
+                _repositories = new Hashtable();
 
-        public void RollBackTransaction()
-        {
-            _dbFactory.GetDataContext.Database.RollbackTransaction();
+            var type = typeof(T).Name;
+
+            if (!_repositories.ContainsKey(type))
+            {
+                var repositoryType = typeof(Repository<>);
+
+                var repositoryInstance =
+                    Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _acornaDbContext);
+
+                _repositories.Add(type, repositoryInstance);
+            }
+
+            return (IRepository<T>)_repositories[type];
         }
 
         public void SaveChanges()
         {
-            _dbFactory.GetDataContext.SaveChanges();
+            _acornaDbContext.SaveChanges();
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _acornaDbContext.Dispose();
+            }
+        }
+
     }
 }

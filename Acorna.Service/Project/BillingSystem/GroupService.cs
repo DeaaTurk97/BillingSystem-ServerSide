@@ -12,12 +12,12 @@ namespace Acorna.Service.Project.BillingSystem
 {
     public class GroupService : IGroupService
     {
-        private readonly IRepository<Group> _groupRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GroupService(IRepository<Group> groupRepository, IMapper mapper)
+        public GroupService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _groupRepository = groupRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -25,12 +25,11 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                List<Group> job = await _groupRepository.GetAllAsync();
-                return _mapper.Map<List<GroupModel>>(job); ;
+                List<Group> groups = await _unitOfWork.GetRepository<Group>().GetAllAsync();
+                return _mapper.Map<List<GroupModel>>(groups);
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }
@@ -39,7 +38,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                PaginationRecord<Group> group = await _groupRepository.GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
+                PaginationRecord<Group> group = await _unitOfWork.GetRepository<Group>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
                 PaginationRecord<GroupModel> paginationRecordModel = new PaginationRecord<GroupModel>
                 {
                     DataRecord = _mapper.Map<IEnumerable<GroupModel>>(group.DataRecord),
@@ -57,7 +56,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group = await _groupRepository.GetSingleAsync(groupId);
+                Group group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(groupId);
                 return _mapper.Map<GroupModel>(group);
             }
             catch (Exception)
@@ -70,7 +69,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                return _groupRepository.GetTotalCount();
+                return _unitOfWork.GetRepository<Group>().GetTotalCount();
             }
             catch (Exception ex)
             {
@@ -85,7 +84,10 @@ namespace Acorna.Service.Project.BillingSystem
                 Group group = _mapper.Map<Group>(groupModel);
 
                 if (group != null)
-                    _groupRepository.Insert(group);
+                {
+                    _unitOfWork.GetRepository<Group>().Insert(group);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return group.Id;
             }
@@ -99,12 +101,17 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group =  _groupRepository.GetSingle(groupModel.Id);
-                group.GroupNameAr = groupModel.GroupNameAr;
-                group.GroupNameEn = groupModel.GroupNameEn;
+                Group group = _unitOfWork.GetRepository<Group>().GetSingle(groupModel.Id);
+
 
                 if (group != null)
-                    _groupRepository.Update(group);
+                {
+                    group.GroupNameAr = groupModel.GroupNameAr;
+                    group.GroupNameEn = groupModel.GroupNameEn;
+
+                    _unitOfWork.GetRepository<Group>().Update(group);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return true;
             }
@@ -118,10 +125,13 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group =  _groupRepository.GetSingle(id);
+                Group group = _unitOfWork.GetRepository<Group>().GetSingle(id);
 
                 if (group != null)
-                    _groupRepository.Delete(group);
+                {
+                    _unitOfWork.GetRepository<Group>().Delete(group);
+                    _unitOfWork.SaveChanges();
+                }
 
                 return true;
             }

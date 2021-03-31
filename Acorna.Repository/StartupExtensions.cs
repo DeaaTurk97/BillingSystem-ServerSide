@@ -14,10 +14,9 @@ namespace Acorna.Repository.DependencyInjection
         public static void AddDependencyInjectionRepository(this IServiceCollection services, IConfiguration configuration)
         {
             IdentityBuilder builder = services.AddDependencyInjectionCore(configuration);
-            builder.AddEntityFrameworkStores<AcornaContext>();
-            services.AddDbContext<AcornaContext>(options => options.UseSqlServer(configuration.GetConnectionString("AppConnectionString")));
+            builder.AddEntityFrameworkStores<AcornaDbContext>();
+            services.AddDbContext<AcornaDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AppConnectionString")));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-            services.AddScoped(typeof(IDbFactory), typeof(DbFactory));
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(ISecurityRepository), typeof(SecurityRepository));
         }

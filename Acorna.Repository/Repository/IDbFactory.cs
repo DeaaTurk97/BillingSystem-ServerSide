@@ -6,6 +6,6 @@ namespace Acorna.Repository.Repository
 {
     public interface IDbFactory
     {
-        AcornaContext GetDataContext { get; }
+        AcornaDbContext GetDataContext { get; }
     }
 }
