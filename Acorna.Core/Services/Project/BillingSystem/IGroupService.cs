@@ -10,8 +10,8 @@ namespace Acorna.Core.Services.Project.BillingSystem
         Task<List<GroupModel>> GetAllGroups();
         Task<PaginationRecord<GroupModel>> GetGroups(int pageIndex, int pageSize);
         Task<GroupModel> GetGroupId(int groupId);
-        int AddGroup(GroupModel jobModel);
-        bool UpdateGroup(GroupModel jobModel);
+        int AddGroup(GroupModel groupModel);
+        bool UpdateGroup(GroupModel groupModel);
         bool DeleteGroup(int id);
     }
 }
