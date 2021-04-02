@@ -92,7 +92,7 @@ namespace Acorna.Repository.Repository
         }
 
         public async Task<PaginationRecord<T>> GetAllAsync(int pageIndex, int pageSize, Expression<Func<T, int>> keySelector,
-           Expression<Func<T, bool>>[] predicate, OrderBy orderBy, params Expression<Func<T, object>>[] includeProperties)
+          Expression<Func<T, bool>>[] predicate, OrderBy orderBy, params Expression<Func<T, object>>[] includeProperties)
         {
             var entities = FilterQuery(keySelector, predicate, orderBy, includeProperties);
             var total = await entities.CountAsync();// entities.CountAsync() is different than pageSize
