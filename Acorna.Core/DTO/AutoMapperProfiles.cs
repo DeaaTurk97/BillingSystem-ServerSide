@@ -27,6 +27,7 @@ namespace Acorna.DTO
             CreateMap<Language, LanguageModel>().ReverseMap();
             CreateMap<Group, GroupModel>().ReverseMap();
             CreateMap<Operator, OperatorModel>().ReverseMap();
+            CreateMap<Country, CountryModel>().ReverseMap();
 
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
 
