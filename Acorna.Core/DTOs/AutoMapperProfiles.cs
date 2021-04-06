@@ -1,4 +1,5 @@
-﻿using Acorna.Core.Entity;
+﻿using Acorna.Core.DTOs.billingSystem;
+using Acorna.Core.Entity;
 using Acorna.Core.Entity.Notification;
 using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Entity.Security;
@@ -7,10 +8,10 @@ using Acorna.Core.Models.Chat;
 using Acorna.Core.Models.Notification;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Models.SystemDefinition;
-using Acorna.DTO.Security;
+using Acorna.DTOs.Security;
 using AutoMapper;
 
-namespace Acorna.DTO
+namespace Acorna.DTOs
 {
     public class AutoMapperProfiles : Profile
     {
@@ -28,8 +29,14 @@ namespace Acorna.DTO
             CreateMap<Group, GroupModel>().ReverseMap();
             CreateMap<Operator, OperatorModel>().ReverseMap();
             CreateMap<Country, CountryModel>().ReverseMap();
-
+            CreateMap<Governorate, GovernorateModel>().ReverseMap();
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
+
+            //DTOs
+            CreateMap<Governorate, GovernorateDTO>().ReverseMap();
+            CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
+
+
 
         }
     }

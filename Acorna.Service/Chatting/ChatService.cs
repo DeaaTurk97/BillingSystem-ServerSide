@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Acorna.Core.DTO;
+using Acorna.Core.DTOs;
 using Acorna.Core.Entity;
 using Acorna.Core.IServices.Chat;
 using Acorna.Core.IServices.Notification;

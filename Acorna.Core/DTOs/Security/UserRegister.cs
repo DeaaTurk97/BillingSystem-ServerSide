@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Acorna.DTO.Security
+namespace Acorna.DTOs.Security
 {
     public class UserRegister
     {

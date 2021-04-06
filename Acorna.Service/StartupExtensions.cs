@@ -28,6 +28,7 @@ namespace Acorna.Service.DependencyInjection
             services.AddTransient<IGroupService, GroupService>();
             services.AddTransient<IOperatorService, OperatorService>();
             services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<IGovernorateService, GovernorateService>();
         }
     }
 }

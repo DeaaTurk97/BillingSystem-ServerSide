@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Acorna.Core.Entity.Security;
-using Acorna.DTO.Security;
+using Acorna.DTOs.Security;
 
 namespace Acorna.Controllers.Security
 {

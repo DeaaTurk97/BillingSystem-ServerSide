@@ -1,6 +1,8 @@
 ﻿using Acorna.Core.Entity;
 using Acorna.Core.Repository;
+using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Repository.DataContext;
+using Acorna.Repository.Repository.CustomRepository;
 using System;
 using System.Collections;
 
@@ -9,12 +11,15 @@ namespace Acorna.Repository.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AcornaDbContext _acornaDbContext;
+        private IGovernorateRepository _governorateRepository;
         private Hashtable _repositories;
 
         public UnitOfWork(AcornaDbContext acornaDbContext)
         {
             _acornaDbContext = acornaDbContext;
         }
+
+        public IGovernorateRepository GovernorateRepository => _governorateRepository = _governorateRepository ?? new GovernorateRepository(_acornaDbContext);
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
