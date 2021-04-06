@@ -1,8 +1,10 @@
-﻿using Acorna.Core.Entity.Project.BillingSystem;
+﻿using Acorna.Core.DTOs.billingSystem;
+using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
+using Acorna.Repository;
 using Acorna.Repository.DataContext;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -17,13 +19,11 @@ namespace Acorna.Service.Project.BillingSystem
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly AcornaDbContext _acornaDbContext;
 
-        public GovernorateService(IUnitOfWork unitOfWork, IMapper mapper, AcornaDbContext acornaDbContext)
+        public GovernorateService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _acornaDbContext = acornaDbContext;
         }
 
         public async Task<List<GovernorateModel>> GetAllGovernorates()
@@ -43,29 +43,14 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                IEnumerable<GovernorateModel> governorates = await (from gover in _acornaDbContext.Governorate
-                                                             join cou in _acornaDbContext.Country on
-                                                             gover.CountryId equals cou.Id
-                                                             select new GovernorateModel
-                                                             {
-                                                                 Id = gover.Id,
-                                                                 GovernorateNameAr = gover.GovernorateNameAr,
-                                                                 GovernorateNameEn = gover.GovernorateNameEn,
-                                                                 CountryNameAr = cou.CountryNameAr,
-                                                                 CountryNameEn = cou.CountryNameEn,
-                                                                 CountryId = cou.Id
-                                                             }).OrderByDescending(s => s.Id)
-                                                                     .Skip(pageSize * (pageIndex - 1))
-                                                                     .Take(pageSize)
-                                                                     .ToListAsync();
+                IEnumerable<GovernorateDTO> governoratesDTO = await _unitOfWork.GovernorateRepository.GetGovernorates(pageIndex, pageSize);
 
-                PaginationRecord<GovernorateModel> paginationRecordModel = new PaginationRecord<GovernorateModel>
+                PaginationRecord<GovernorateModel> paginationRecord = new PaginationRecord<GovernorateModel>
                 {
-                    DataRecord = governorates,
-                    CountRecord = GetCountRecord(),
+                    DataRecord = _mapper.Map<IEnumerable<GovernorateModel>>(governoratesDTO),
+                    CountRecord = GetCountRecord()
                 };
-
-                return paginationRecordModel;
+                return paginationRecord;
             }
             catch (Exception ex)
             {

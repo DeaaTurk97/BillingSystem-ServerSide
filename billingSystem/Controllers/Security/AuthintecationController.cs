@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Acorna.Core.Entity.Security;
-using Acorna.DTO.Security;
+using Acorna.DTOs.Security;
 
 namespace Acorna.Controllers.Security
 {

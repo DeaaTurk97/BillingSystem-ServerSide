@@ -1,4 +1,4 @@
-﻿namespace Acorna.Core.DTO
+﻿namespace Acorna.Core.DTOs
 {
     public class SystemEnum
     {
