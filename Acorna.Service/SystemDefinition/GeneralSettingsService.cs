@@ -1,22 +1,22 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Acorna.Core.Entity.SystemDefinition;
+﻿using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Acorna.Service.SystemDefinition
 {
     public class GeneralSettingsService : IGeneralSettingsService
     {
-        private readonly IRepository<GeneralSetting> _repository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GeneralSettingsService(IRepository<GeneralSetting> repository, IMapper mapper)
+        public GeneralSettingsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -24,7 +24,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                List<GeneralSetting> generalSettings = await _repository.GetAllAsync();
+                List<GeneralSetting> generalSettings = await _unitOfWork.GetRepository<GeneralSetting>().GetAllAsync();
                 return _mapper.Map<List<GeneralSettingModel>>(generalSettings);
             }
             catch (Exception ex)
@@ -41,8 +41,8 @@ namespace Acorna.Service.SystemDefinition
                 try
                 {
                     //Delete old records...
-                    List<GeneralSetting> generalSettingsExisting = await _repository.GetAllAsync();
-                    _repository.DeleteRange(generalSettingsExisting);
+                    List<GeneralSetting> generalSettingsExisting = await _unitOfWork.GetRepository<GeneralSetting>().GetAllAsync();
+                    _unitOfWork.GetRepository<GeneralSetting>().DeleteRange(generalSettingsExisting);
                     //Then insert again...
                     List<GeneralSetting> listOfGeneralSettings = new List<GeneralSetting>();
 
@@ -53,13 +53,14 @@ namespace Acorna.Service.SystemDefinition
                         generalSetting.SettingValue = generalSettingModel.SettingValue;
                         listOfGeneralSettings.Add(generalSetting);
                     }
-                    _repository.InsertRange(listOfGeneralSettings);
+                    _unitOfWork.GetRepository<GeneralSetting>().InsertRange(listOfGeneralSettings);
+                    _unitOfWork.SaveChanges();
                 }
                 catch (Exception)
                 {
-                    //_repository.RollBackTransaction();
                     return false;
                 }
+
                 return true;
             }
             catch (Exception ex)
