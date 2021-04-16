@@ -2,9 +2,11 @@ using Acorna.Core.IServices.Chat;
 using Acorna.Core.IServices.Notification;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.IServices.SystemDefinition;
+using Acorna.Core.Services.Email;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Repository.DependencyInjection;
 using Acorna.Service.Chatting;
+using Acorna.Service.Email;
 using Acorna.Service.Notification;
 using Acorna.Service.Project;
 using Acorna.Service.Project.BillingSystem;
@@ -29,6 +31,7 @@ namespace Acorna.Service.DependencyInjection
             services.AddTransient<IOperatorService, OperatorService>();
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IGovernorateService, GovernorateService>();
+            services.AddTransient<IEmailService, EmailService>();
         }
     }
 }
