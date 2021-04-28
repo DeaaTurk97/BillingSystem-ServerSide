@@ -32,6 +32,7 @@ namespace Acorna.Service.DependencyInjection
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IGovernorateService, GovernorateService>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IPhoneBookService, PhoneBookService>();
         }
     }
 }

@@ -1,14 +1,12 @@
-﻿using Acorna.Core.Entity.Project.BillingSystem;
-using Acorna.Core.Models.Project.BillingSystem;
+﻿using Acorna.Core.DTOs.billingSystem;
+using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
-using Acorna.Core.Sheard;
 using Acorna.Repository.DataContext;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using Acorna.Core.DTOs.billingSystem;
+using System.Threading.Tasks;
 
 namespace Acorna.Repository.Repository.CustomRepository
 {

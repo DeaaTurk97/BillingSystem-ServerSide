@@ -29,12 +29,14 @@ namespace Acorna.DTOs
             CreateMap<Group, GroupModel>().ReverseMap();
             CreateMap<Operator, OperatorModel>().ReverseMap();
             CreateMap<Country, CountryModel>().ReverseMap();
+            CreateMap<PhoneBook, PhoneBookModel>().ReverseMap();
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
 
             //DTOs
             CreateMap<Governorate, GovernorateDTO>().ReverseMap();
             CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
+            CreateMap<PhoneBookModel, PhoneBookDTO>().ReverseMap();
 
 
 

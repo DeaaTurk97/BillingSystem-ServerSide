@@ -12,6 +12,8 @@ namespace Acorna.Repository.Repository
     {
         private readonly AcornaDbContext _acornaDbContext;
         private IGovernorateRepository _governorateRepository;
+        private IPhoneBookRepository _phoneBookRepository;
+
         private Hashtable _repositories;
 
         public UnitOfWork(AcornaDbContext acornaDbContext)
@@ -20,6 +22,7 @@ namespace Acorna.Repository.Repository
         }
 
         public IGovernorateRepository GovernorateRepository => _governorateRepository = _governorateRepository ?? new GovernorateRepository(_acornaDbContext);
+        public IPhoneBookRepository PhoneBookRepository => _phoneBookRepository = _phoneBookRepository ?? new PhoneBookRepository(_acornaDbContext);
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
