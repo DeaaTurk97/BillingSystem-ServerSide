@@ -142,17 +142,17 @@ namespace Acorna.Service.Project.BillingSystem
                 if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin || rolesType == RolesType.AdminGroup)
                 {
                     phoneBook = _unitOfWork.GetRepository<PhoneBook>().GetWhere(x => x.PhoneNumber == phoneNumber
-                                                                                && x.TypePhoneNumber == (int)TypesPhoneNumber.Official).ToList();
+                                                                                && x.TypePhoneNumberId == (int)TypesPhoneNumber.Official).ToList();
                 }
                 else if (rolesType == RolesType.Employee)
                 {
                     phoneBook = _unitOfWork.GetRepository<PhoneBook>().GetWhere(x => x.PhoneNumber == phoneNumber
                                                                                 && x.PersonalUserId == currentUserId
-                                                                                && x.TypePhoneNumber == (int)TypesPhoneNumber.Personal).ToList();
+                                                                                && x.TypePhoneNumberId == (int)TypesPhoneNumber.Personal).ToList();
                 }
 
 
-                return  (phoneBook == null) ? true : false;
+                return  (phoneBook.Count > 0) ? true : false;
             }
             catch (Exception)
             {
@@ -173,7 +173,7 @@ namespace Acorna.Service.Project.BillingSystem
                     phoneBook.PhoneName = phoneBookModel.PhoneName;
                     phoneBook.PhoneNumber = phoneBookModel.PhoneNumber;
                     phoneBook.StatusNumberId = phoneBookModel.StatusNumberId;
-                    phoneBook.TypePhoneNumber = phoneBookModel.TypePhoneNumberId;
+                    phoneBook.TypePhoneNumberId = phoneBookModel.TypePhoneNumberId;
 
                     _unitOfWork.GetRepository<PhoneBook>().Update(phoneBook);
                     _unitOfWork.SaveChanges();

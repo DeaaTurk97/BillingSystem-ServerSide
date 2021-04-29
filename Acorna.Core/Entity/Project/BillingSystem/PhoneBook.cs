@@ -13,7 +13,7 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         [Required, MaxLength(10)]
         public int? PersonalUserId { get; set; }
         [Required, MaxLength(10)]
-        public int TypePhoneNumber { get; set; }
+        public int TypePhoneNumberId { get; set; }
         [Required, MaxLength(10)]
         public int StatusNumberId { get; set; }
         [Required, MaxLength(10)]

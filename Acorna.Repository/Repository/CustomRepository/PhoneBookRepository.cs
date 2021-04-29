@@ -31,7 +31,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                               Id = phone.Id,
                                                               PhoneNumber = phone.PhoneNumber,
                                                               PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumber,
+                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
                                                               UserName = usr.UserName,
                                                               StatusNumberId = phone.StatusNumberId
 
@@ -73,7 +73,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                               Id = phone.Id,
                                                               PhoneNumber = phone.PhoneNumber,
                                                               PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumber,
+                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
                                                               UserName = usr.UserName,
                                                               StatusNumberId = phone.StatusNumberId
 
@@ -111,7 +111,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                               Id = phone.Id,
                                                               PhoneNumber = phone.PhoneNumber,
                                                               PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumber,
+                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
                                                               UserName = usr.UserName,
                                                               StatusNumberId = phone.StatusNumberId
 
