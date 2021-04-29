@@ -1,3 +1,9 @@
+using Acorna.Core.Entity.Security;
+using Acorna.Core.Entity.SystemDefinition;
+using Acorna.Core.Models.Security;
+using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Repository;
+using Acorna.Repository.DataContext;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,12 +12,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Acorna.Core.Entity.Security;
-using Acorna.Core.Entity.SystemDefinition;
-using Acorna.Core.Models.Security;
-using Acorna.Core.Models.SystemDefinition;
-using Acorna.Core.Repository;
-using Acorna.Repository.DataContext;
 
 public class SecurityService : ISecurityService
 {
@@ -81,7 +81,7 @@ public class SecurityService : ISecurityService
     {
         try
         {
-            return await GetAllUsersByTypeAsync("admin");
+            return await GetAllUsersByTypeAsync("superadmin");
         }
         catch (Exception)
         {
@@ -94,7 +94,7 @@ public class SecurityService : ISecurityService
     {
         try
         {
-            return await GetAllUsersByTypeAsync("superadmin");
+            return await GetAllUsersByTypeAsync("admin");
         }
         catch (Exception)
         {

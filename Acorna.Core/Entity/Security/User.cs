@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Acorna.Core.Entity.SystemDefinition;
+using Acorna.Core.Entity.Project.BillingSystem;
 
 namespace Acorna.Core.Entity.Security
 {
@@ -26,6 +27,9 @@ namespace Acorna.Core.Entity.Security
         public int LanguageId { get; set; }
         [ForeignKey("LanguageId")]
         public virtual Language Language { get; set; }
+        public int GroupId { get; set; }
+        [ForeignKey("GroupId")]
+        public virtual Group Group { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; }
     }

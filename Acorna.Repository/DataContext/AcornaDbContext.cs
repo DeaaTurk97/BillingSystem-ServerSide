@@ -117,8 +117,8 @@ namespace Acorna.Repository.DataContext
                 },
                 new Role {
                     Id = 4,
-                    Name = "Student",
-                    NormalizedName = "STUDENT",
+                    Name = "Employee",
+                    NormalizedName = "EMPLOYEE",
                     PowerLevel = 96
                 },
                 new Role {
@@ -141,7 +141,8 @@ namespace Acorna.Repository.DataContext
                 PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
                 IsActive = true,
                 LanguageId = 1,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                GroupId = 1
             },
             new User
             {
@@ -153,7 +154,8 @@ namespace Acorna.Repository.DataContext
                 PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
                 IsActive = true,
                 LanguageId = 2,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                GroupId = 1
             },
             new User
             {
@@ -165,19 +167,21 @@ namespace Acorna.Repository.DataContext
                 PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
                 IsActive = true,
                 LanguageId = 1,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                GroupId = 1
             },
             new User
             {
                 Id = 4, // primary key
-                UserName = "student",
-                NormalizedUserName = "STUDENT",
-                Email = "Student@a.com",
-                NormalizedEmail = "STUDENT@A.COM",
+                UserName = "employee",
+                NormalizedUserName = "EMPLOYEE",
+                Email = "Employee@a.com",
+                NormalizedEmail = "EMPLOYEE@A.COM",
                 PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
                 IsActive = true,
                 LanguageId = 1,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                GroupId = 2
             },
             new User
             {
@@ -189,9 +193,11 @@ namespace Acorna.Repository.DataContext
                 PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
                 IsActive = true,
                 LanguageId = 1,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                GroupId = 2
             }
             );
+
             //Assign role to User
             builder.Entity<UserRole>().ToTable("UserRoles").HasData(
             new UserRole
@@ -220,6 +226,7 @@ namespace Acorna.Repository.DataContext
                 UserId = 5
             }
             );
+
 
             builder.Entity<Language>().ToTable("Language").HasData(new List<Language>
             {
@@ -260,6 +267,21 @@ namespace Acorna.Repository.DataContext
                 },
             });
 
+            //Create New Groups
+            builder.Entity<Group>().ToTable("Groups").HasData(new List<Group>
+            {
+                new Group {
+                    Id = 1,
+                    GroupNameAr = "تكنولوجيا المعلومات",
+                    GroupNameEn = "IT",
+                },
+                new Group {
+                    Id = 2,
+                    GroupNameAr = "المالية",
+                    GroupNameEn = "Financial",
+                }
+            });
+
             //Rename All Tables Identity
             builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
             builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
@@ -272,6 +294,7 @@ namespace Acorna.Repository.DataContext
         public DbSet<Operator> Operator { get; set; }
         public DbSet<Country> Country { get; set; }
         public DbSet<Governorate> Governorate { get; set; }
+        public DbSet<PhoneBook> PhoneBook { get; set; }
         public DbSet<GeneralSetting> GeneralSetting { get; set; }
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Language> Language { get; set; }

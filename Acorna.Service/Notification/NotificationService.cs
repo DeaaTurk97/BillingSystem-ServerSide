@@ -1,12 +1,10 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using Acorna.Core.Entity.Notification;
+﻿using Acorna.Core.Entity.Notification;
 using Acorna.Core.IServices.Notification;
 using Acorna.Core.Models.Notification;
 using Acorna.Core.Repository;
+using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Acorna.Service.Notification
 {

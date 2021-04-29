@@ -7,6 +7,7 @@ namespace Acorna.Core.Repository
     {
         IRepository<T> GetRepository<T>() where T : BaseEntity;
         IGovernorateRepository GovernorateRepository { get; }
+        IPhoneBookRepository PhoneBookRepository { get; }
 
         void SaveChanges();
     }
