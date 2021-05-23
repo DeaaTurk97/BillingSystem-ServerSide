@@ -1,7 +1,6 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
 using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
-using Acorna.Repository.DataContext;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,19 +9,21 @@ using System.Threading.Tasks;
 
 namespace Acorna.Repository.Repository.CustomRepository
 {
-    public class GovernorateRepository : Repository<Governorate>, IGovernorateRepository
+    internal class GovernorateRepository : Repository<Governorate>, IGovernorateRepository
     {
-        public GovernorateRepository(AcornaDbContext dbContext): base(dbContext)
-        {
+        private readonly IDbFactory _dbFactory;
 
+        internal GovernorateRepository(IDbFactory dbFactory) : base(dbFactory)
+        {
+            _dbFactory = dbFactory;
         }
 
         public async Task<IEnumerable<GovernorateDTO>> GetGovernorates(int pageIndex, int pageSize)
         {
             try
             {
-                IEnumerable<GovernorateDTO> governorates = await (from gover in _dbContext.Governorate
-                                                                    join cou in _dbContext.Country on
+                IEnumerable<GovernorateDTO> governorates = await (from gover in _dbFactory.DataContext.Governorate
+                                                                    join cou in _dbFactory.DataContext.Country on
                                                                     gover.CountryId equals cou.Id
                                                                     select new GovernorateDTO
                                                                     {

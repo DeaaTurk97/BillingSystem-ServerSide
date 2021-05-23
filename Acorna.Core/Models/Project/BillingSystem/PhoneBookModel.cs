@@ -11,5 +11,7 @@
         public int StatusNumberId { get; set; }
         public string StatusNumberName { get; set; }
         public int StatusAdminId { get; set; }
+        public string GroupNameAr { get; set; }
+        public string GroupNameEn { get; set; }
     }
 }

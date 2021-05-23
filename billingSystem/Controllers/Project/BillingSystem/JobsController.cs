@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
-using Acorna.Core.IServices.Project;
 using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,11 +13,11 @@ namespace Acorna.Controllers.Project
     [ApiController]
     public class JobsController : TeamControllerBase
     {
-        private readonly IJobService _jobService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public JobsController(IJobService jobService)
+        public JobsController(IUnitOfWorkService unitOfWorkService)
         {
-            _jobService = jobService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(await _jobService.GetAllJobs());
+                return Ok(await _unitOfWorkService.JobService.GetAllJobs());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(await _jobService.GetJobs(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.JobService.GetJobs(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(await _jobService.GetJobId(jobId));
+                return Ok(await _unitOfWorkService.JobService.GetJobId(jobId));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(_jobService.AddJob(jobModel));
+                return Ok(_unitOfWorkService.JobService.AddJob(jobModel));
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(_jobService.UpdateJob(jobModel));
+                return Ok(_unitOfWorkService.JobService.UpdateJob(jobModel));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace Acorna.Controllers.Project
         {
             try
             {
-                return Ok(_jobService.DeleteJob(id));
+                return Ok(_unitOfWorkService.JobService.DeleteJob(id));
             }
             catch (Exception ex)
             {

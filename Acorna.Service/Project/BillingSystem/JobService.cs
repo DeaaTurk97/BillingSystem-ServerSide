@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.Project
 {
-    public class JobService : IJobService
+    internal class JobService : IJobService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public JobService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal JobService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

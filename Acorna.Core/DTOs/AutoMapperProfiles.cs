@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
+using Acorna.Core.DTOs.Chat;
 using Acorna.Core.Entity;
 using Acorna.Core.Entity.Notification;
 using Acorna.Core.Entity.Project.BillingSystem;
@@ -34,6 +35,8 @@ namespace Acorna.DTOs
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
 
             //DTOs
+            CreateMap<ChatMessageModel, ChatMessageDTO>().ReverseMap();
+
             CreateMap<Governorate, GovernorateDTO>().ReverseMap();
             CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
             CreateMap<PhoneBookModel, PhoneBookDTO>().ReverseMap();

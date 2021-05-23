@@ -15,12 +15,12 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-    public class GovernorateService : IGovernorateService
+    internal class GovernorateService : IGovernorateService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GovernorateService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal GovernorateService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

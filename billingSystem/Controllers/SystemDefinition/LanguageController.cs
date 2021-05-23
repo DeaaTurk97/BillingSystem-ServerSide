@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Acorna.Controllers.Base;
 using Acorna.Core.IServices.SystemDefinition;
 using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Services;
 
 namespace Acorna.Controllers.SystemDefinition
 {
@@ -12,11 +13,11 @@ namespace Acorna.Controllers.SystemDefinition
     [ApiController]
     public class LanguageController : TeamControllerBase
     {
-        private readonly ILanguageService _languageService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public LanguageController(ILanguageService languageService)
+        public LanguageController(IUnitOfWorkService unitOfWorkService)
         {
-            _languageService = languageService;
+            _unitOfWorkService = unitOfWorkService;
         }
         [HttpGet]
         [Route("GetAllLanguages")]
@@ -24,7 +25,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                List<LanguageModel> languageModel = await _languageService.GetAllLanguagesAsync();
+                List<LanguageModel> languageModel = await _unitOfWorkService.LanguageService.GetAllLanguagesAsync();
                 return Ok(languageModel);
             }
             catch (Exception ex)
@@ -39,7 +40,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                return Ok(await _languageService.GetAllLanguagesAsync(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.LanguageService.GetAllLanguagesAsync(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -53,7 +54,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                return Ok(_languageService.GetLanguageById(id));
+                return Ok(_unitOfWorkService.LanguageService.GetLanguageById(id));
             }
             catch (Exception ex)
             {
@@ -67,7 +68,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                return Ok(_languageService.AddLanguage(languageModel));
+                return Ok(_unitOfWorkService.LanguageService.AddLanguage(languageModel));
             }
             catch (Exception)
             {
@@ -82,7 +83,7 @@ namespace Acorna.Controllers.SystemDefinition
             try
             {
                 if (languageModel.Id != 0)
-                    await _languageService.UpdateLanguageAsync(languageModel);
+                    await _unitOfWorkService.LanguageService.UpdateLanguageAsync(languageModel);
             }
             catch (Exception)
             {
@@ -98,7 +99,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                _languageService.DeleteLanguage(id);
+                _unitOfWorkService.LanguageService.DeleteLanguage(id);
             }
             catch (Exception)
             {

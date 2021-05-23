@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Acorna.Controllers.Base;
+using Acorna.Core.Models.Chat;
+using Acorna.Core.Services;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using Acorna.Controllers.Base;
-using Acorna.Core.IServices.Chat;
-using Acorna.Core.Models.Chat;
 
 namespace Acorna.Controllers.Chat
 {
@@ -11,11 +11,11 @@ namespace Acorna.Controllers.Chat
     [ApiController]
     public class ChatController : TeamControllerBase
     {
-        private readonly IChatService _chatService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public ChatController(IChatService chatService)
+        public ChatController(IUnitOfWorkService unitOfWorkService)
         {
-            _chatService = chatService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpPost]
@@ -24,7 +24,7 @@ namespace Acorna.Controllers.Chat
         {
             try
             {
-                return Ok(_chatService.AddNewMassage(chatMessageModel));
+                return Ok(_unitOfWorkService.ChatService.AddNewMassage(chatMessageModel));
             }
             catch (Exception ex)
             {
@@ -38,7 +38,7 @@ namespace Acorna.Controllers.Chat
         {
             try
             {
-                return Ok(await _chatService.GetAllChattingMassage(CurrentUserId, recipientId));
+                return Ok(await _unitOfWorkService.ChatService.GetAllChattingMassage(CurrentUserId, recipientId));
             }
             catch (Exception ex)
             {
@@ -52,7 +52,7 @@ namespace Acorna.Controllers.Chat
         {
             try
             {
-                return Ok(await _chatService.GetUnReadMessages(CurrentUserId));
+                return Ok(await _unitOfWorkService.ChatService.GetUnReadMessages(CurrentUserId));
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace Acorna.Controllers.Chat
         {
             try
             {
-                return Ok(await _chatService.MarkMessageAsRead(CurrentUserId, messageId));
+                return Ok(await _unitOfWorkService.ChatService.MarkMessageAsRead(CurrentUserId, messageId));
             }
             catch (Exception ex)
             {

@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,11 +13,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [ApiController]
     public class CountriesController : TeamControllerBase
     {
-        private readonly ICountryService _countryService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public CountriesController(ICountryService countryService)
+        public CountriesController(IUnitOfWorkService unitOfWorkService)
         {
-            _countryService = countryService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _countryService.GetAllCountries());
+                return Ok(await _unitOfWorkService.CountryService.GetAllCountries());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _countryService.GetCountries(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.CountryService.GetCountries(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _countryService.GetCountryId(countryId));
+                return Ok(await _unitOfWorkService.CountryService.GetCountryId(countryId));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_countryService.AddCountry(countryModel));
+                return Ok(_unitOfWorkService.CountryService.AddCountry(countryModel));
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_countryService.UpdateCountry(countryModel));
+                return Ok(_unitOfWorkService.CountryService.UpdateCountry(countryModel));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_countryService.DeleteCountry(id));
+                return Ok(_unitOfWorkService.CountryService.DeleteCountry(id));
             }
             catch (Exception ex)
             {

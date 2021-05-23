@@ -1,61 +1,46 @@
-﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Acorna.Core.DTOs;
+﻿using Acorna.Core.DTOs;
+using Acorna.Core.DTOs.Chat;
 using Acorna.Core.Entity;
 using Acorna.Core.IServices.Chat;
-using Acorna.Core.IServices.Notification;
 using Acorna.Core.Models.Chat;
 using Acorna.Core.Models.Notification;
 using Acorna.Core.Repository;
-using Acorna.Repository.DataContext;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Acorna.Service.Chatting
 {
-    public class ChatService : IChatService
+    internal class ChatService : IChatService
     {
         private readonly IMapper _imapper;
-        private readonly IRepository<Chat> _chatRepository;
-        private readonly AcornaDbContext _teamDataContext;
-        private readonly INotificationService _notificationService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ChatService(IMapper imapper, IRepository<Chat> chatRepository, AcornaDbContext teamDataContext, INotificationService notificationService)
+        internal ChatService(IUnitOfWork unitOfWork, IMapper imapper)
         {
+            _unitOfWork = unitOfWork;
             _imapper = imapper;
-            _chatRepository = chatRepository;
-            _teamDataContext = teamDataContext;
-            _notificationService = notificationService;
         }
 
         public ChatMessageModel AddNewMassage(ChatMessageModel chatMessageModel)
         {
             try
             {
-                //_chatRepository.BeginTransaction();
-
                 Chat chat = _imapper.Map<Chat>(chatMessageModel);
-                _chatRepository.Insert(chat);
+                _unitOfWork.ChatRepository.Insert(chat);
                 ChatMessageModel chatMessage = _imapper.Map<ChatMessageModel>(chat);
 
-                if (chat.Id != 0)
+                _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
                 {
-                    _notificationService.AddNotificationItem(new NotificationItemModel
-                    {
-                        SenderId = chat.CreatedBy,
-                        RecipientId = (chat.CreatedBy == 1) ? 2 : 1,
-                        MessageText = "New Message was Added",
-                        IsRead = false,
-                        Deleted = false,
-                        NotificationTypeId = (int)SystemEnum.NotificationType.Chatting,
-                    });
-                }
-                //_chatRepository.CommitTransaction();
-
+                    SenderId = chat.CreatedBy,
+                    RecipientId = (chat.CreatedBy == 1) ? 2 : 1,
+                    MessageText = "New Message was Added",
+                    IsRead = false,
+                    Deleted = false,
+                    NotificationTypeId = (int)SystemEnum.NotificationType.Chatting,
+                });
                 return chatMessage;
-
             }
             catch (Exception ex)
             {
@@ -67,28 +52,8 @@ namespace Acorna.Service.Chatting
         {
             try
             {
-                IEnumerable<ChatMessageModel> chatMessageModels = await (from chat in _teamDataContext.Chat
-                                                                         join userSender in _teamDataContext.Users on chat.CreatedBy equals userSender.Id
-                                                                         join userRecipien in _teamDataContext.Users on chat.CreatedBy equals userRecipien.Id
-                                                                         where chat.RecipientId == senderId && chat.CreatedBy == recipientId ||
-                                                                         chat.RecipientId == recipientId && chat.CreatedBy == senderId
-                                                                         select new ChatMessageModel
-                                                                         {
-                                                                             Id = chat.Id,
-                                                                             CreatedBy = chat.CreatedBy,
-                                                                             CreatedDate = chat.CreatedDate,
-                                                                             UpdatedBy = chat.UpdatedBy,
-                                                                             UpdatedDate = chat.UpdatedDate,
-                                                                             MessageText = chat.MessageText,
-                                                                             IsRead = chat.IsRead,
-                                                                             DateRead = chat.DateRead,
-                                                                             SenderName = userSender.UserName,
-                                                                             SenderPhotoUrl = userSender.PhotoURL,
-                                                                             RecipientId = chat.RecipientId,
-                                                                             RecipientName = userRecipien.UserName,
-                                                                             RecipientPhotoUrl = userRecipien.PhotoURL
-                                                                         }
-                                                                   ).OrderByDescending(o => o.CreatedDate).ToListAsync();
+                IEnumerable<ChatMessageDTO> chatMessageDTO = await _unitOfWork.ChatRepository.GetAllChattingMassage(senderId, recipientId);
+                IEnumerable<ChatMessageModel> chatMessageModels = _imapper.Map<IEnumerable<ChatMessageModel>>(chatMessageDTO);
 
                 return chatMessageModels;
             }
@@ -102,8 +67,8 @@ namespace Acorna.Service.Chatting
         {
             try
             {
-                IEnumerable<Chat> chatMessageModels = await _teamDataContext.Chat.Where(m => m.IsRead == false && m.RecipientId == userId).ToListAsync();
-                return chatMessageModels.Count();
+                int countChatMessageModels = await _unitOfWork.ChatRepository.GetUnReadMessages(userId);
+                return countChatMessageModels;
             }
             catch (Exception)
             {
@@ -116,7 +81,7 @@ namespace Acorna.Service.Chatting
         {
             try
             {
-                Chat chat = await _chatRepository.GetSingleAsync(messageId);
+                Chat chat = await _unitOfWork.ChatRepository.GetSingleAsync(messageId);
 
                 if (chat.RecipientId == userId)
                 {
@@ -124,7 +89,7 @@ namespace Acorna.Service.Chatting
                     chat.DateRead = DateTime.Now;
                 }
 
-                return _chatRepository.Update(chat);
+                return _unitOfWork.ChatRepository.Update(chat);
             }
             catch (Exception)
             {

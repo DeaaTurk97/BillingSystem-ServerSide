@@ -17,8 +17,7 @@ namespace Acorna.Repository.DependencyInjection
             builder.AddEntityFrameworkStores<AcornaDbContext>();
             services.AddDbContext<AcornaDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AppConnectionString")));
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped(typeof(ISecurityRepository), typeof(SecurityRepository));
+            services.AddScoped(typeof(IDbFactory), typeof(DbFactory));
         }
     }
 }

@@ -1,21 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Acorna.Repository.DataContext;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Acorna.Repository.DataContext;
 
 namespace Acorna.Repository.Repository
 {
-    public class DbFactory : IDbFactory,IDisposable
+    public class DbFactory : IDbFactory, IDisposable
     {
         private readonly AcornaDbContext _dbContext;
 
-        public DbFactory(AcornaDbContext teamDataContext)
+        public DbFactory(AcornaDbContext acornaDataContext)
         {
-            _dbContext = teamDataContext;
+            _dbContext = acornaDataContext;
         }
 
-        public AcornaDbContext GetDataContext
+        public AcornaDbContext DataContext
         {
             get
             {
