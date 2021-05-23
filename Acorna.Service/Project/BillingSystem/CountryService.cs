@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-    public class CountryService : ICountryService
+    internal class CountryService : ICountryService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CountryService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal CountryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

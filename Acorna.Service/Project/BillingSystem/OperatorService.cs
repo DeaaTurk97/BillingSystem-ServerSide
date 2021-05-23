@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-    public class OperatorService : IOperatorService
+    internal class OperatorService : IOperatorService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public OperatorService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal OperatorService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

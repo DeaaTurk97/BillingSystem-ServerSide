@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Acorna.Core.Services;
+using Acorna.DTOs.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Acorna.Core.Entity.Security;
-using Acorna.DTOs.Security;
 
 namespace Acorna.Controllers.Security
 {
@@ -14,51 +12,32 @@ namespace Acorna.Controllers.Security
     [ApiController]
     public class AdminController : ControllerBase
     {
-        private readonly ISecurityService _securityService;
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public AdminController(ISecurityService securityService, UserManager<User> userManager)
+        public AdminController(IUnitOfWorkService unitOfWorkService)
         {
-            _securityService = securityService;
-            _userManager = userManager;
+            _unitOfWorkService = unitOfWorkService;
         }
 
-        [Authorize(Policy = "RequierSuperAdminRole")]
+        [Authorize(Policy = "RequierUsersAdminRole")]
         [HttpGet("GetUsersWithRoles")]
         public async Task<IActionResult> GetUsersWithRoles()
         {
             try
             {
-                return Ok(await _securityService.GetUsersListAsync());
+                return Ok(await _unitOfWorkService.SecurityService.GetUsersListAsync());
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        [Authorize(Policy = "RequierSuperAdminRole")]
+        [Authorize(Policy = "RequierUsersAdminRole")]
         [HttpPost]
         [Route("editRoles")]
         public async Task<IActionResult> EditRoles(string userName, RoleEdit roleEditDTO)
         {
-            var user = await _userManager.FindByNameAsync(userName);
-            var userRoles = await _userManager.GetRolesAsync(user);
-            var selectedRoles = roleEditDTO.RoleNames;
-
-            selectedRoles = selectedRoles ?? new string[] { }; // same ---> selectedRoles = selectedRoles != null ? selectedRoles : new string[] {};
-            var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
-
-            if (!result.Succeeded)
-                return BadRequest("Something goes wrong with adding roles!");
-
-            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
-
-            if (!result.Succeeded)
-                return BadRequest("Something goes wrong with removing roles!");
-
-
-            return Ok(await _userManager.GetRolesAsync(user));
-
+            return Ok(await _unitOfWorkService.SecurityService.EditRoles(userName, roleEditDTO));
         }
     }
 }

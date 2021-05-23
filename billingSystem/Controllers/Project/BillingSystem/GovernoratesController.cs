@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,11 +13,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [ApiController]
     public class GovernoratesController : TeamControllerBase
     {
-        private readonly IGovernorateService _governorateService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public GovernoratesController(IGovernorateService governorateService)
+        public GovernoratesController(IUnitOfWorkService unitOfWorkService)
         {
-            _governorateService = governorateService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _governorateService.GetAllGovernorates());
+                return Ok(await _unitOfWorkService.GovernorateService.GetAllGovernorates());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _governorateService.GetGovernorates(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.GovernorateService.GetGovernorates(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _governorateService.GetGovernorateId(countryId));
+                return Ok(await _unitOfWorkService.GovernorateService.GetGovernorateId(countryId));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_governorateService.AddGovernorate(governorateModel));
+                return Ok(_unitOfWorkService.GovernorateService.AddGovernorate(governorateModel));
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_governorateService.UpdateGovernorate(countryModel));
+                return Ok(_unitOfWorkService.GovernorateService.UpdateGovernorate(countryModel));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_governorateService.DeleteGovernorate(id));
+                return Ok(_unitOfWorkService.GovernorateService.DeleteGovernorate(id));
             }
             catch (Exception ex)
             {

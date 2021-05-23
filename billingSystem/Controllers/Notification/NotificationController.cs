@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using Acorna.Controllers.Base;
-using Acorna.Core.IServices.Notification;
+﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Notification;
+using Acorna.Core.Services;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Acorna.Controllers.Notification
 {
@@ -11,11 +11,11 @@ namespace Acorna.Controllers.Notification
     [ApiController]
     public class NotificationController : TeamControllerBase
     {
-        private readonly INotificationService _notificationService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public NotificationController(INotificationService notificationService)
+        public NotificationController(IUnitOfWorkService unitOfWorkService)
         {
-            _notificationService = notificationService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -24,7 +24,7 @@ namespace Acorna.Controllers.Notification
         {
             try
             {
-                return Ok(_notificationService.GetAllUnreadNotificationItems(CurrentUserId));
+                return Ok(_unitOfWorkService.NotificationService.GetAllUnreadNotificationItems(CurrentUserId));
             }
             catch (Exception ex)
             {
@@ -38,7 +38,7 @@ namespace Acorna.Controllers.Notification
         {
             try
             {
-                return Ok(_notificationService.UpdateReadNotificationsItems(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId));
+                return Ok(_unitOfWorkService.NotificationService.UpdateReadNotificationsItems(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId));
             }
             catch (Exception ex)
             {

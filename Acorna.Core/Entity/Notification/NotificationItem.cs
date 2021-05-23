@@ -11,6 +11,15 @@ namespace Acorna.Core.Entity.Notification
         public int NotificationTypeId { get; set; }
         [ForeignKey("NotificationTypeId")]
         public NotificationType NotificationType { get; set; }
+
+        public virtual ICollection<NotificationItemTranslation> NotificationItemTranslations { get; set; }
         public int ReferenceMassageId { get; set; }
+    }
+
+    public class NotificationItemTranslation : TranslateBase
+    {
+        public int NotificationItemId { get; set; }
+        [Column(TypeName = "nvarchar(max)")]
+        public string MessageText { get; set; }
     }
 }

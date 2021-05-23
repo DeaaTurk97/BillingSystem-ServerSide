@@ -1,5 +1,5 @@
 ﻿using Acorna.Controllers.Base;
-using Acorna.Core.Services.Email;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,11 +12,11 @@ namespace billingSystem.Controllers.Emails
     [ApiController]
     public class EmailsController : TeamControllerBase
     {
-        private readonly IEmailService _emailService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public EmailsController(IEmailService emailService)
+        public EmailsController(IUnitOfWorkService unitOfWorkService)
         {
-            _emailService = emailService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpPost]
@@ -25,7 +25,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.SendTestEmail());
+                return Ok(await _unitOfWorkService.EmailService.SendTestEmail());
             }
             catch (Exception ex)
             {
@@ -39,7 +39,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.ImportBillEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.ImportBillEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.ReminderIdentifyNewNumbersEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.ReminderIdentifyNewNumbersEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.RejectNumberEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.RejectNumberEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -81,7 +81,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.PaidEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.PaidEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.UnpaidEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.UnpaidEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -109,7 +109,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.SubmittedBillEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.SubmittedBillEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -123,7 +123,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.ReminderTotalDueEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.ReminderTotalDueEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -137,7 +137,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.ReminderStartPeriodSubmittBillEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.ReminderStartPeriodSubmittBillEmail(toEmail));
             }
             catch (Exception ex)
             {
@@ -151,7 +151,7 @@ namespace billingSystem.Controllers.Emails
         {
             try
             {
-                return Ok(await _emailService.ReminderEndPeriodSubmittBillEmail(toEmail));
+                return Ok(await _unitOfWorkService.EmailService.ReminderEndPeriodSubmittBillEmail(toEmail));
             }
             catch (Exception ex)
             {

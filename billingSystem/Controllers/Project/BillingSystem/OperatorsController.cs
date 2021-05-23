@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,11 +13,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [ApiController]
     public class OperatorsController : TeamControllerBase
     {
-        private readonly IOperatorService _operatorService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public OperatorsController(IOperatorService operatorService)
+        public OperatorsController(IUnitOfWorkService unitOfWorkService)
         {
-            _operatorService = operatorService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _operatorService.GetAllOperators());
+                return Ok(await _unitOfWorkService.OperatorService.GetAllOperators());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _operatorService.GetOperators(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.OperatorService.GetOperators(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _operatorService.GetOperatorId(groupId));
+                return Ok(await _unitOfWorkService.OperatorService.GetOperatorId(groupId));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_operatorService.AddOperator(operatorModel));
+                return Ok(_unitOfWorkService.OperatorService.AddOperator(operatorModel));
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_operatorService.UpdateOperator(operatorModel));
+                return Ok(_unitOfWorkService.OperatorService.UpdateOperator(operatorModel));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_operatorService.DeleteOperator(id));
+                return Ok(_unitOfWorkService.OperatorService.DeleteOperator(id));
             }
             catch (Exception ex)
             {

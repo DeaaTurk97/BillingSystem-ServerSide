@@ -1,41 +1,29 @@
-﻿using AutoMapper;
+﻿using Acorna.Core.DTOs.Security;
+using Acorna.Core.Entity.Security;
+using Acorna.Core.Services;
+using Acorna.DTOs.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
-using Acorna.Core.Entity.Security;
-using Acorna.DTOs.Security;
 
 namespace Acorna.Controllers.Security
 {
     [Route("api/[controller]")]
     [ApiController]
     [AllowAnonymous]
-    public class AuthintecationController : ControllerBase
+    public class AuthintecationController : Controller
     {
-        private readonly IConfiguration _config;
-        private readonly IMapper _mapper;
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly IUnitOfWorkService _unitOfWorkService;
+        private readonly IConfiguration _configuration;
 
-        private readonly ISecurityService _securityService;
-
-        public AuthintecationController(IConfiguration config, UserManager<User> userManager, SignInManager<User> signInManager,
-                                        IMapper mapper, ISecurityService securityService)
+        public AuthintecationController(IUnitOfWorkService unitOfWorkService, IConfiguration configuration)
         {
-            _config = config;
-            _mapper = mapper;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _securityService = securityService;
+            _unitOfWorkService = unitOfWorkService;
+            _configuration = configuration;
         }
 
         [Authorize(Roles = "SuperAdmin")]
@@ -52,25 +40,38 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                var userManager = await _userManager.FindByEmailAsync(userLogin.Email);
+                var loginResult = await _unitOfWorkService.SecurityService.Login(userLogin);
 
-                if (userManager != null)
+                if (loginResult != null)
                 {
-                    var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
-
-                    if (result.Succeeded)
-                    {
-                        var appUser = _userManager.Users.FirstOrDefault(u => u.NormalizedEmail.ToUpper() == userLogin.Email.ToUpper());
-                        var userToReturn = _mapper.Map<UserList>(appUser);
-                        return Ok(new
-                        {
-                            token = GenerateJwtToken(appUser).Result,
-                            user = userToReturn
-                        });
-                    }
+                    return Ok(loginResult);
                 }
-
                 return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet]
+        [Route("ConfirmEmail")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        {
+            try
+            {
+                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    throw new Exception("User Not Exist!");
+                }
+                IdentityResult result = await _unitOfWorkService.SecurityService.ConfirmEmailAsync(user, token);
+                string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
+                string viewPage = string.Format(result.Succeeded ? "../../Views/{0}/EmailConfirmed" : "../../Views/{0}/Error", userLanguage);
+                ViewData["WebSiteURL"] = _configuration.GetSection("AllowedClient").Value;
+                return View(viewPage);
             }
             catch (Exception ex)
             {
@@ -85,55 +86,26 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                var userToCreate = _mapper.Map<User>(userRegister);
-                userToCreate.SecurityStamp = Guid.NewGuid().ToString();// Add this to avoid error when update roles
-                var result = await _userManager.CreateAsync(userToCreate, userRegister.PasswordHash);
-                var userToReturn = _mapper.Map<UserRegister>(userToCreate);
-                var userManager = await _userManager.FindByNameAsync(userToCreate.UserName);
+                userRegister.IsActive = true;
+                userRegister.SecurityStamp = Guid.NewGuid().ToString();// Add this to avoid error when update roles
+                IdentityResult result = await _unitOfWorkService.SecurityService.CreateUserAsync(userRegister);
 
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(userManager, "guest");
-                    return Ok(userToReturn);
+                    string token = await _unitOfWorkService.SecurityService.GenerateEmailConfirmationTokenAsync(userRegister);
+                    string confirmationLink = Url.Action(nameof(ConfirmEmail), "Authentication",
+                                                            new { token, email = userRegister.Email }, Request.Scheme);
+                    string emailSubject = userRegister.LanguageId == 1 ? "تأكيد البريد الإلكتروني" : "Confirmation email";
+                    string userLanguage = userRegister.LanguageId == 1 ? "Arabic" : "English";
+                    string viewPath = Path.Combine(string.Format("Views/{0}", userLanguage), "ConfirmEmail.html");
+                    string template = System.IO.File.ReadAllText(viewPath);
+                    template = template.Replace("CONFIRMATION_URL", confirmationLink);
+                    await _unitOfWorkService.EmailService.ConfirmationEmail(userRegister.Email, template);
+                    await _unitOfWorkService.SecurityService.AddToRoleAsync(userRegister, "guest");
+
+                    return Ok(userRegister);
                 }
                 return BadRequest(result.Errors);
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-
-        [AllowAnonymous]
-        private async Task<string> GenerateJwtToken(User user)
-        {
-            try
-            {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName)
-                };
-
-                var roles = await _userManager.GetRolesAsync(user);
-                foreach (var role in roles)
-                {
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                }
-
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-                var tokenDedcription = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.Now.AddDays(1),
-                    SigningCredentials = creds
-                };
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDedcription);
-
-                return tokenHandler.WriteToken(token);
             }
             catch (Exception ex)
             {
@@ -148,7 +120,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                var userManager = await _userManager.FindByEmailAsync(userEmail);
+                var userManager = await _unitOfWorkService.SecurityService.FindByEmailAsync(userEmail);
                 return (userManager != null) ? true : false;
             }
             catch (Exception ex)
@@ -161,7 +133,11 @@ namespace Acorna.Controllers.Security
         [Route("GetAllUsersAsync")]
         public async Task<IActionResult> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
         {
-            return Ok(new { data = await _securityService.GetAllUsersAsync(pageNumber, pageSize), total = _userManager.Users.Count() });
+            return Ok(new
+            {
+                data = await _unitOfWorkService.SecurityService.GetAllUsersAsync(pageNumber, pageSize),
+                total = _unitOfWorkService.SecurityService.GetUsersCountRecord()
+            });
         }
 
         [HttpGet]
@@ -170,11 +146,96 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                return Ok(await _securityService.GetUserBySearchNameAsync(searchUserName));
+                return Ok(await _unitOfWorkService.SecurityService.GetUserBySearchNameAsync(searchUserName));
             }
             catch (Exception)
             {
                 return BadRequest("false");
+            }
+        }
+
+        [HttpPost]
+        [Route("CompleteResetPassword")]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CompleteResetPassword([FromForm] UserResetPassword userResetPassword)
+        {
+            try
+            {
+                if (userResetPassword.Password != userResetPassword.ConfirmPassword ||
+                    string.IsNullOrEmpty(userResetPassword.Password) ||
+                    string.IsNullOrEmpty(userResetPassword.Email) ||
+                    string.IsNullOrEmpty(userResetPassword.Token))
+                {
+                    throw new Exception("Invalid reset password request!");
+                }
+                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(userResetPassword.Email);
+
+                if (user == null)
+                {
+                    throw new Exception("User Not Exist!");
+                }
+                string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
+                IdentityResult result = await _unitOfWorkService.SecurityService.ResetPasswordAsync(user, userResetPassword.Token, userResetPassword.Password);
+                string viewPage = string.Format(result.Succeeded ? "../../Views/{0}/ResetPasswordDone" : "../../Views/{0}/Error", userLanguage);
+
+                ViewData["WebSiteURL"] = _configuration.GetSection("AllowedClient").Value;
+                return View(viewPage);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet]
+        [Route("viewForResetPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ViewForResetPassword(string email, string token)
+        {
+            try
+            {
+                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(email);
+
+                if (user == null)
+                {
+                    throw new Exception("User Not Exist!");
+                }
+                string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
+                string viewPage = string.Format("../../Views/{0}/ResetPassword", userLanguage);
+                UserResetPassword userResetPassword = new UserResetPassword();
+                userResetPassword.Email = email;
+                userResetPassword.Token = token;
+                return View(viewPage, userResetPassword);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost]
+        [Route("resetPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(UserResetPassword userResetPassword)
+        {
+            try
+            {
+                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(userResetPassword.Email);
+                string token = await _unitOfWorkService.SecurityService.GeneratePasswordResetTokenAsync(user);
+                string confirmationLink = Url.Action(nameof(ViewForResetPassword), "Authentication", new { token, email = user.Email }, Request.Scheme);
+                string emailSubject = user.LanguageId == 1 ? "إعادة ضبط كلمة المرور" : "Reset Password";
+                string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
+                string viewPath = Path.Combine(string.Format("Views/{0}", userLanguage), "ConfirmEmailForResetPassword.html");
+                string template = System.IO.File.ReadAllText(viewPath);
+                template = template.Replace("CONFIRMATION_URL", confirmationLink);
+                await _unitOfWorkService.EmailService.ResetPasswordEmail(user.Email, template);
+
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

@@ -26,13 +26,22 @@ namespace Acorna.Repository.DataContext
             this._httpContextAccessor = httpContextAccessor;
         }
 
-        private int UserId => int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        public int UserId => int.Parse(_httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value);
+        const int Default_User_Language_ID = 1;
 
         public async Task<int> GetUserLanguageId()
         {
-            StringValues languages;
-            _httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Accept-Language", out languages);
-            return languages.Count == 0 ? 1 : int.Parse(languages[0]);
+            try
+            {
+                StringValues languages = new StringValues();
+
+                if (!_httpContextAccessor.HttpContext.Request.Headers.TryGetValue("Accept-Language", out languages))
+                {
+                    return Default_User_Language_ID;
+                }
+                return StringValues.IsNullOrEmpty(languages) || languages.Count == 0 ? Default_User_Language_ID : int.Parse(languages[0]);
+            }
+            catch { return Default_User_Language_ID; }
         }
 
         public override int SaveChanges()
@@ -300,6 +309,7 @@ namespace Acorna.Repository.DataContext
         public DbSet<Language> Language { get; set; }
         public DbSet<NotificationType> NotificationType { get; set; }
         public DbSet<NotificationTemplate> NotificationTemplate { get; set; }
+        public DbSet<NotificationTemplateTranslation> NotificationTemplateTranslation { get; set; }
 
         public new DbSet<T> Set<T>() where T : BaseEntity
         {

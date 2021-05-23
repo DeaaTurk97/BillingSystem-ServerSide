@@ -1,18 +1,43 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
+using Acorna.Core.Entity.Security;
+using Acorna.Core.Entity.SystemDefinition;
+using Acorna.Core.Models.Security;
+using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Repository;
+using Acorna.DTOs.Security;
+using Acorna.Repository.Repository;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Acorna.Repository.DataContext;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 
-public class SecurityRepository : ISecurityRepository
+internal class SecurityRepository : ISecurityRepository
 {
-    protected readonly AcornaDbContext _teamDataContext;
+    private readonly IDbFactory _dbFactory;
+    private readonly IMapper _mapper;
+    private readonly UserManager<User> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly IConfiguration _configuration;
 
-    public SecurityRepository(AcornaDbContext teamDataContext)
+    internal SecurityRepository(IDbFactory dbFactory, IMapper mapper,
+                                UserManager<User> userManager, SignInManager<User> signInManager,
+                                IConfiguration configuration)
     {
         try
         {
-            _teamDataContext = teamDataContext;
+            _dbFactory = dbFactory;
+            _mapper = mapper;
+            _userManager = userManager;
+            _configuration = configuration;
+            _signInManager = signInManager;
         }
         catch (Exception)
         {
@@ -20,38 +45,356 @@ public class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<object> GetUsersListAsync()
+    public Task<List<UserModel>> GetUsersListAsync()
     {
-        return await (from user in _teamDataContext.Users
-                      orderby user.Id
-                      select new
-                      {
-                          Id = user.Id,
-                          userName = user.UserName,
-                          Roles = (from userRole in user.UserRoles
-                                   join role in _teamDataContext.Roles
-                                   on userRole.RoleId equals role.Id
-                                   select role.Name).ToList()
-                      }).ToListAsync();
+        return (from user in _dbFactory.DataContext.Users
+                orderby user.Id
+                select new UserModel
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                }).ToListAsync();
     }
 
-    public async Task<object> GetUserBySearchNameAsync(string searchUserName)
+    public Task<List<UserModel>> GetUserBySearchNameAsync(string searchUserName)
     {
-        return await (from user in _teamDataContext.Users
-                      select new
-                      {
-                          user.Id,
-                          user.UserName,
-                      }).Where(x => x.UserName == searchUserName).ToListAsync();
+        return (from user in _dbFactory.DataContext.Users
+                select new UserModel
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                }).Where(x => x.UserName == searchUserName).ToListAsync();
     }
 
-    public async Task<object> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
     {
-        return await (from user in _teamDataContext.Users
-                      select new
-                      {
-                          user.Id,
-                          user.UserName,
-                      }).Skip(pageSize * (pageNumber - 1)).Take(pageSize).ToListAsync();
+        try
+        {
+            IEnumerable<User> users = await GetAllAsync(pageNumber, pageSize, x => x.Id, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+            List<Role> roles = await _dbFactory.DataContext.Roles.ToListAsync();
+
+            return users.Select(x => new UserModel
+            {
+                UserId = x.Id,
+                UserName = x.UserName,
+                RoleId = x.UserRoles.Select(x => x.RoleId).FirstOrDefault(),
+                RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
+
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public Task<IEnumerable<User>> GetAllAsync(int pageIndex, int pageSize, Expression<Func<User, int>> keySelector, OrderBy orderBy = OrderBy.Ascending, params Expression<Func<User, object>>[] includeProperties)
+    {
+        try
+        {
+            return GetAllAsync(pageIndex, pageSize, keySelector, null, orderBy, includeProperties);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<User>> GetAllAsync(int pageIndex, int pageSize, Expression<Func<User, int>> keySelector,
+           Expression<Func<User, bool>>[] predicate, OrderBy orderBy, params Expression<Func<User, object>>[] includeProperties)
+    {
+        try
+        {
+            var entities = FilterQuery(keySelector, predicate, orderBy, includeProperties);
+            var total = await entities.CountAsync();// entities.CountAsync() is different than pageSize
+            entities = entities.Paginate(pageIndex, pageSize);
+            var list = await entities.ToListAsync();
+            return list.ToPaginatedList(pageIndex, pageSize, total);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private IQueryable<User> FilterQuery(Expression<Func<User, int>> keySelector, Expression<Func<User, bool>>[] predicate, OrderBy orderBy, Expression<Func<User, object>>[] includeProperties)
+    {
+        try
+        {
+            var entities = IncludeProperties(includeProperties);
+            entities = (predicate != null) ? PredicateProperties(predicate) : entities;
+            entities = (orderBy == OrderBy.Ascending) ? entities.OrderBy(keySelector) : entities.OrderByDescending(keySelector);
+            return entities;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    private IQueryable<User> PredicateProperties(Expression<Func<User, bool>>[] predicateProperties)
+    {
+        try
+        {
+            IQueryable<User> entities = _dbFactory.DataContext.Users;
+            foreach (var predicate in predicateProperties)
+            {
+                entities = entities.Where(predicate);
+            }
+            return entities;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    private IQueryable<User> IncludeProperties(params Expression<Func<User, object>>[] includeProperties)
+    {
+        try
+        {
+            IQueryable<User> entities = _dbFactory.DataContext.Users;
+            foreach (var includeProperty in includeProperties)
+            {
+                entities = entities.Include(includeProperty);
+            }
+            return entities;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<UserModel>> GetAllUsersByTypeAsync(string userType)
+    {
+        try
+        {
+            List<User> users = await _dbFactory.DataContext.Users.Where(user =>
+            user.UserRoles.Where(ur => ur.Role.Name.ToLower() == userType).Count() > 0).ToListAsync();
+
+            return users.Select(x => new UserModel
+            {
+                UserId = x.Id,
+                UserName = x.UserName,
+
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public int GetUsersCountRecord()
+    {
+        return _dbFactory.DataContext.Users.Count();
+    }
+
+    public void Delete(int id)
+    {
+        try
+        {
+            User user = _dbFactory.DataContext.Users.FirstOrDefault(s => s.Id == id);
+            if (user != null)
+                _dbFactory.DataContext.Users.Remove(user);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<bool> UpdateUserLanguage(int userId, int languageId)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.FindAsync(userId);
+
+            if (user != null)
+                user.LanguageId = languageId;
+
+            _dbFactory.DataContext.Users.Update(user);
+            await _dbFactory.DataContext.SaveChangesAsync();
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<LanguageModel> GetLanguageInformations(int userId)
+    {
+        try
+        {
+            Language language = await (from user in _dbFactory.DataContext.Users
+                                       join lang in _dbFactory.DataContext.Language on user.LanguageId equals lang.Id
+                                       where user.Id == userId
+                                       select new Language
+                                       {
+                                           Id = lang.Id,
+                                           LanguageDirection = lang.LanguageDirection,
+
+                                       }).SingleOrDefaultAsync();
+
+            LanguageModel languageModel = _mapper.Map<LanguageModel>(language);
+
+            return languageModel;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+
+    }
+
+    public Task<List<Role>> GetAllRoles()
+    {
+        try
+        {
+            return _dbFactory.DataContext.Roles.ToListAsync();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<bool> UpdateUserRole(UserModel userModel)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.FindAsync(userModel.UserId);
+            IEnumerable<string> roles = await _userManager.GetRolesAsync(user);
+
+            if (roles != null)
+            {
+                var isDeleted = await _userManager.RemoveFromRolesAsync(user, roles.ToArray());
+
+                if (isDeleted.Succeeded)
+                {
+                    List<Role> roleList = await GetAllRoles();
+                    string roleName = roleList.Find(x => x.Id == userModel.RoleId).Name;
+                    await _userManager.AddToRoleAsync(user, roleName);
+                }
+            }
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<IList<string>> EditRoles(string userName, RoleEdit roleEditDTO)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var selectedRoles = roleEditDTO.RoleNames;
+
+        selectedRoles = selectedRoles ?? new string[] { }; // same ---> selectedRoles = selectedRoles != null ? selectedRoles : new string[] {};
+        var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
+
+        if (!result.Succeeded)
+            throw new Exception("Something goes wrong with adding roles!");
+
+        result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+
+        if (!result.Succeeded)
+            throw new Exception("Something goes wrong with removing roles!");
+
+        return await _userManager.GetRolesAsync(user);
+    }
+
+    public Task<User> FindByEmailAsync(string email)
+    {
+        return _userManager.FindByEmailAsync(email);
+    }
+
+    public async Task<string> GenerateJwtTokenAsync(User user)
+    {
+        var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName)
+                };
+
+        var roles = await _userManager.GetRolesAsync(user);
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+        var tokenDedcription = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.Now.AddDays(1),
+            SigningCredentials = creds
+        };
+
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDedcription);
+
+        return tokenHandler.WriteToken(token);
+    }
+
+    public Task<string> GeneratePasswordResetTokenAsync(User user)
+    {
+        return _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+    {
+        return _userManager.ResetPasswordAsync(user, token, password);
+    }
+
+    public Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+    {
+        return _userManager.ConfirmEmailAsync(user, token);
+    }
+
+    public async Task<object> Login(UserLogin userLogin)
+    {
+        var userManager = await FindByEmailAsync(userLogin.Email);
+
+        if (userManager == null)
+        {
+            return null;
+        }
+        var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
+
+        if (!result.Succeeded)
+        {
+            return null;
+        }
+        var appUser = _userManager.Users.FirstOrDefault(u => u.NormalizedEmail.ToUpper() == userLogin.Email.ToUpper());
+        var userToReturn = _mapper.Map<UserList>(appUser);
+        return new
+        {
+            token = GenerateJwtTokenAsync(appUser).Result,
+            user = userToReturn
+        };
+    }
+
+    public Task<IdentityResult> CreateUserAsync(UserRegister userRegister)
+    {
+        User userToCreate = _mapper.Map<User>(userRegister);
+        return _userManager.CreateAsync(userToCreate, userRegister.PasswordHash);
+    }
+
+    public async Task AddToRoleAsync(UserRegister userRegister, string roleName)
+    {
+        User userManager = await _userManager.FindByNameAsync(userRegister.UserName);
+        await _userManager.AddToRoleAsync(userManager, roleName);
+    }
+
+    public Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister)
+    {
+        User userToCreate = _mapper.Map<User>(userRegister);
+        return _userManager.GenerateEmailConfirmationTokenAsync(userToCreate);
     }
 }

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.Email
 {
-    public class EmailService : IEmailService
+    internal class EmailService : IEmailService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public EmailService(IUnitOfWork unitOfWork)
+        internal EmailService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -284,6 +284,50 @@ namespace Acorna.Service.Email
                     Subject = generalSettingModels.Find(x => x.SettingName.Trim() == "ReminderEndPeriodSubmittBillSubject")?.SettingValue,
                     CC = generalSettingModels.Find(x => x.SettingName.Trim() == "ReminderEndPeriodSubmittBillCC")?.SettingValue,
                     Body = generalSettingModels.Find(x => x.SettingName.Trim() == "ReminderEndPeriodSubmittBillBody")?.SettingValue,
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ConfirmationEmail(string ToEmail, string confirmationLink)
+        {
+            try
+            {
+                List<GeneralSetting> generalSettingModels = await _unitOfWork.GetRepository<GeneralSetting>().GetAllAsync();
+
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailForTest")?.SettingValue,
+                    Subject = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestSubject")?.SettingValue,
+                    CC = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestCC")?.SettingValue,
+                    Body = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestBody")?.SettingValue,
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ResetPasswordEmail(string ToEmail, string confirmationLink)
+        {
+            try
+            {
+                List<GeneralSetting> generalSettingModels = await _unitOfWork.GetRepository<GeneralSetting>().GetAllAsync();
+
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailForTest")?.SettingValue,
+                    Subject = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestSubject")?.SettingValue,
+                    CC = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestCC")?.SettingValue,
+                    Body = generalSettingModels.Find(x => x.SettingName.Trim() == "EmailTestBody")?.SettingValue,
                 };
 
                 return await ConfigureEmail(emailModel);

@@ -13,6 +13,9 @@ namespace Acorna.Core.Services.Email
         Task<bool> ReminderTotalDueEmail(string ToEmail);
         Task<bool> ReminderStartPeriodSubmittBillEmail(string ToEmail);
         Task<bool> ReminderEndPeriodSubmittBillEmail(string ToEmail);
+        Task<bool> ConfirmationEmail(string ToEmail, string confirmationLink);
+        Task<bool> ResetPasswordEmail(string ToEmail, string confirmationLink);
+
         Task<bool> SendTestEmail();
     }
 }

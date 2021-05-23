@@ -11,22 +11,24 @@ using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Repository.Repository.CustomRepository
 {
-    public class PhoneBookRepository : Repository<PhoneBook>, IPhoneBookRepository
+    internal class IncomingNumbersRepository : Repository<PhoneBook>, IIncomingNumbersRepository
     {
         private readonly IDbFactory _dbFactory;
 
-        public PhoneBookRepository(IDbFactory dbFactory) : base(dbFactory)
+        internal IncomingNumbersRepository(IDbFactory dbFactory) : base(dbFactory)
         {
             _dbFactory = dbFactory;
         }
 
-        public async Task<List<PhoneBookDTO>> GetOfficialPhonesBook(int pageIndex, int pageSize)
+        public async Task<List<PhoneBookDTO>> GetAllIncomingNumbers(int pageIndex, int pageSize, int statusNumber)
         {
             try
             {
                 List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
                                                           join usr in _dbFactory.DataContext.Users on phone.StatusAdminId equals usr.Id
-                                                          where (phone.PersonalUserId == null || phone.PersonalUserId == 0)
+                                                          join grop in _dbFactory.DataContext.Group on usr.GroupId equals grop.Id
+                                                          where (phone.PersonalUserId == null || phone.PersonalUserId == 0) 
+                                                          && phone.StatusNumberId == statusNumber
                                                           select new PhoneBookDTO
                                                           {
                                                               Id = phone.Id,
@@ -35,9 +37,11 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                               PhoneName = phone.PhoneName,
                                                               TypePhoneNumberId = phone.TypePhoneNumberId,
                                                               UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
+                                                              StatusNumberId = phone.StatusNumberId,
+                                                              GroupNameAr = grop.GroupNameAr,
+                                                              GroupNameEn = grop.GroupNameEn
 
-                                                          }).OrderByDescending(s => s.Id)
+                                                          }).OrderByDescending(s => s.Id).ThenBy(s => s.GroupNameAr)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
@@ -61,7 +65,7 @@ namespace Acorna.Repository.Repository.CustomRepository
             }
         }
 
-        public async Task<List<PhoneBookDTO>> GetPhonesBookByGroupId(int pageIndex, int pageSize, int userId)
+        public async Task<List<PhoneBookDTO>> GetIncomingNumbersByGroupId(int pageIndex, int pageSize, int statusNumber, int userId)
         {
             try
             {
@@ -69,7 +73,10 @@ namespace Acorna.Repository.Repository.CustomRepository
 
                 List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
                                                           join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
-                                                          where phone.PersonalUserId.ToString() != string.Empty && usr.GroupId == user.GroupId
+                                                          join grop in _dbFactory.DataContext.Group on usr.GroupId equals grop.Id
+                                                          where phone.PersonalUserId.ToString() != string.Empty 
+                                                          && usr.GroupId == user.GroupId
+                                                          && phone.StatusNumberId == statusNumber
                                                           select new PhoneBookDTO
                                                           {
                                                               Id = phone.Id,
@@ -78,9 +85,11 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                               PhoneName = phone.PhoneName,
                                                               TypePhoneNumberId = phone.TypePhoneNumberId,
                                                               UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
+                                                              StatusNumberId = phone.StatusNumberId,
+                                                              GroupNameAr = grop.GroupNameAr,
+                                                              GroupNameEn = grop.GroupNameEn
 
-                                                          }).OrderByDescending(s => s.Id)
+                                                          }).OrderByDescending(s => s.Id).ThenBy(s => s.GroupNameAr)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
@@ -93,45 +102,6 @@ namespace Acorna.Repository.Repository.CustomRepository
                     });
                 }
 
-
-                return phoneBookDTOs;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        public async Task<List<PhoneBookDTO>> GetPhonesBookByUserId(int pageIndex, int pageSize, int userId)
-        {
-            try
-            {
-                List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                          join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
-                                                          where phone.PersonalUserId == userId
-                                                          select new PhoneBookDTO
-                                                          {
-                                                              Id = phone.Id,
-                                                              CreatedDate = phone.CreatedDate,
-                                                              PhoneNumber = phone.PhoneNumber,
-                                                              PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
-                                                              UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
-
-                                                          }).OrderByDescending(s => s.Id)
-                                                                     .Skip(pageSize * (pageIndex - 1))
-                                                                     .Take(pageSize)
-                                                                     .ToListAsync();
-
-                if (phoneBookDTOs.Count > 0)
-                {
-                    phoneBookDTOs.ForEach(x =>
-                    {
-                        x.TypePhoneNumberName = Enum.GetName(typeof(TypesPhoneNumber), Convert.ToInt32(x.TypePhoneNumberId));
-                        x.StatusNumberName = Enum.GetName(typeof(StatusCycleBills), Convert.ToInt32(x.StatusNumberName));
-                    });
-                }
 
                 return phoneBookDTOs;
             }

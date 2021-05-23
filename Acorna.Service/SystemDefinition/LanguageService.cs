@@ -1,31 +1,31 @@
-﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Acorna.Core.Entity.SystemDefinition;
+﻿using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.IServices.SystemDefinition;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
 using Acorna.Core.Sheard;
+using AutoMapper;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Acorna.Service.SystemDefinition
 {
-    public class LanguageService : ILanguageService
+    internal class LanguageService : ILanguageService
     {
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IRepository<Language> _languageRepository;
 
-        public LanguageService(IMapper mapper, IRepository<Language> languageRepository)
+        internal LanguageService(IUnitOfWork unitOfWork, IMapper mapper)
         {
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _languageRepository = languageRepository;
         }
 
         public List<LanguageModel> GetAllLanguages()
         {
             try
             {
-                List<Language> languages = _languageRepository.GetAll();
+                List<Language> languages = _unitOfWork.GetRepository<Language>().GetAll();
                 return _mapper.Map<List<LanguageModel>>(languages);
             }
             catch (System.Exception)
@@ -38,7 +38,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                List<Language> languages = await _languageRepository.GetAllAsync();
+                List<Language> languages = await _unitOfWork.GetRepository<Language>().GetAllAsync();
                 return _mapper.Map<List<LanguageModel>>(languages);
             }
             catch (System.Exception)
@@ -51,7 +51,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                PaginationRecord<Language> language = await _languageRepository.GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
+                PaginationRecord<Language> language = await _unitOfWork.GetRepository<Language>().GetAllAsync(pageIndex, pageSize, x => x.Id, OrderBy.Descending);
                 PaginationRecord<LanguageModel> paginationRecordModel = new PaginationRecord<LanguageModel>
                 {
                     DataRecord = _mapper.Map<IEnumerable<LanguageModel>>(language.DataRecord),
@@ -72,7 +72,7 @@ namespace Acorna.Service.SystemDefinition
             {
                 Language language = _mapper.Map<Language>(languageModel);
                 if (language != null)
-                    _languageRepository.Insert(language);
+                    _unitOfWork.GetRepository<Language>().Insert(language);
                 id = language.Id;
                 return id;
             }
@@ -86,7 +86,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                Language language = await _languageRepository.GetSingleAsync(languageModel.Id);
+                Language language = await _unitOfWork.GetRepository<Language>().GetSingleAsync(languageModel.Id);
                 language.LanguageCode = languageModel.LanguageCode;
                 language.LanguageDefaultDisply = languageModel.LanguageDefaultDisply;
                 language.LanguageDirection = languageModel.LanguageDirection;
@@ -94,7 +94,7 @@ namespace Acorna.Service.SystemDefinition
 
                 if (language != null)
                 {
-                    _languageRepository.Update(language);
+                    _unitOfWork.GetRepository<Language>().Update(language);
                 }
 
                 return true;
@@ -109,7 +109,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                Language language = _languageRepository.GetSingle(id);
+                Language language = _unitOfWork.GetRepository<Language>().GetSingle(id);
                 return _mapper.Map<LanguageModel>(language);
             }
             catch (System.Exception)
@@ -123,10 +123,10 @@ namespace Acorna.Service.SystemDefinition
             try
             {
 
-                Language language = _languageRepository.GetSingle(id);
+                Language language = _unitOfWork.GetRepository<Language>().GetSingle(id);
 
                 if (language != null)
-                    _languageRepository.Delete(language);
+                    _unitOfWork.GetRepository<Language>().Delete(language);
 
                 return true;
             }

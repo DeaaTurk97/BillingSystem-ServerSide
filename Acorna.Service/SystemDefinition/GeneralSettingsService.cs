@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace Acorna.Service.SystemDefinition
 {
-    public class GeneralSettingsService : IGeneralSettingsService
+    internal class GeneralSettingsService : IGeneralSettingsService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public GeneralSettingsService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal GeneralSettingsService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

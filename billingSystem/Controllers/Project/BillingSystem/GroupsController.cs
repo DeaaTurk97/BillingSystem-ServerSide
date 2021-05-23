@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -13,11 +13,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [ApiController]
     public class GroupsController : TeamControllerBase
     {
-        private readonly IGroupService _groupService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public GroupsController(IGroupService groupService)
+        public GroupsController(IUnitOfWorkService unitOfWorkService)
         {
-            _groupService = groupService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _groupService.GetAllGroups());
+                return Ok(await _unitOfWorkService.GroupService.GetAllGroups());
             }
             catch (Exception ex)
             {
@@ -40,7 +40,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _groupService.GetGroups(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.GroupService.GetGroups(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _groupService.GetGroupId(groupId));
+                return Ok(await _unitOfWorkService.GroupService.GetGroupId(groupId));
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_groupService.AddGroup(groupModel));
+                return Ok(_unitOfWorkService.GroupService.AddGroup(groupModel));
             }
             catch (Exception ex)
             {
@@ -82,7 +82,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_groupService.UpdateGroup(groupModel));
+                return Ok(_unitOfWorkService.GroupService.UpdateGroup(groupModel));
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_groupService.DeleteGroup(id));
+                return Ok(_unitOfWorkService.GroupService.DeleteGroup(id));
             }
             catch (Exception ex)
             {

@@ -13,12 +13,12 @@ using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-    public class PhoneBookService : IPhoneBookService
+    internal class PhoneBookService : IPhoneBookService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public PhoneBookService(IUnitOfWork unitOfWork, IMapper mapper)
+        internal PhoneBookService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;

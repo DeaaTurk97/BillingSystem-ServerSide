@@ -1,6 +1,6 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem;
+using Acorna.Core.Services;
 using Acorna.Core.Sheard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [ApiController]
     public class PhonesBookController : TeamControllerBase
     {
-        private readonly IPhoneBookService _phoneBookService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public PhonesBookController(IPhoneBookService phoneBook)
+        public PhonesBookController(IUnitOfWorkService unitOfWorkService)
         {
-            _phoneBookService = phoneBook;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -28,7 +28,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
             try
             {
                 string st = CurrentUserRole;
-                return Ok(await _phoneBookService.GetAllPhonesBook());
+                return Ok(await _unitOfWorkService.PhoneBookService.GetAllPhonesBook());
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
 
             try
             {
-                return Ok(await _phoneBookService.GetPhonesBook(pageIndex, pageSize, CurrentUserId, CurrentUserRole));
+                return Ok(await _unitOfWorkService.PhoneBookService.GetPhonesBook(pageIndex, pageSize, CurrentUserId, CurrentUserRole));
             }
             catch (Exception ex)
             {
@@ -58,7 +58,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _phoneBookService.GetPhoneBookId(phoneBookId));
+                return Ok(await _unitOfWorkService.PhoneBookService.GetPhoneBookId(phoneBookId));
             }
             catch (Exception ex)
             {
@@ -72,7 +72,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_phoneBookService.AddPhoneBook(phoneBookModel, CurrentUserId, CurrentUserRole));
+                return Ok(_unitOfWorkService.PhoneBookService.AddPhoneBook(phoneBookModel, CurrentUserId, CurrentUserRole));
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok( await _phoneBookService.IsNumberAdded(phoneNumber, CurrentUserId, CurrentUserRole));
+                return Ok(await _unitOfWorkService.PhoneBookService.IsNumberAdded(phoneNumber, CurrentUserId, CurrentUserRole));
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_phoneBookService.UpdatePhoneBook(phoneBookModel));
+                return Ok(_unitOfWorkService.PhoneBookService.UpdatePhoneBook(phoneBookModel));
             }
             catch (Exception ex)
             {
@@ -115,7 +115,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(_phoneBookService.DeletePhoneBook(id));
+                return Ok(_unitOfWorkService.PhoneBookService.DeletePhoneBook(id));
             }
             catch (Exception ex)
             {

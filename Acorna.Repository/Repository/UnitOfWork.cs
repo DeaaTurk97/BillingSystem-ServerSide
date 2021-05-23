@@ -1,8 +1,15 @@
 ﻿using Acorna.Core.Entity;
+using Acorna.Core.Entity.Security;
 using Acorna.Core.Repository;
+using Acorna.Core.Repository.Chat;
 using Acorna.Core.Repository.ICustomRepsitory;
-using Acorna.Repository.DataContext;
+using Acorna.Core.Repository.Notification;
+using Acorna.Repository.Repository.Chat;
 using Acorna.Repository.Repository.CustomRepository;
+using Acorna.Repository.Repository.Notification;
+using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections;
 
@@ -10,19 +17,41 @@ namespace Acorna.Repository.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly AcornaDbContext _acornaDbContext;
-        private IGovernorateRepository _governorateRepository;
-        private IPhoneBookRepository _phoneBookRepository;
-
         private Hashtable _repositories;
+        private readonly IDbFactory _dbFactory;
+        private readonly UserManager<User> _userManager;
+        private readonly IConfiguration _configuration;
+        private readonly SignInManager<User> _signInManager;
+        private readonly IMapper _mapper;
 
-        public UnitOfWork(AcornaDbContext acornaDbContext)
+        public UnitOfWork(IDbFactory dbFactory, IMapper mapper,
+                         UserManager<User> userManager, IConfiguration configuration,
+                         SignInManager<User> signInManager)
         {
-            _acornaDbContext = acornaDbContext;
+            _dbFactory = dbFactory;
+            _userManager = userManager;
+            _configuration = configuration;
+            _signInManager = signInManager;
+            _mapper = mapper;
         }
 
-        public IGovernorateRepository GovernorateRepository => _governorateRepository = _governorateRepository ?? new GovernorateRepository(_acornaDbContext);
-        public IPhoneBookRepository PhoneBookRepository => _phoneBookRepository = _phoneBookRepository ?? new PhoneBookRepository(_acornaDbContext);
+        Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory));
+        Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
+        Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
+
+        public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
+        public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
+        public IIncomingNumbersRepository IncomingNumbersRepository => LazyIncomingNumbersRepository.Value;
+
+        //base
+        Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));
+        Lazy<ISecurityRepository> LazySecurityRepository => new Lazy<ISecurityRepository>(() =>
+                    new SecurityRepository(_dbFactory, _mapper, _userManager, _signInManager, _configuration));
+        Lazy<INotificationRepository> LazyNotificationRepository => new Lazy<INotificationRepository>(() => new NotificationRepository(_dbFactory, _mapper));
+        //base
+        public IChatRepository ChatRepository => LazyChatRepository.Value;
+        public ISecurityRepository SecurityRepository => LazySecurityRepository.Value;
+        public INotificationRepository NotificationRepository => LazyNotificationRepository.Value;
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
@@ -36,7 +65,7 @@ namespace Acorna.Repository.Repository
                 var repositoryType = typeof(Repository<>);
 
                 var repositoryInstance =
-                    Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _acornaDbContext);
+                    Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)), _dbFactory);
 
                 _repositories.Add(type, repositoryInstance);
             }
@@ -44,9 +73,25 @@ namespace Acorna.Repository.Repository
             return (IRepository<T>)_repositories[type];
         }
 
-        public void SaveChanges()
+        public bool SaveChanges()
         {
-            _acornaDbContext.SaveChanges();
+            bool returnValue = true;
+            using (var dbContextTransaction = _dbFactory.DataContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    _dbFactory.DataContext.SaveChanges();
+                    dbContextTransaction.Commit();
+                }
+                catch (Exception)
+                {
+                    //Log Exception Handling message                      
+                    returnValue = false;
+                    dbContextTransaction.Rollback();
+                }
+            }
+
+            return returnValue;
         }
 
         public void Dispose()
@@ -58,7 +103,7 @@ namespace Acorna.Repository.Repository
         {
             if (disposing)
             {
-                _acornaDbContext.Dispose();
+                _dbFactory.DataContext.Dispose();
             }
         }
 

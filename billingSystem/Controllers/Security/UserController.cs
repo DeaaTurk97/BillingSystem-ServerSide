@@ -8,6 +8,7 @@ using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Sheard;
+using Acorna.Core.Services;
 
 namespace Acorna.Controllers.Security
 {
@@ -16,11 +17,11 @@ namespace Acorna.Controllers.Security
     [ApiController]
     public class UserController : TeamControllerBase
     {
-        private readonly ISecurityService _securityService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public UserController(ISecurityService securityService)
+        public UserController(IUnitOfWorkService unitOfWorkService)
         {
-            _securityService = securityService;
+            _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
@@ -29,7 +30,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                List<UserModel> userModels = await _securityService.GetAllUsersAsync();
+                List<UserModel> userModels = await _unitOfWorkService.SecurityService.GetAllUsersAsync();
                 return Ok(userModels);
             }
             catch (Exception ex)
@@ -44,7 +45,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                List<UserModel> userModels = await _securityService.GetAllSuperAdminsAsync();
+                List<UserModel> userModels = await _unitOfWorkService.SecurityService.GetAllSuperAdminsAsync();
                 return Ok(userModels);
             }
             catch (Exception ex)
@@ -59,7 +60,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                List<UserModel> userModels = await _securityService.GetAllAdminsAsync();
+                List<UserModel> userModels = await _unitOfWorkService.SecurityService.GetAllAdminsAsync();
                 return Ok(userModels);
             }
             catch (Exception ex)
@@ -76,8 +77,8 @@ namespace Acorna.Controllers.Security
             {
                 PaginationRecord<UserModel> paginationRecord = new PaginationRecord<UserModel>
                 {
-                    DataRecord = await _securityService.GetAllUsersAsync(pageIndex, pageSize),
-                    CountRecord = _securityService.GetCountRecord(),
+                    DataRecord = await _unitOfWorkService.SecurityService.GetAllUsersAsync(pageIndex, pageSize),
+                    CountRecord = _unitOfWorkService.SecurityService.GetUsersCountRecord(),
                 };
 
                 return Ok(paginationRecord);
@@ -106,7 +107,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                _securityService.Delete(id);
+                _unitOfWorkService.SecurityService.Delete(id);
             }
             catch (Exception)
             {
@@ -123,7 +124,7 @@ namespace Acorna.Controllers.Security
             try
             {
                 if (languageId != 0)
-                    await _securityService.UpdateUserLanguage(CurrentUserId, languageId);
+                    await _unitOfWorkService.SecurityService.UpdateUserLanguage(CurrentUserId, languageId);
             }
             catch (Exception ex)
             {
@@ -138,7 +139,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                LanguageModel languageModel = await _securityService.GetLanguageInformations(CurrentUserId);
+                LanguageModel languageModel = await _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
                 return Ok(languageModel);
             }
             catch (Exception ex)
@@ -153,7 +154,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                List<Role> roles = await _securityService.GetAllRoles();
+                List<Role> roles = await _unitOfWorkService.SecurityService.GetAllRoles();
                 return Ok(roles);
             }
             catch (Exception ex)
@@ -168,7 +169,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                return Ok(await _securityService.UpdateUserRole(userModel));
+                return Ok(await _unitOfWorkService.SecurityService.UpdateUserRole(userModel));
             }
             catch (Exception ex)
             {

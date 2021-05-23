@@ -1,6 +1,7 @@
 using Acorna.Controllers.Base;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,18 +15,18 @@ namespace Acorna.Controllers.SystemDefinition
     [ApiController]
     public class GeneralSettingsController : TeamControllerBase
     {
-        private readonly IGeneralSettingsService _generalSettingsService;
+        private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public GeneralSettingsController(IGeneralSettingsService generalSettingsService)
+        public GeneralSettingsController(IUnitOfWorkService unitOfWorkService)
         {
-            _generalSettingsService = generalSettingsService;
+            _unitOfWorkService = unitOfWorkService;
         }
         [HttpGet]
         public async Task<IActionResult> GetGeneralSettings()
         {
             try
             {
-                return Ok(await _generalSettingsService.GetAllAsync());
+                return Ok(await _unitOfWorkService.GeneralSettingsService.GetAllAsync());
             }
             catch (Exception ex)
             {
@@ -37,7 +38,7 @@ namespace Acorna.Controllers.SystemDefinition
         {
             try
             {
-                await _generalSettingsService.UpdateGeneralSettingsAsync(generalSettingModel);
+                await _unitOfWorkService.GeneralSettingsService.UpdateGeneralSettingsAsync(generalSettingModel);
             }
             catch (Exception)
             {
