@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Acorna.Controllers.Security
     {
         private readonly IUnitOfWorkService _unitOfWorkService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger _logger;
 
         public AuthintecationController(IUnitOfWorkService unitOfWorkService, IConfiguration configuration)
         {
@@ -50,7 +52,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -75,7 +78,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -109,7 +113,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -148,9 +153,10 @@ namespace Acorna.Controllers.Security
             {
                 return Ok(await _unitOfWorkService.SecurityService.GetUserBySearchNameAsync(searchUserName));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("false");
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -184,7 +190,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -210,7 +217,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
 
@@ -235,7 +243,8 @@ namespace Acorna.Controllers.Security
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
             }
         }
     }
