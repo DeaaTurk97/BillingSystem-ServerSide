@@ -27,14 +27,14 @@ internal class SecurityService : ISecurityService
         }
     }
 
-    public Task<List<UserModel>> GetUsersListAsync()
+    public async Task<List<UserModel>> GetUsersListAsync()
     {
-        return _unitOfWork.SecurityRepository.GetUsersListAsync();
+        return await _unitOfWork.SecurityRepository.GetUsersListAsync();
     }
 
-    public Task<List<UserModel>> GetUserBySearchNameAsync(string searchUserName)
+    public async Task<List<UserModel>> GetUserBySearchNameAsync(string searchUserName)
     {
-        return _unitOfWork.SecurityRepository.GetUserBySearchNameAsync(searchUserName);
+        return await _unitOfWork.SecurityRepository.GetUserBySearchNameAsync(searchUserName);
     }
 
     public Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)

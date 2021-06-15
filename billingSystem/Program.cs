@@ -21,6 +21,10 @@ namespace Acorna
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    //.UseIIS(options =>
+                    //{
+                    //    options.Limits.MaxRequestBodySize = int.MaxValue;
+                    //});
                 });
     }
 }

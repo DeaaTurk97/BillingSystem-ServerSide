@@ -12,10 +12,12 @@ namespace Acorna.Core.DependencyInjection
             IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
-                opt.Password.RequireDigit = true;
-                opt.Password.RequiredLength = 6;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequiredLength = 9;
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireUppercase = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireNonAlphanumeric = false;
             }).AddDefaultTokenProviders();
 
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);

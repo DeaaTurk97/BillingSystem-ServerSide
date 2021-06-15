@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Acorna.Controllers.Base;
+using Microsoft.AspNetCore.Http;
 
 namespace Acorna.Controllers.Documents
 {
@@ -31,17 +32,26 @@ namespace Acorna.Controllers.Documents
             }
             catch (Exception ex)
             {
-                throw ex;
+                return BadRequest(ex);
             }
         }
+
         [HttpPost]
+        [RequestFormLimits(MultipartBodyLengthLimit = 4294967295)]
+        [RequestSizeLimit(4294967295)]
         public async Task<IActionResult> UploadDocuments()
         {
             List<DocumentModel> uploadedDocuments = new List<DocumentModel>();
             try
             {
                 string filePath = _config["StoredFilesPath"];
-                System.IO.FileInfo file = new System.IO.FileInfo(filePath);
+                //
+                string folderPath = filePath + @"\" + DateTime.Now.ToString("dd-MM-yyyy hh-mm-ss");
+
+                //Create a new folder and put all bills inside it.
+                Directory.CreateDirectory(folderPath);
+
+                System.IO.FileInfo file = new System.IO.FileInfo(folderPath);
                 file.Directory.Create();
 
                 foreach (var formFile in Request.Form.Files)
@@ -49,7 +59,7 @@ namespace Acorna.Controllers.Documents
                     if (formFile.Length > 0)
                     {
                         String uploadedFileName = Path.GetRandomFileName();
-                        var fullFilePath = Path.Combine(filePath, uploadedFileName);
+                        var fullFilePath = Path.Combine(folderPath, uploadedFileName);
                         using (var stream = System.IO.File.Create(fullFilePath))
                         {
                             await formFile.CopyToAsync(stream);
@@ -58,9 +68,9 @@ namespace Acorna.Controllers.Documents
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest(false);
+                return BadRequest(ex);
             }
             return Ok(uploadedDocuments);
         }
@@ -74,9 +84,9 @@ namespace Acorna.Controllers.Documents
                 var fullFilePath = Path.Combine(filePath, fileName);
                 System.IO.File.Delete(fullFilePath);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                BadRequest(false);
+                BadRequest(ex);
             }
             return Ok(true);
         }

@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+      <PackageReference Include="ExcelDataReader.DataSet" Version="3.6.0" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Acorna.CommonMember\Acorna.CommonMember.csproj" />
     <ProjectReference Include="..\Acorna.Core\Acorna.Core.csproj" />
     <ProjectReference Include="..\Acorna.Repository\Acorna.Repository.csproj" PrivateAssets="All" />
   </ItemGroup>
