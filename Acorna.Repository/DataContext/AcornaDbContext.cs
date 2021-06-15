@@ -126,8 +126,8 @@ namespace Acorna.Repository.DataContext
                 },
                 new Role {
                     Id = 4,
-                    Name = "Employee",
-                    NormalizedName = "EMPLOYEE",
+                    Name = "Employees",
+                    NormalizedName = "EMPLOYEES",
                     PowerLevel = 96
                 },
                 new Role {
@@ -281,14 +281,32 @@ namespace Acorna.Repository.DataContext
             {
                 new Group {
                     Id = 1,
-                    GroupNameAr = "تكنولوجيا المعلومات",
-                    GroupNameEn = "IT",
+                    GroupNameAr = "الإدارة",
+                    GroupNameEn = "Administration",
                 },
-                new Group {
+                 new Group {
                     Id = 2,
-                    GroupNameAr = "المالية",
-                    GroupNameEn = "Financial",
-                }
+                    GroupNameAr = "الموظفين",
+                    GroupNameEn = "Employees",
+                },
+            });
+
+            //Create New ServiceType
+            builder.Entity<ServiceType>().ToTable("ServicesTypes").HasData(new List<ServiceType>
+            {
+                new ServiceType {
+                    Id = 1,
+                    ServiceNameAr = "فارغ",
+                    ServiceNameEn = "Empty",
+                    IsCalculatedValue = false,
+                },
+                new ServiceType {
+                    Id = 2,
+                    ServiceNameAr = "EBU_حزمة",
+                    ServiceNameEn = "EBU_Bundel",
+                    IsCalculatedValue = false,
+                },
+
             });
 
             //Rename All Tables Identity
@@ -310,6 +328,9 @@ namespace Acorna.Repository.DataContext
         public DbSet<NotificationType> NotificationType { get; set; }
         public DbSet<NotificationTemplate> NotificationTemplate { get; set; }
         public DbSet<NotificationTemplateTranslation> NotificationTemplateTranslation { get; set; }
+        public DbSet<Bill> Bill { get; set; }
+        public DbSet<BillDetails> BillDetails { get; set; }
+        public DbSet<ServiceType> ServiceType { get; set; }
 
         public new DbSet<T> Set<T>() where T : BaseEntity
         {

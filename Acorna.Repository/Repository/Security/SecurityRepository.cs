@@ -1,3 +1,4 @@
+using Acorna.CommonMember;
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Security;
@@ -290,111 +291,250 @@ internal class SecurityRepository : ISecurityRepository
 
     public async Task<IList<string>> EditRoles(string userName, RoleEdit roleEditDTO)
     {
-        var user = await _userManager.FindByNameAsync(userName);
-        var userRoles = await _userManager.GetRolesAsync(user);
-        var selectedRoles = roleEditDTO.RoleNames;
+        try
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var selectedRoles = roleEditDTO.RoleNames;
 
-        selectedRoles = selectedRoles ?? new string[] { }; // same ---> selectedRoles = selectedRoles != null ? selectedRoles : new string[] {};
-        var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
+            selectedRoles = selectedRoles ?? new string[] { }; // same ---> selectedRoles = selectedRoles != null ? selectedRoles : new string[] {};
+            var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
 
-        if (!result.Succeeded)
-            throw new Exception("Something goes wrong with adding roles!");
+            if (!result.Succeeded)
+                throw new Exception("Something goes wrong with adding roles!");
 
-        result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
 
-        if (!result.Succeeded)
-            throw new Exception("Something goes wrong with removing roles!");
+            if (!result.Succeeded)
+                throw new Exception("Something goes wrong with removing roles!");
 
-        return await _userManager.GetRolesAsync(user);
+            return await _userManager.GetRolesAsync(user);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     public Task<User> FindByEmailAsync(string email)
     {
-        return _userManager.FindByEmailAsync(email);
+        try
+        {
+            return _userManager.FindByEmailAsync(email);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public async Task<string> GenerateJwtTokenAsync(User user)
     {
-        var claims = new List<Claim>
+        try
+        {
+            var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.UserName)
                 };
 
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
+            var tokenDedcription = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = creds
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDedcription);
+
+            return tokenHandler.WriteToken(token);
         }
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Token").Value));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-        var tokenDedcription = new SecurityTokenDescriptor
+        catch (Exception ex)
         {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(1),
-            SigningCredentials = creds
-        };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDedcription);
-
-        return tokenHandler.WriteToken(token);
+            throw ex;
+        }
     }
 
     public Task<string> GeneratePasswordResetTokenAsync(User user)
     {
-        return _userManager.GeneratePasswordResetTokenAsync(user);
+        try
+        {
+            return _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
     {
-        return _userManager.ResetPasswordAsync(user, token, password);
+        try
+        {
+            return _userManager.ResetPasswordAsync(user, token, password);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task<IdentityResult> ConfirmEmailAsync(User user, string token)
     {
-        return _userManager.ConfirmEmailAsync(user, token);
+        try
+        {
+            return _userManager.ConfirmEmailAsync(user, token);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public async Task<object> Login(UserLogin userLogin)
     {
-        var userManager = await FindByEmailAsync(userLogin.Email);
+        try
+        {
+            var userManager = await FindByEmailAsync(userLogin.Email);
 
-        if (userManager == null)
-        {
-            return null;
-        }
-        var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
+            if (userManager == null)
+            {
+                return null;
+            }
+            var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
 
-        if (!result.Succeeded)
-        {
-            return null;
+            if (!result.Succeeded)
+            {
+                return null;
+            }
+            var appUser = _userManager.Users.FirstOrDefault(u => u.NormalizedEmail.ToUpper() == userLogin.Email.ToUpper());
+            var userToReturn = _mapper.Map<UserList>(appUser);
+            return new
+            {
+                token = GenerateJwtTokenAsync(appUser).Result,
+                user = userToReturn
+            };
         }
-        var appUser = _userManager.Users.FirstOrDefault(u => u.NormalizedEmail.ToUpper() == userLogin.Email.ToUpper());
-        var userToReturn = _mapper.Map<UserList>(appUser);
-        return new
+        catch (Exception ex)
         {
-            token = GenerateJwtTokenAsync(appUser).Result,
-            user = userToReturn
-        };
+            throw ex;
+        }
     }
 
     public Task<IdentityResult> CreateUserAsync(UserRegister userRegister)
     {
-        User userToCreate = _mapper.Map<User>(userRegister);
-        return _userManager.CreateAsync(userToCreate, userRegister.PasswordHash);
+        try
+        {
+            User userToCreate = _mapper.Map<User>(userRegister);
+            return _userManager.CreateAsync(userToCreate, userRegister.PasswordHash);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<bool> IsUserExistsByPhoneNumber(string phoneNumber)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.UserName == phoneNumber);
+            return (user != null) ? true : false;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public async Task AddToRoleAsync(UserRegister userRegister, string roleName)
     {
-        User userManager = await _userManager.FindByNameAsync(userRegister.UserName);
-        await _userManager.AddToRoleAsync(userManager, roleName);
+        try
+        {
+            User userManager = await _userManager.FindByNameAsync(userRegister.UserName);
+            await _userManager.AddToRoleAsync(userManager, roleName);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister)
     {
-        User userToCreate = _mapper.Map<User>(userRegister);
-        return _userManager.GenerateEmailConfirmationTokenAsync(userToCreate);
+        try
+        {
+            User userToCreate = _mapper.Map<User>(userRegister);
+            return _userManager.GenerateEmailConfirmationTokenAsync(userToCreate);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<int> SearchByPhoneNumber(string phoneNumber)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.SingleAsync(x => x.PhoneNumber == phoneNumber);
+            return user.Id;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<int> CreateUserUsingPhoneNumber(string phoneNumber)
+    {
+        try
+        {
+            List<GeneralSetting> generalSettings = _dbFactory.DataContext.GeneralSetting.ToList();
+            string defaultPassword = Convert.ToString(generalSettings.Find(x => x.SettingName == "DefaultPassword").SettingValue);
+            bool isDefaultPassword = Convert.ToBoolean(generalSettings.Find(x => x.SettingName == "IsDefaultPassword").SettingValue);
+
+            User user = new User
+            {
+                UserName = phoneNumber,
+                Email = string.Format(phoneNumber + "{0}", "@un.com"),
+                EmailConfirmed = true,
+                PhoneNumber = phoneNumber,
+                PasswordHash = (isDefaultPassword) ? defaultPassword : Utilites.GetRandomPassword(9), 
+                SecurityStamp = Guid.NewGuid().ToString(),
+                IsActive = true,
+                LanguageId = 1,
+                GroupId = 1,
+            };
+
+            var resultCreateUser = await _userManager.CreateAsync(user, user.PasswordHash);
+
+            if (!resultCreateUser.Succeeded)
+            {
+                throw new Exception("Failed to create local user account.");
+            }
+
+            var resultCreateRole = await _userManager.AddToRoleAsync(user, "Employees");
+
+            if (!resultCreateRole.Succeeded)
+            {
+                throw new Exception("Failed to create Role for user.");
+            }
+
+            return user.Id;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 }

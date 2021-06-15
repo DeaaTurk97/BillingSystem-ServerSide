@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Acorna.Hubs;
 using Acorna.Service.DependencyInjection;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 
 namespace Acorna
 {
@@ -84,7 +86,10 @@ namespace Acorna
                 options.AddPolicy(AllowSpecificOrigins, builder =>
                     builder.WithOrigins(Configuration.GetSection("AllowedClient").Value).AllowAnyMethod().AllowAnyHeader().AllowCredentials());
             });
+
             services.AddSignalR();
+            services.AddMvc();
+            services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromHours(3));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

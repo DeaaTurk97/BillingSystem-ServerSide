@@ -83,11 +83,12 @@ namespace Acorna.Repository.Repository
                     _dbFactory.DataContext.SaveChanges();
                     dbContextTransaction.Commit();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     //Log Exception Handling message                      
                     returnValue = false;
                     dbContextTransaction.Rollback();
+                    throw ex;
                 }
             }
 

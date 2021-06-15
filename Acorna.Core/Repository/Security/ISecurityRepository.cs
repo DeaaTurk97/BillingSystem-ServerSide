@@ -28,4 +28,7 @@ public interface ISecurityRepository
     Task<IdentityResult> CreateUserAsync(UserRegister userRegister);
     Task AddToRoleAsync(UserRegister userRegister, string roleName);
     Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister);
+    Task<bool> IsUserExistsByPhoneNumber(string phoneNumber);
+    Task<int> SearchByPhoneNumber(string phoneNumber);
+    Task<int> CreateUserUsingPhoneNumber(string phoneNumber);
 }

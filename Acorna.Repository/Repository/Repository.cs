@@ -31,7 +31,6 @@ namespace Acorna.Repository.Repository
             }
             catch (Exception)
             {
-
                 throw new Exception("Error When Get All");
             }
         }
@@ -153,7 +152,6 @@ namespace Acorna.Repository.Repository
             }
             catch (Exception)
             {
-
                 throw new Exception("Entity is Null Please Check on Your Data");
             }
         }

@@ -37,6 +37,8 @@ namespace Acorna.Service.UnitOfWork
         Lazy<IOperatorService> LazyOperatorService => new Lazy<IOperatorService>(() => new OperatorService(_unitOfWork, _mapper));
         Lazy<IPhoneBookService> LazyPhoneBookService => new Lazy<IPhoneBookService>(() => new PhoneBookService(_unitOfWork, _mapper));
         Lazy<IEmailService> LazyEmailService => new Lazy<IEmailService>(() => new EmailService(_unitOfWork));
+        Lazy<IBillService> LazyBillService => new Lazy<IBillService>(() => new BillService(_unitOfWork, _mapper));
+
 
         //base
         Lazy<ISecurityService> LazySecurityService => new Lazy<ISecurityService>(() => new SecurityService(_unitOfWork, _mapper));
@@ -55,6 +57,8 @@ namespace Acorna.Service.UnitOfWork
         public IOperatorService OperatorService => LazyOperatorService.Value;
         public IPhoneBookService PhoneBookService => LazyPhoneBookService.Value;
         public IEmailService EmailService => LazyEmailService.Value;
+        public IBillService BillService => LazyBillService.Value;
+
 
         //base
         public ISecurityService SecurityService => LazySecurityService.Value;
