@@ -4,6 +4,7 @@ using Acorna.Core.Repository;
 using Acorna.Core.Repository.Chat;
 using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Core.Repository.Notification;
+using Acorna.Core.Repository.Project.BillingSystem.Report;
 using Acorna.Repository.Repository.Chat;
 using Acorna.Repository.Repository.CustomRepository;
 using Acorna.Repository.Repository.Notification;
@@ -38,10 +39,13 @@ namespace Acorna.Repository.Repository
         Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory));
         Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
+        Lazy<ICallDetailsReportRepository> LazyCallDetailsReportRepository => new Lazy<ICallDetailsReportRepository>(() => new CallDetailsReportRepository(_dbFactory));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
         public IIncomingNumbersRepository IncomingNumbersRepository => LazyIncomingNumbersRepository.Value;
+
+        public ICallDetailsReportRepository CallDetailsReportRepository => LazyCallDetailsReportRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));
@@ -52,6 +56,7 @@ namespace Acorna.Repository.Repository
         public IChatRepository ChatRepository => LazyChatRepository.Value;
         public ISecurityRepository SecurityRepository => LazySecurityRepository.Value;
         public INotificationRepository NotificationRepository => LazyNotificationRepository.Value;
+        
 
         public IRepository<T> GetRepository<T>() where T : BaseEntity
         {
