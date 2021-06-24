@@ -101,11 +101,12 @@ namespace Acorna
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(AllowSpecificOrigins);
-
-            app.UseHttpsRedirection();
+            // Stop as long as we don't have https certificate.
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(AllowSpecificOrigins);
 
             app.UseAuthentication();
 

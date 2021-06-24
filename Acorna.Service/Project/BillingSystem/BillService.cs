@@ -7,6 +7,7 @@ using ExcelDataReader;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using static Acorna.Core.DTOs.SystemEnum;
@@ -29,6 +30,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
+                IFormatProvider enUsDateFormat = new CultureInfo("en-US").DateTimeFormat;
                 List<Bill> bills = new List<Bill>();
                 List<BillDetails> billsDetails = new List<BillDetails>();
                 string phoneBookId = string.Empty;
@@ -42,163 +44,178 @@ namespace Acorna.Service.Project.BillingSystem
                 string callDuration = string.Empty;
                 int userId = 0;
 
+
                 foreach (DocumentModel file in filesUploaded)
                 {
-                    using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
+                    using (StreamWriter outputFile = new StreamWriter(Path.Combine("C:\\Inetpub\\wwwroot\\MukalamatSyria.Api\\uploaded-files", "logger.txt")))
                     {
-                        using (var reader = ExcelReaderFactory.CreateReader(stream))
+                        outputFile.WriteLine("StreamWriter");
+
+
+                        using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
                         {
-                            DataSet datasetBills = reader.AsDataSet();
-                            DataTable dataTable = datasetBills.Tables[0];
 
+                            outputFile.WriteLine("File.Open");
 
-                            dataTable = dataTable.AsEnumerable()
-                                                 .GroupBy(r => r.Field<object>("Column5"))
-                                                 .SelectMany(x => x)
-                                                 .CopyToDataTable();
-
-                            while (reader.Read()) //Each row of the file
+                            using (var reader = ExcelReaderFactory.CreateReader(stream))
                             {
-                                if (reader.GetValue(0).ToString().Trim().Contains("customer_id"))
-                                {
-                                    continue;
-                                }
+                                outputFile.WriteLine("ExcelReaderFactory.CreateReader");
 
-                                //check if this user is Exist or not
-                                userPhoneNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(1)).Trim());
-                                if (userId == 0)
+                                DataSet datasetBills = reader.AsDataSet();
+                                outputFile.WriteLine("DataSet datasetBills = reader.AsDataSet();");
+                                DataTable dataTable = datasetBills.Tables[0];
+                                outputFile.WriteLine("DataTable dataTable = datasetBills.Tables[0];");
+
+                                dataTable = dataTable.AsEnumerable()
+                                                     .GroupBy(r => r.Field<object>("Column5"))
+                                                     .SelectMany(x => x)
+                                                     .CopyToDataTable();
+
+                                outputFile.WriteLine("dataTable.AsEnumerable()");
+
+                                while (reader.Read()) //Each row of the file
                                 {
-                                    if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
+                                    if (reader.GetValue(0).ToString().Trim().Contains("customer_id"))
                                     {
-                                        userId = _unitOfWork.SecurityRepository.SearchByPhoneNumber(userPhoneNumber).Result;
+                                        continue;
+                                    }
+
+                                    //check if this user is Exist or not
+                                    userPhoneNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(1)).Trim());
+                                    if (userId == 0)
+                                    {
+                                        if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
+                                        {
+                                            userId = _unitOfWork.SecurityRepository.SearchByPhoneNumber(userPhoneNumber).Result;
+                                        }
+                                        else
+                                        {
+                                            userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber).Result;
+                                        }
+                                    }
+
+                                    //check if current row for called_number column is number
+                                    if (Utilites.IsStringNumber(Convert.ToString(reader.GetValue(2)).Trim()))
+                                    {
+                                        PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == Convert.ToString(reader.GetValue(2)));
+
+                                        dialedNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(2)).Trim());
+
+                                        if (phoneBook != null)
+                                        {
+                                            phoneBookId = Convert.ToString(phoneBook.Id);
+                                            TypePhoneNumberId = phoneBook.TypePhoneNumberId;
+
+                                            operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
+                                            Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
+                                            operatrId = operatr != null ? operatr.Id : 0;
+                                        }
+                                        else
+                                        {
+                                            phoneBookId = string.Empty;
+                                            TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
+                                            operatrId = 0;
+                                        }
                                     }
                                     else
                                     {
-                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber).Result;
-                                    }
-                                }
-
-                                //check if current row for called_number column is number
-                                if (Utilites.IsStringNumber(Convert.ToString(reader.GetValue(2)).Trim()))
-                                {
-                                    PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == Convert.ToString(reader.GetValue(2)));
-
-                                    dialedNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(2)).Trim());
-
-                                    if (phoneBook != null)
-                                    {
-                                        phoneBookId = Convert.ToString(phoneBook.Id);
-                                        TypePhoneNumberId = phoneBook.TypePhoneNumberId;
-
-                                        operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
-                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
-                                        operatrId = operatr != null ? operatr.Id : 0;
-                                    }
-                                    else
-                                    {
+                                        dialedNumber = Convert.ToString(reader.GetValue(2)).Trim();
                                         phoneBookId = string.Empty;
                                         TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                         operatrId = 0;
                                     }
-                                }
-                                else
-                                {
-                                    dialedNumber = Convert.ToString(reader.GetValue(2)).Trim();
-                                    phoneBookId = string.Empty;
-                                    TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
-                                    operatrId = 0;
-                                }
 
 
-                                if (!string.IsNullOrEmpty(Convert.ToString(reader.GetValue(6)).Trim()))
-                                {
-                                    ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceNameAr == Convert.ToString(reader.GetValue(6)) || x.ServiceNameEn == Convert.ToString(reader.GetValue(6)));
-                                    if (serviceType != null)
+                                    if (!string.IsNullOrEmpty(Convert.ToString(reader.GetValue(6)).Trim()))
                                     {
-                                        serviceTypeId = serviceType.Id;
-                                    }
-                                    else
-                                    {
-                                        //adding a new service type if type Not Exist
-                                        ServiceType addingServiceType = new ServiceType
+                                        ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == Convert.ToString(reader.GetValue(6)) || x.ServiceTypeNameEn == Convert.ToString(reader.GetValue(6)));
+                                        if (serviceType != null)
                                         {
-                                            ServiceNameAr = Convert.ToString(reader.GetValue(6)).Trim(),
-                                            ServiceNameEn = Convert.ToString(reader.GetValue(6)).Trim(),
-                                            IsCalculatedValue = true
-                                        };
-
-                                        _unitOfWork.GetRepository<ServiceType>().Insert(addingServiceType);
-
-                                        if (!_unitOfWork.SaveChanges())
-                                        {
-                                            throw new Exception("Error occurred when inserting a new service");
+                                            serviceTypeId = serviceType.Id;
                                         }
+                                        else
+                                        {
+                                            //adding a new service type if type Not Exist
+                                            ServiceType addingServiceType = new ServiceType
+                                            {
+                                                ServiceTypeNameAr = Convert.ToString(reader.GetValue(6)).Trim(),
+                                                ServiceTypeNameEn = Convert.ToString(reader.GetValue(6)).Trim(),
+                                                IsCalculatedValue = true
+                                            };
 
-                                        serviceTypeId = addingServiceType.Id;
-                                    }
-                                }
-                                else
-                                {
-                                    if (Convert.ToString(reader.GetValue(2)).Trim().Contains("bundle"))
-                                    {
-                                        ServiceType serviceBundle = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceNameAr == "EBU_حزمة" || x.ServiceNameEn == "Bundel");
-                                        serviceTypeId = serviceBundle.Id;
+                                            _unitOfWork.GetRepository<ServiceType>().Insert(addingServiceType);
+
+                                            if (!_unitOfWork.SaveChanges())
+                                            {
+                                                throw new Exception("Error occurred when inserting a new service");
+                                            }
+
+                                            serviceTypeId = addingServiceType.Id;
+                                        }
                                     }
                                     else
                                     {
-                                        //service Number one is empty or ????
-                                        serviceTypeId = 1;
+                                        if (Convert.ToString(reader.GetValue(2)).Trim().Contains("bundle"))
+                                        {
+                                            ServiceType serviceBundle = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == "EBU_حزمة" || x.ServiceTypeNameEn == "Bundel");
+                                            serviceTypeId = serviceBundle.Id;
+                                        }
+                                        else
+                                        {
+                                            //service Number one is empty or ????
+                                            serviceTypeId = 1;
+                                        }
                                     }
-                                }
 
-                                //when this service is INTERNET
-                                if (Convert.ToString(reader.GetValue(7)).Trim().Contains("KB") && !string.IsNullOrEmpty(Convert.ToString(reader.GetValue(7)).Trim()))
-                                {
-                                    dataUsage = Convert.ToString(reader.GetValue(7)).Trim();
-                                    callDuration = "-";
-                                }
-                                else
-                                {
-                                    callDuration = Convert.ToString(reader.GetValue(8)).Trim();
-                                    dataUsage = "-";
-                                }
-
-                                billsDetails.Add(new BillDetails
-                                {
-                                    PhoneBookId = phoneBookId,
-                                    CallDateTime = Convert.ToDateTime(reader.GetValue(3)),
-                                    CallDuration = callDuration,
-                                    CallNetPrice = Convert.ToDecimal(reader.GetValue(9)),
-                                    CallRetailPrice = Convert.ToDecimal(reader.GetValue(9)),
-                                    PhoneNumber = dialedNumber,
-                                    TypePhoneNumberId = TypePhoneNumberId,
-                                    ServiceTypeId = serviceTypeId,
-                                    OperatorId = operatrId,
-                                    DataUsage = dataUsage,
-                                });
-                            }
-
-                            if (billsDetails.Count > 0)
-                            {
-                                //chicking if current bill is added
-                                if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3))), userId))
-                                {
-                                    bills.Add(new Bill
+                                    //when this service is INTERNET
+                                    if (Convert.ToString(reader.GetValue(7)).Trim().Contains("KB") && !string.IsNullOrEmpty(Convert.ToString(reader.GetValue(7)).Trim()))
                                     {
-                                        UserId = userId,
-                                        BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3))),
-                                        SubmittedByAdmin = false,
-                                        SubmittedByUser = false,
-                                        IsPaid = false,
-                                        IsTerminal = false,
-                                        BillDetails = billsDetails
+                                        dataUsage = Convert.ToString(reader.GetValue(7)).Trim();
+                                        callDuration = "-";
+                                    }
+                                    else
+                                    {
+                                        callDuration = Convert.ToString(reader.GetValue(8)).Trim();
+                                        dataUsage = "-";
+                                    }
+
+                                    billsDetails.Add(new BillDetails
+                                    {
+                                        PhoneBookId = phoneBookId,
+                                        CallDateTime = Convert.ToDateTime(reader.GetValue(3), enUsDateFormat),
+                                        CallDuration = callDuration,
+                                        CallNetPrice = Convert.ToDecimal(reader.GetValue(9)),
+                                        CallRetailPrice = Convert.ToDecimal(reader.GetValue(9)),
+                                        PhoneNumber = dialedNumber,
+                                        TypePhoneNumberId = TypePhoneNumberId,
+                                        ServiceTypeId = serviceTypeId,
+                                        OperatorId = operatrId,
+                                        DataUsage = dataUsage,
                                     });
                                 }
+
+                                if (billsDetails.Count > 0)
+                                {
+                                    //chicking if current bill is added
+                                    if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)), userId))
+                                    {
+                                        bills.Add(new Bill
+                                        {
+                                            UserId = userId,
+                                            BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)),
+                                            SubmittedByAdmin = false,
+                                            SubmittedByUser = false,
+                                            IsPaid = false,
+                                            IsTerminal = false,
+                                            BillDetails = billsDetails
+                                        });
+                                    }
+                                }
                             }
+                            // to reset userId after inserted bill
+                            billsDetails = new List<BillDetails>();
+                            userId = 0;
                         }
-                        // to reset userId after inserted bill
-                        billsDetails = new List<BillDetails>();
-                        userId = 0;
                     }
                 }
 
@@ -207,12 +224,18 @@ namespace Acorna.Service.Project.BillingSystem
             }
             catch (Exception ex)
             {
+                using (StreamWriter writer = System.IO.File.AppendText("C:\\Inetpub\\wwwroot\\MukalamatSyria.Api\\uploaded-files\\logger.txt"))
+                {
+                    writer.WriteLine("log message : " + ex);
+                }
+
                 throw ex;
             }
         }
 
         public bool UploadSyriaTelBills(List<DocumentModel> filesUploaded, int currentUserId)
         {
+            IFormatProvider enUsDateFormat = new CultureInfo("en-US").DateTimeFormat;
             List<Bill> bills = new List<Bill>();
             List<BillDetails> billsDetails = new List<BillDetails>();
             string phoneBookId = string.Empty;
@@ -300,7 +323,7 @@ namespace Acorna.Service.Project.BillingSystem
 
                                 if (!string.IsNullOrEmpty(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim()) && Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() != "????")
                                 {
-                                    ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceNameAr == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() || x.ServiceNameEn == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
+                                    ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() || x.ServiceTypeNameEn == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
                                     if (serviceType != null)
                                     {
                                         serviceTypeId = serviceType.Id;
@@ -310,8 +333,8 @@ namespace Acorna.Service.Project.BillingSystem
                                         //adding a new service type if type Not Exist
                                         ServiceType addingServiceType = new ServiceType
                                         {
-                                            ServiceNameAr = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
-                                            ServiceNameEn = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
+                                            ServiceTypeNameAr = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
+                                            ServiceTypeNameEn = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
                                             IsCalculatedValue = true
                                         };
 
@@ -348,7 +371,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 {
                                     PhoneBookId = phoneBookId,
                                     CallDuration = callDuration,
-                                    CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column0"]),
+                                    CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat),
                                     CallNetPrice = Convert.ToDecimal(dataTable.Rows[index]["Column3"]),
                                     CallRetailPrice = Convert.ToDecimal(dataTable.Rows[index]["Column3"]),
                                     PhoneNumber = dialedNumber,
@@ -365,12 +388,12 @@ namespace Acorna.Service.Project.BillingSystem
                                     if (Utilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column5"].ToString().Trim()) != Utilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column5"].ToString().Trim()))
                                     {
                                         //chicking if current bill is Exist
-                                        if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"])), userId))
+                                        if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
                                         {
                                             bills.Add(new Bill
                                             {
                                                 UserId = userId,
-                                                BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"])),
+                                                BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
                                                 SubmittedByAdmin = false,
                                                 SubmittedByUser = false,
                                                 IsPaid = false,
@@ -386,12 +409,12 @@ namespace Acorna.Service.Project.BillingSystem
                                 else
                                 {
                                     //chicking if current bill is added
-                                    if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"])), userId))
+                                    if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
                                     {
                                         bills.Add(new Bill
                                         {
                                             UserId = userId,
-                                            BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"])),
+                                            BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
                                             SubmittedByAdmin = false,
                                             SubmittedByUser = false,
                                             IsPaid = false,

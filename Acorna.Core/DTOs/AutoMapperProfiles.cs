@@ -33,11 +33,14 @@ namespace Acorna.DTOs
             CreateMap<PhoneBook, PhoneBookModel>().ReverseMap();
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
+            CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
 
             //DTOs
             CreateMap<ChatMessageModel, ChatMessageDTO>().ReverseMap();
 
-            CreateMap<Governorate, GovernorateDTO>().ReverseMap();
+            CreateMap<Governorate, GovernorateDTO>().ForMember(dest => dest.CountryNameAr, s => s.MapFrom(y => y.Country.CountryNameAr))
+                                                .ForMember(dest => dest.CountryNameEn, s => s.MapFrom(y => y.Country.CountryNameEn)).ReverseMap();
+
             CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
             CreateMap<PhoneBookModel, PhoneBookDTO>().ReverseMap();
 

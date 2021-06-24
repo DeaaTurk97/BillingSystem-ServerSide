@@ -35,7 +35,7 @@ namespace Acorna.Repository.Repository
             _mapper = mapper;
         }
 
-        Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory));
+        Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory, _mapper));
         Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
 

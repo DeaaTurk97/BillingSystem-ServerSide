@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Acorna.Core.Models.Project.BillingSystem
 {
-    public class BillDetails : BaseModel
+    public class BillDetailsModel : BaseModel
     {
         public int BillId { get; set; }
         public string PhoneBookId { get; set; }
