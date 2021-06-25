@@ -296,14 +296,14 @@ namespace Acorna.Repository.DataContext
             {
                 new ServiceType {
                     Id = 1,
-                    ServiceNameAr = "فارغ",
-                    ServiceNameEn = "Empty",
+                    ServiceTypeNameAr = "فارغ",
+                    ServiceTypeNameEn = "Empty",
                     IsCalculatedValue = false,
                 },
                 new ServiceType {
                     Id = 2,
-                    ServiceNameAr = "EBU_حزمة",
-                    ServiceNameEn = "EBU_Bundel",
+                    ServiceTypeNameAr = "EBU_حزمة",
+                    ServiceTypeNameEn = "EBU_Bundel",
                     IsCalculatedValue = false,
                 },
 

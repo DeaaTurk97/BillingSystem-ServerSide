@@ -7,9 +7,9 @@ namespace Acorna.Core.Entity.Project.BillingSystem
     public class ServiceType : BaseEntity
     {
         [Required, MaxLength(150)]
-        public string ServiceNameAr { get; set; }
+        public string ServiceTypeNameAr { get; set; }
         [Required, MaxLength(150)]
-        public string ServiceNameEn { get; set; }
+        public string ServiceTypeNameEn { get; set; }
         public bool IsCalculatedValue { get; set; }
     }
 }

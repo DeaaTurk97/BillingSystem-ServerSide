@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Acorna.Core.Models.Project.BillingSystem
 {
-    public class Bill : BaseModel
+    public class BillModel : BaseModel
     {
         public int UserId { get; set; }
         public DateTime BillDate { get; set; }

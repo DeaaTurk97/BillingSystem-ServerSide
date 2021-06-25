@@ -1,6 +1,8 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
 using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,37 +14,31 @@ namespace Acorna.Repository.Repository.CustomRepository
     internal class GovernorateRepository : Repository<Governorate>, IGovernorateRepository
     {
         private readonly IDbFactory _dbFactory;
+        private readonly IMapper _mapper;
 
-        internal GovernorateRepository(IDbFactory dbFactory) : base(dbFactory)
+        internal GovernorateRepository(IDbFactory dbFactory, IMapper mapper) : base(dbFactory)
         {
             _dbFactory = dbFactory;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<GovernorateDTO>> GetGovernorates(int pageIndex, int pageSize)
         {
             try
             {
-                IEnumerable<GovernorateDTO> governorates = await (from gover in _dbFactory.DataContext.Governorate
-                                                                    join cou in _dbFactory.DataContext.Country on
-                                                                    gover.CountryId equals cou.Id
-                                                                    select new GovernorateDTO
-                                                                    {
-                                                                        Id = gover.Id,
-                                                                        GovernorateNameAr = gover.GovernorateNameAr,
-                                                                        GovernorateNameEn = gover.GovernorateNameEn,
-                                                                        CountryNameAr = cou.CountryNameAr,
-                                                                        CountryNameEn = cou.CountryNameEn,
-                                                                        CountryId = cou.Id
-                                                                    }).OrderByDescending(s => s.Id)
+                IEnumerable<GovernorateDTO> governorates = await _dbFactory.DataContext.Governorate
+                                                                     .Include(x => x.Country)
+                                                                     .ProjectTo<GovernorateDTO>(_mapper.ConfigurationProvider)
+                                                                     .OrderByDescending(s => s.Id)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
 
                 return governorates;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
         }
     }

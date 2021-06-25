@@ -23,6 +23,6 @@ namespace Acorna.Core.Services
         public IPhoneBookService PhoneBookService { get; }
         public IEmailService EmailService { get; }
         public IBillService BillService { get; }
-
+        public IServiceType ServiceTypeService { get; }
     }
 }
