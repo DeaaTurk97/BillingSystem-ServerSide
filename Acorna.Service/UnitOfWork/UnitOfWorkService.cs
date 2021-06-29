@@ -1,4 +1,5 @@
-﻿using Acorna.Core.IServices.Chat;
+﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.IServices.Chat;
 using Acorna.Core.IServices.Notification;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.IServices.SystemDefinition;
@@ -40,6 +41,7 @@ namespace Acorna.Service.UnitOfWork
         Lazy<IPhoneBookService> LazyPhoneBookService => new Lazy<IPhoneBookService>(() => new PhoneBookService(_unitOfWork, _mapper));
         Lazy<IEmailService> LazyEmailService => new Lazy<IEmailService>(() => new EmailService(_unitOfWork));
         Lazy<IBillService> LazyBillService => new Lazy<IBillService>(() => new BillService(_unitOfWork, _mapper));
+        Lazy<IServiceType> LazyServiceTypeService => new Lazy<IServiceType>(() => new ServiceTypeService(_unitOfWork, _mapper));
 
         Lazy<ICallDetailsReportService> LazyCallDetailsReportService => new Lazy<ICallDetailsReportService>(() => new CallDetailsReportService(_unitOfWork, _mapper));
 
@@ -62,6 +64,8 @@ namespace Acorna.Service.UnitOfWork
         public IEmailService EmailService => LazyEmailService.Value;
         public IBillService BillService => LazyBillService.Value;
         public ICallDetailsReportService CallDetailsReportService => LazyCallDetailsReportService.Value;
+        public IServiceType ServiceTypeService => LazyServiceTypeService.Value;
+
 
         //base
         public ISecurityService SecurityService => LazySecurityService.Value;

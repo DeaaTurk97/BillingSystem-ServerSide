@@ -4,13 +4,9 @@ using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
-using Acorna.Repository;
-using Acorna.Repository.DataContext;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Acorna.Service.Project.BillingSystem
