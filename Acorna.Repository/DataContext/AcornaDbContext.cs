@@ -359,6 +359,10 @@ namespace Acorna.Repository.DataContext
         public DbSet<ServiceType> ServiceType { get; set; }
         public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }
 
+		public DbQuery<CallDetailsDTO> CallDetails { get; set; }
+        public DbQuery<CallSummaryDTO> CallSummary { get; set; }
+        public DbQuery<CallFinanceDTO> CallFinance { get; set; }
+
         public new DbSet<T> Set<T>() where T : BaseEntity
         {
             return base.Set<T>();
