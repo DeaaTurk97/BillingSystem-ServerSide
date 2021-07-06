@@ -47,31 +47,17 @@ namespace Acorna.Service.Project.BillingSystem
 
                 foreach (DocumentModel file in filesUploaded)
                 {
-                    using (StreamWriter outputFile = new StreamWriter(Path.Combine("C:\\Inetpub\\wwwroot\\MukalamatSyria.Api\\uploaded-files", "logger.txt")))
-                    {
-                        outputFile.WriteLine("StreamWriter");
-
-
                         using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
                         {
-
-                            outputFile.WriteLine("File.Open");
-
                             using (var reader = ExcelReaderFactory.CreateReader(stream))
                             {
-                                outputFile.WriteLine("ExcelReaderFactory.CreateReader");
-
                                 DataSet datasetBills = reader.AsDataSet();
-                                outputFile.WriteLine("DataSet datasetBills = reader.AsDataSet();");
                                 DataTable dataTable = datasetBills.Tables[0];
-                                outputFile.WriteLine("DataTable dataTable = datasetBills.Tables[0];");
 
                                 dataTable = dataTable.AsEnumerable()
                                                      .GroupBy(r => r.Field<object>("Column5"))
                                                      .SelectMany(x => x)
                                                      .CopyToDataTable();
-
-                                outputFile.WriteLine("dataTable.AsEnumerable()");
 
                                 while (reader.Read()) //Each row of the file
                                 {
@@ -216,7 +202,7 @@ namespace Acorna.Service.Project.BillingSystem
                             billsDetails = new List<BillDetails>();
                             userId = 0;
                         }
-                    }
+                    //}
                 }
 
                 _unitOfWork.GetRepository<Bill>().InsertRange(bills);

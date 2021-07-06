@@ -98,11 +98,11 @@ internal class SecurityService : ISecurityService
         }
     }
 
-    public void Delete(int id)
+    public async Task<bool> Delete(int id)
     {
         try
         {
-            _unitOfWork.SecurityRepository.Delete(id);
+           return await _unitOfWork.SecurityRepository.Delete(id);
         }
         catch (Exception ex)
         {

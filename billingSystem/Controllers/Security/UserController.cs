@@ -103,18 +103,16 @@ namespace Acorna.Controllers.Security
         }
 
         [HttpDelete]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int userId)
         {
             try
             {
-                _unitOfWorkService.SecurityService.Delete(id);
+                return Ok(await _unitOfWorkService.SecurityService.Delete(userId));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                BadRequest("false");
+                return BadRequest(ex);
             }
-
-            return Ok("true");
         }
 
         [HttpPut]

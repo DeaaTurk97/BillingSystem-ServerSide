@@ -16,6 +16,7 @@ namespace Acorna.Core.Repository
         IGovernorateRepository GovernorateRepository { get; }
         IPhoneBookRepository PhoneBookRepository { get; }
         IIncomingNumbersRepository IncomingNumbersRepository { get; }
+        IBillsSummaryRepository BillsSummaryRepository { get; }
         ICallDetailsReportRepository CallDetailsReportRepository { get; }
 
         bool SaveChanges();
