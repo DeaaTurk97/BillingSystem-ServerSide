@@ -4,7 +4,6 @@ using Acorna.Core.IServices.Project;
 using Acorna.Core.IServices.SystemDefinition;
 using Acorna.Core.Services.Email;
 using Acorna.Core.Services.Project.BillingSystem;
-using Acorna.Core.Services.Project.BillingSystem.Report;
 
 namespace Acorna.Core.Services
 {
@@ -24,7 +23,7 @@ namespace Acorna.Core.Services
         public IPhoneBookService PhoneBookService { get; }
         public IEmailService EmailService { get; }
         public IBillService BillService { get; }
-        public ICallDetailsReportService CallDetailsReportService { get; }
+        public ICallDetailsViewService CallDetailsViewService { get; }
 
         public IServiceType ServiceTypeService { get; }
     }

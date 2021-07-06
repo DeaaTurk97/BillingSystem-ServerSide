@@ -11,6 +11,8 @@ namespace Acorna.Core.Repository.Project.BillingSystem.Report
 {
     public interface ICallDetailsReportRepository 
     {
-        Task<List<CallDetailsReportDTO>> GetReport(CallDetailsReportModel filter);
+        List<CallDetailsDTO> GetCallDetails(CallsInfoFilterModel filter, out int countRecord);
+        List<CallSummaryDTO> GetCallSummary(CallsInfoFilterModel filter, out int countRecord);
+        List<CallFinanceDTO> GetCallFinance(CallsInfoFilterModel filter, out int countRecord);
     }
 }

@@ -39,7 +39,7 @@ namespace Acorna.Repository.Repository
         Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory, _mapper));
         Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
-        Lazy<ICallDetailsReportRepository> LazyCallDetailsReportRepository => new Lazy<ICallDetailsReportRepository>(() => new CallDetailsReportRepository(_dbFactory));
+        Lazy<ICallDetailsReportRepository> LazyCallDetailsReportRepository => new Lazy<ICallDetailsReportRepository>(() => new CallDetailsViewRepository(_dbFactory));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
