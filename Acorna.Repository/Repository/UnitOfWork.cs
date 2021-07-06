@@ -38,10 +38,12 @@ namespace Acorna.Repository.Repository
         Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory, _mapper));
         Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
+        Lazy<IBillsSummaryRepository> LazyBillsSummaryRepository => new Lazy<IBillsSummaryRepository>(() => new BillsSummaryRepository(_dbFactory, _mapper));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
         public IIncomingNumbersRepository IncomingNumbersRepository => LazyIncomingNumbersRepository.Value;
+        public IBillsSummaryRepository BillsSummaryRepository => LazyBillsSummaryRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));

@@ -192,13 +192,32 @@ internal class SecurityRepository : ISecurityRepository
         return _dbFactory.DataContext.Users.Count();
     }
 
-    public void Delete(int id)
+    public async Task<bool> Delete(int id)
     {
         try
         {
             User user = _dbFactory.DataContext.Users.FirstOrDefault(s => s.Id == id);
-            if (user != null)
-                _dbFactory.DataContext.Users.Remove(user);
+
+            if (user == null)
+            {
+                throw new Exception("User Not Exist!");
+            }
+
+            //Delete User
+            await _userManager.DeleteAsync(user);
+
+            var rolesForUser = await GetRolesAsync(user);
+
+            if (rolesForUser.Count() > 0)
+            {
+                foreach (var role in rolesForUser)
+                {
+                    // item should be the name of the role
+                    var result = await _userManager.RemoveFromRoleAsync(user, role);
+                }
+            }
+
+            return true;
         }
         catch (Exception ex)
         {
@@ -531,6 +550,19 @@ internal class SecurityRepository : ISecurityRepository
             }
 
             return user.Id;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<IList<string>> GetRolesAsync(User user)
+    {
+        try
+        {
+            IList<string> roles = await _userManager.GetRolesAsync(user);
+            return roles;
         }
         catch (Exception ex)
         {

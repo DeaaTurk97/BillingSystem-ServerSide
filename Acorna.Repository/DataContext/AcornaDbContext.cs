@@ -309,6 +309,32 @@ namespace Acorna.Repository.DataContext
 
             });
 
+            //Create New Phone numbers type
+            builder.Entity<TypePhoneNumber>().ToTable("TypePhoneNumber").HasData(new List<TypePhoneNumber>
+            {
+                new TypePhoneNumber {
+                    Id = 1,
+                    TypeNameAr = "مجاني",
+                    TypeNameEn = "Free",
+                },
+                new TypePhoneNumber {
+                    Id = 2,
+                    TypeNameAr = "رسمي",
+                    TypeNameEn = "Official",
+                },
+                new TypePhoneNumber {
+                    Id = 3,
+                    TypeNameAr = "شخصي",
+                    TypeNameEn = "Personal",
+                },
+                new TypePhoneNumber {
+                    Id = 4,
+                    TypeNameAr = "غير معرف",
+                    TypeNameEn = "Unknown",
+                },
+
+            });
+
             //Rename All Tables Identity
             builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
             builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
@@ -331,6 +357,7 @@ namespace Acorna.Repository.DataContext
         public DbSet<Bill> Bill { get; set; }
         public DbSet<BillDetails> BillDetails { get; set; }
         public DbSet<ServiceType> ServiceType { get; set; }
+        public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }
 
         public new DbSet<T> Set<T>() where T : BaseEntity
         {

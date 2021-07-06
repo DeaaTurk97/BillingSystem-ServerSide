@@ -1,7 +1,5 @@
 ﻿using Acorna.Controllers.Base;
-using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Services;
-using Acorna.Core.Sheard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -26,8 +24,6 @@ namespace billingSystem.Controllers.Project.BillingSystem
         [Route("GetComingNumbers")]
         public async Task<IActionResult> GetPhonesBook(int pageIndex = 1, int pageSize = 10, int statusNumber = 1)
         {
-            PaginationRecord<PhoneBookModel> phoneBookModel = new PaginationRecord<PhoneBookModel>();
-
             try
             {
                 return Ok(await _unitOfWorkService.IncomingNumbersService.GetComingNumbers(pageIndex, pageSize, statusNumber, CurrentUserId, CurrentUserRole));
