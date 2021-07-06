@@ -2,6 +2,7 @@
 using Acorna.Core.Repository.Chat;
 using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Core.Repository.Notification;
+using Acorna.Core.Repository.Project.BillingSystem.Report;
 
 namespace Acorna.Core.Repository
 {
@@ -15,6 +16,7 @@ namespace Acorna.Core.Repository
         IGovernorateRepository GovernorateRepository { get; }
         IPhoneBookRepository PhoneBookRepository { get; }
         IIncomingNumbersRepository IncomingNumbersRepository { get; }
+        ICallDetailsReportRepository CallDetailsReportRepository { get; }
 
         bool SaveChanges();
     }
