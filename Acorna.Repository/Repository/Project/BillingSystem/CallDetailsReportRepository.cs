@@ -192,6 +192,12 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.GroupId.HasValue? filter.GroupId.Value : System.Data.SqlTypes.SqlInt32.Null
 						},
 						new SqlParameter() {
+							ParameterName = "@IsSubmitted",
+							SqlDbType =  System.Data.SqlDbType.Int,
+							Direction = System.Data.ParameterDirection.Input,
+							Value =  System.Data.SqlTypes.SqlBoolean.Null
+						},
+						new SqlParameter() {
 							ParameterName = "@PageIndex",
 							SqlDbType =  System.Data.SqlDbType.Int,
 							Direction = System.Data.ParameterDirection.Input,
@@ -204,7 +210,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.PageSize.HasValue? filter.PageSize.Value : 10
 						}};
 
-		var list = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromDate, @ToDate, @GroupId, @PageIndex, @PageSize", param).ToList();
+		var list = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromDate, @ToDate, @GroupId, @IsSubmitted, @PageIndex, @PageSize", param).ToList();
 		countRecord = Convert.ToInt32(param[0].Value);
 		return list;
 	}
