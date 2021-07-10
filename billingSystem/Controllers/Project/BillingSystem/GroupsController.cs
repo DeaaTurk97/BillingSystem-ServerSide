@@ -104,5 +104,20 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet]
+        [Route("GetGroupsByUser")]
+        public async Task<IActionResult> GetAllGroupsByUser()
+        {
+            try
+            {
+                var list = await _unitOfWorkService.GroupService.GetGroupsByUserRole(CurrentUserId, CurrentUserRole);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

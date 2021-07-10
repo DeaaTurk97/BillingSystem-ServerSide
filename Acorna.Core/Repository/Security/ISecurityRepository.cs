@@ -8,9 +8,11 @@ using System.Threading.Tasks;
 
 public interface ISecurityRepository
 {
+    Task<User> GetUserById(int id);
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
     Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10);
+    Task<List<UserModel>> GetUsersByGrpupIdAsync(int groupId);
     Task<List<UserModel>> GetAllUsersByTypeAsync(string userType);
     int GetUsersCountRecord();
     void Delete(int id);

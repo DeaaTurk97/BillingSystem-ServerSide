@@ -28,6 +28,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallDetails(model);
                 return Ok(list);
             }
@@ -43,6 +45,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
                 return Ok(list);
             }
@@ -58,6 +62,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallFinance(model);
                 return Ok(list);
             }
@@ -65,6 +71,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
             {
                 return BadRequest(ex);
             }
+        }
+
+        private void PrepareCallsInfoFilterModel(CallsInfoFilterModel model)
+		{
+            model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;
+            model.UserId = model.UserId != null && model.UserId.Value > 0 ? model.UserId.Value : (int?)null;
         }
     }
 }

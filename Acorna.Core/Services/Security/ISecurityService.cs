@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 
 public interface ISecurityService
 {
+    Task<User> GetUserById(int id);
     int GetUsersCountRecord();
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
@@ -29,5 +30,7 @@ public interface ISecurityService
     Task<IdentityResult> CreateUserAsync(UserRegister userRegister);
     Task AddToRoleAsync(UserRegister userRegister, string roleName);
     Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister);
+    Task<List<UserModel>> GetUsersByGroupId(int groupId);
+    Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole);
 
 }

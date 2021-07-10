@@ -176,5 +176,21 @@ namespace Acorna.Controllers.Security
                 throw ex;
             }
         }
+
+        [HttpGet]
+        [Route("GetUsersByCurrentRole")]
+        public async Task<IActionResult> GetUsersByCurrentRole()
+        {
+            try
+            {
+                var list = await _unitOfWorkService.SecurityService.GetUsersByCurrentRole(CurrentUserId, CurrentUserRole);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
     }
 }

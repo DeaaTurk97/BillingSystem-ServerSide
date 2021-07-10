@@ -2,18 +2,19 @@ using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
+using Acorna.Core.Services;
 using Acorna.DTOs.Security;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 internal class SecurityService : ISecurityService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _imapper;
-
     internal SecurityService(IUnitOfWork unitOfWork, IMapper imapper)
     {
         try
@@ -27,6 +28,17 @@ internal class SecurityService : ISecurityService
         }
     }
 
+    public Task<User> GetUserById(int id)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.GetUserById(id);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
     public async Task<List<UserModel>> GetUsersListAsync()
     {
         return await _unitOfWork.SecurityRepository.GetUsersListAsync();
@@ -207,5 +219,42 @@ internal class SecurityService : ISecurityService
     public Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister)
     {
         return _unitOfWork.SecurityRepository.GenerateEmailConfirmationTokenAsync(userRegister);
+    }
+
+    public async Task<List<UserModel>> GetUsersByGroupId(int groupId)
+    {
+        try
+        {
+            var users = await _unitOfWork.SecurityRepository.GetUsersByGrpupIdAsync(groupId);
+            return users;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole)
+    {
+        try
+        {
+            RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+            var list = new List<UserModel>();
+            if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+            {
+                list = await GetAllUsersAsync();
+            }
+            else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
+            {
+                var user = _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                list = GetUsersByGroupId(user.Result.GroupId).Result;
+            }
+
+            return list;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

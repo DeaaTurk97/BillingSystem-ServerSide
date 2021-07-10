@@ -46,6 +46,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
+    public Task<User> GetUserById(int id)
+    {
+        return _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+    }
+
     public Task<List<UserModel>> GetUsersListAsync()
     {
         return (from user in _dbFactory.DataContext.Users
@@ -82,6 +87,25 @@ internal class SecurityRepository : ISecurityRepository
                 RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
 
             }).ToList();
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public Task<List<UserModel>> GetUsersByGrpupIdAsync(int groupId)
+    {
+        try
+        {
+            return (from user in _dbFactory.DataContext.Users
+                    where user.GroupId == groupId
+                    orderby user.UserName
+                    select new UserModel
+                    {
+                        UserId = user.Id,
+                        UserName = user.UserName,
+					}).ToListAsync();
         }
         catch (Exception)
         {
