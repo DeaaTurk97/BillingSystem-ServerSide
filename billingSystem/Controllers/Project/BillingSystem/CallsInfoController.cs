@@ -77,6 +77,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
 		{
             model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;
             model.UserId = model.UserId != null && model.UserId.Value > 0 ? model.UserId.Value : (int?)null;
+            model.ServiceTypeId = model.ServiceTypeId != null && model.ServiceTypeId.Value > 0 ? model.ServiceTypeId.Value : (int?)null;
+            model.CountryId = model.CountryId != null && model.CountryId.Value > 0 ? model.CountryId.Value : (int?)null;
+            model.CountryIdExclude = model.CountryIdExclude != null && model.CountryIdExclude.Value > 0 ? model.CountryIdExclude.Value : (int?)null;
+            model.PhoneTypeId = model.PhoneTypeId != null && model.PhoneTypeId.Value > 0 ? model.PhoneTypeId.Value : (int?)null;
+            model.TypePhoneNumberId = model.TypePhoneNumberId != null && model.TypePhoneNumberId.Value > 0 ? model.TypePhoneNumberId.Value : (int?)null;
+            model.IsSubmitted = model.IsSubmitted != null ? model.IsSubmitted.Value : (bool?)null;
         }
     }
 }
