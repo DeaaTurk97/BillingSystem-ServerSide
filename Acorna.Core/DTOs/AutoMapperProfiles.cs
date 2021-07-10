@@ -11,6 +11,7 @@ using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.DTOs.Security;
 using AutoMapper;
+using System.Globalization;
 
 namespace Acorna.DTOs
 {
@@ -34,6 +35,16 @@ namespace Acorna.DTOs
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
             CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
+            CreateMap<Bill, BillsSummaryDTO>().ForMember(dest => dest.BillMonth, s => s.MapFrom(x => CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month)))
+                                              .ForMember(dest => dest.BillYear, s => s.MapFrom(x => x.BillDate.Year))
+                                              .ForMember(dest => dest.IsPaid, s => s.MapFrom(x => x.IsPaid))
+                                              .ForMember(dest => dest.BillNote, s => s.MapFrom(x => x.Note))
+                                              .ForMember(dest => dest.BillStatus, s => s.MapFrom(x => (x.SubmittedByUser == true && x.SubmittedByAdmin == false) ? "Submitted"
+                                              : x.SubmittedByUser == false  || x.SubmittedByUser == null ? "Not Submitted"
+                                              : (x.SubmittedByUser == true && x.SubmittedByAdmin == true) ? "Approved" : ""))
+                                              .ReverseMap();
+
+            CreateMap<TypePhoneNumber, TypePhoneNumberModel>().ReverseMap();
 
             //DTOs
             CreateMap<ChatMessageModel, ChatMessageDTO>().ReverseMap();
@@ -43,6 +54,7 @@ namespace Acorna.DTOs
 
             CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
             CreateMap<PhoneBookModel, PhoneBookDTO>().ReverseMap();
+            CreateMap<BillsSummaryModel, BillsSummaryDTO>().ReverseMap();
 
 
 

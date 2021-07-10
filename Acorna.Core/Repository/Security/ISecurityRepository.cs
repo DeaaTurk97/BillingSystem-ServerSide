@@ -15,7 +15,7 @@ public interface ISecurityRepository
     Task<List<UserModel>> GetUsersByGrpupIdAsync(int groupId);
     Task<List<UserModel>> GetAllUsersByTypeAsync(string userType);
     int GetUsersCountRecord();
-    void Delete(int id);
+    Task<bool> Delete(int id);
     Task<bool> UpdateUserLanguage(int userId, int languageId);
     Task<LanguageModel> GetLanguageInformations(int userId);
     Task<List<Role>> GetAllRoles();
