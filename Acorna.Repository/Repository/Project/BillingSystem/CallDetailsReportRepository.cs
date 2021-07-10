@@ -21,7 +21,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
-using System.Text;
+
 using System.Threading.Tasks;
 
 internal class CallDetailsViewRepository : ICallDetailsReportRepository
@@ -44,15 +44,15 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 						},
 						new SqlParameter() {
 							ParameterName = "@FromDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.FromDate.HasValue ?  filter.FromDate.Value : System.Data.SqlTypes.SqlDateTime.MinValue.Value
+							Value = !String.IsNullOrEmpty(filter.FromDate) ? filter.ToDate : System.Data.SqlTypes.SqlString.Null
 						},
 						new SqlParameter() {
 							ParameterName = "@ToDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.ToDate.HasValue ?  filter.ToDate.Value :  System.Data.SqlTypes.SqlDateTime.MaxValue.Value
+							Value = !String.IsNullOrEmpty(filter.ToDate) ? filter.ToDate : System.Data.SqlTypes.SqlString.Null
 						},
 						new SqlParameter() {
 							ParameterName = "@UserId",
@@ -110,7 +110,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 						}};
 
 		var list = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @PhoneTypeId, @TypePhoneNumberId, @PageIndex, @PageSize", param).ToList();
-		countRecord = Convert.ToInt32(param[0].Value);
+		countRecord = param[0].Value != null ?  Convert.ToInt32(param[0].Value): 0;
 		return list;
 	}
 
@@ -123,18 +123,33 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							SqlDbType =  System.Data.SqlDbType.BigInt,
 							Direction = System.Data.ParameterDirection.Output,
 						},
+
 						new SqlParameter() {
-							ParameterName = "@FromDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							ParameterName = "@FromCallDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.FromDate.HasValue ?  filter.FromDate.Value : System.Data.SqlTypes.SqlDateTime.MinValue.Value
+							Value = !string.IsNullOrEmpty(filter.FromDate) ? filter.FromDate : System.Data.SqlTypes.SqlString.Null
 						},
 						new SqlParameter() {
-							ParameterName = "@ToDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							ParameterName = "@ToCallDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.ToDate.HasValue ?  filter.ToDate.Value :  System.Data.SqlTypes.SqlDateTime.MaxValue.Value
+							Value = !string.IsNullOrEmpty(filter.ToDate) ? filter.ToDate : System.Data.SqlTypes.SqlString.Null
 						},
+
+						new SqlParameter() {
+							ParameterName = "@FromBillDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
+							Direction = System.Data.ParameterDirection.Input,
+							Value = System.Data.SqlTypes.SqlString.Null
+						},
+						new SqlParameter() {
+							ParameterName = "@ToBillDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
+							Direction = System.Data.ParameterDirection.Input,
+							Value = System.Data.SqlTypes.SqlString.Null
+						},
+
 						new SqlParameter() {
 							ParameterName = "@GroupId",
 							SqlDbType =  System.Data.SqlDbType.Int,
@@ -160,8 +175,8 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.PageSize.HasValue? filter.PageSize.Value : 10
 						}};
 
-		var list = _dbFactory.DataContext.CallSummary.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromDate, @ToDate, @GroupId, @IsSubmitted, @PageIndex, @PageSize", param).ToList();
-		countRecord = Convert.ToInt32(param[0].Value);
+		var list = _dbFactory.DataContext.CallSummary.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromCallDate, @ToCallDate, @FromBillDate, @ToBillDate, @GroupId, @IsSubmitted, @PageIndex, @PageSize", param).ToList();
+		countRecord = param[0].Value != null ? Convert.ToInt32(param[0].Value) : 0;
 		return list;
 	}
 
@@ -173,23 +188,44 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							SqlDbType =  System.Data.SqlDbType.BigInt,
 							Direction = System.Data.ParameterDirection.Output,
 						},
+
 						new SqlParameter() {
-							ParameterName = "@FromDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							ParameterName = "@FromCallDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.FromDate.HasValue ?  filter.FromDate.Value : System.Data.SqlTypes.SqlDateTime.MinValue.Value
+							Value = System.Data.SqlTypes.SqlString.Null
 						},
 						new SqlParameter() {
-							ParameterName = "@ToDate",
-							SqlDbType =  System.Data.SqlDbType.DateTime,
+							ParameterName = "@ToCallDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
 							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.ToDate.HasValue ?  filter.ToDate.Value :  System.Data.SqlTypes.SqlDateTime.MaxValue.Value
+							Value = System.Data.SqlTypes.SqlString.Null
 						},
+
+						new SqlParameter() {
+							ParameterName = "@FromBillDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
+							Direction = System.Data.ParameterDirection.Input,
+							Value = !String.IsNullOrEmpty(filter.FromDate) ? filter.FromDate : System.Data.SqlTypes.SqlString.Null
+						},
+						new SqlParameter() {
+							ParameterName = "@ToBillDate",
+							SqlDbType =  System.Data.SqlDbType.NVarChar,
+							Direction = System.Data.ParameterDirection.Input,
+							Value = !String.IsNullOrEmpty(filter.ToDate) ? filter.ToDate : System.Data.SqlTypes.SqlString.Null
+						},
+
 						new SqlParameter() {
 							ParameterName = "@GroupId",
 							SqlDbType =  System.Data.SqlDbType.Int,
 							Direction = System.Data.ParameterDirection.Input,
 							Value = filter.GroupId.HasValue? filter.GroupId.Value : System.Data.SqlTypes.SqlInt32.Null
+						},
+						new SqlParameter() {
+							ParameterName = "@IsSubmitted",
+							SqlDbType =  System.Data.SqlDbType.Int,
+							Direction = System.Data.ParameterDirection.Input,
+							Value =  System.Data.SqlTypes.SqlBoolean.Null
 						},
 						new SqlParameter() {
 							ParameterName = "@PageIndex",
@@ -204,8 +240,8 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.PageSize.HasValue? filter.PageSize.Value : 10
 						}};
 
-		var list = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromDate, @ToDate, @GroupId, @PageIndex, @PageSize", param).ToList();
-		countRecord = Convert.ToInt32(param[0].Value);
+		var list = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromCallDate, @ToCallDate, @FromBillDate, @ToBillDate, @GroupId, @IsSubmitted, @PageIndex, @PageSize", param).ToList();
+		countRecord = param[0].Value != null ? Convert.ToInt32(param[0].Value) : 0;
 		return list;
 	}
 }
