@@ -12,7 +12,7 @@ public interface ISecurityRepository
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
     Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10);
-    Task<List<UserModel>> GetUsersByGrpupIdAsync(int groupId);
+    Task<List<UserModel>> GetUsersByGroupIdAsync(int groupId);
     Task<List<UserModel>> GetAllUsersByTypeAsync(string userType);
     int GetUsersCountRecord();
     Task<bool> Delete(int id);

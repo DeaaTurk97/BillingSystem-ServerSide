@@ -46,9 +46,16 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public Task<User> GetUserById(int id)
+    public async Task<User> GetUserById(int id)
     {
-        return _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+        try
+        {
+            return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task<List<UserModel>> GetUsersListAsync()
@@ -94,7 +101,7 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public Task<List<UserModel>> GetUsersByGrpupIdAsync(int groupId)
+    public Task<List<UserModel>> GetUsersByGroupIdAsync(int groupId)
     {
         try
         {

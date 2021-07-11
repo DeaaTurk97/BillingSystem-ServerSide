@@ -2,7 +2,6 @@ using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
-using Acorna.Core.Services;
 using Acorna.DTOs.Security;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -114,7 +113,7 @@ internal class SecurityService : ISecurityService
     {
         try
         {
-           return await _unitOfWork.SecurityRepository.Delete(id);
+            return await _unitOfWork.SecurityRepository.Delete(id);
         }
         catch (Exception ex)
         {
@@ -225,7 +224,7 @@ internal class SecurityService : ISecurityService
     {
         try
         {
-            var users = await _unitOfWork.SecurityRepository.GetUsersByGrpupIdAsync(groupId);
+            List<UserModel> users = await _unitOfWork.SecurityRepository.GetUsersByGroupIdAsync(groupId);
             return users;
         }
         catch (Exception)
@@ -239,15 +238,16 @@ internal class SecurityService : ISecurityService
         try
         {
             RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
-            var list = new List<UserModel>();
+            List<UserModel> list = new List<UserModel>();
+
             if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
             {
                 list = await GetAllUsersAsync();
             }
             else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
             {
-                var user = _unitOfWork.SecurityRepository.GetUserById(currentUserId);
-                list = GetUsersByGroupId(user.Result.GroupId).Result;
+                User user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                list = GetUsersByGroupId(user.GroupId).Result;
             }
 
             return list;

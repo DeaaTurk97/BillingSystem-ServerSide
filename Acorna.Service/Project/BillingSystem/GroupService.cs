@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
@@ -70,13 +71,13 @@ namespace Acorna.Service.Project.BillingSystem
 		{
 			try
 			{
-                var currentUser = _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                User currentUser = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
                 if (currentUser == null)
                     return null;
-                var group = currentUser.Result.Group;
+                Group group = currentUser.Group;
                 if(group == null)
 				{
-                    group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.Result.GroupId);
+                    group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.GroupId);
                 }
                 return _mapper.Map<GroupModel>(group);
 			}

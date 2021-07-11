@@ -1,12 +1,9 @@
 ﻿using Acorna.Controllers.Base;
-using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Services;
-using Acorna.Core.Sheard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
 
 namespace billingSystem.Controllers.Project.BillingSystem
 {
