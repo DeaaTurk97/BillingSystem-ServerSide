@@ -13,7 +13,6 @@ namespace Acorna.Core.Models.Project.BillingSystem.Report
         public int? ServiceTypeId { get; set; }
         public int? CountryId { get; set; }
         public int? CountryIdExclude { get; set; }
-        public int? PhoneTypeId { get; set; }
         public int? TypePhoneNumberId { get; set; }
         public bool? IsSubmitted { get; set; }
         public int? PageIndex { get; set; } = 0;

@@ -69,12 +69,6 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.CountryIdExclude.HasValue? filter.CountryIdExclude.Value : System.Data.SqlTypes.SqlInt32.Null
 						},
 						new SqlParameter() {
-							ParameterName = "@PhoneTypeId",
-							SqlDbType =  System.Data.SqlDbType.Int,
-							Direction = System.Data.ParameterDirection.Input,
-							Value = filter.PhoneTypeId.HasValue? filter.PhoneTypeId.Value : System.Data.SqlTypes.SqlInt32.Null
-						},
-						new SqlParameter() {
 							ParameterName = "@TypePhoneNumberId",
 							SqlDbType =  System.Data.SqlDbType.Int,
 							Direction = System.Data.ParameterDirection.Input,
@@ -93,7 +87,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 							Value = filter.PageSize.HasValue? filter.PageSize.Value : 10
 						}};
 
-		var list = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @PhoneTypeId, @TypePhoneNumberId, @PageIndex, @PageSize", param).ToList();
+		var list = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @TypePhoneNumberId, @PageIndex, @PageSize", param).ToList();
 		countRecord = param[0].Value != null ?  Convert.ToInt32(param[0].Value): 0;
 		return list;
 	}
