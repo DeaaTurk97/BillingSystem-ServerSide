@@ -36,8 +36,8 @@ migrations/
 TeamWork/appsettings.json
 TeamWork/appsettings.development.json
 .env
-launchSettings.json
-web.config
+TeamWork/Properties/launchSettings.json
+TeamWork/web.config
 
 # settings folders
 uploaded-files/
