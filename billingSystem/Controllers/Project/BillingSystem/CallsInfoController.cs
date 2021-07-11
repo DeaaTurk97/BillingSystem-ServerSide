@@ -36,7 +36,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
-
+         
         [HttpPost]
         [Route("GetCallSummary")]
         public IActionResult GetCallSummary(CallsInfoFilterModel model)
