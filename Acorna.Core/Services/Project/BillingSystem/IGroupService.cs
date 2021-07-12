@@ -13,5 +13,8 @@ namespace Acorna.Core.Services.Project.BillingSystem
         int AddGroup(GroupModel groupModel);
         bool UpdateGroup(GroupModel groupModel);
         bool DeleteGroup(int id);
+
+        Task<List<GroupModel>> GetGroupsByUserRole(int currentUserId, string currentUserRole);
+        Task<GroupModel> GetGroupByUserId(int currentUserId);
     }
 }

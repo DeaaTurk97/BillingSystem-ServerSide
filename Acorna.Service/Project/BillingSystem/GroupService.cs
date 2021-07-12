@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
@@ -7,10 +8,11 @@ using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-    internal class GroupService : IGroupService
+	internal class GroupService : IGroupService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -65,7 +67,53 @@ namespace Acorna.Service.Project.BillingSystem
             }
         }
 
-        public int GetCountRecord()
+		public async Task<GroupModel> GetGroupByUserId(int currentUserId)
+		{
+			try
+			{
+                User currentUser = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                if (currentUser == null)
+                    return null;
+                Group group = currentUser.Group;
+                if(group == null)
+				{
+                    group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.GroupId);
+                }
+                return _mapper.Map<GroupModel>(group);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+
+        public async Task<List<GroupModel>> GetGroupsByUserRole(int currentUserId, string currentUserRole)
+		{
+			try
+			{
+				RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+				var groups = new List<GroupModel>();
+				if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+				{
+					groups = await GetAllGroups();
+				}
+				else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
+				{
+                    var group = await GetGroupByUserId(currentUserId);
+                    if (group != null)
+                        groups.Add(group);
+                }
+
+				return groups;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
+
+
+		public int GetCountRecord()
         {
             try
             {

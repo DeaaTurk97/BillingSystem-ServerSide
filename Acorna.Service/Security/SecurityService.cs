@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 internal class SecurityService : ISecurityService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _imapper;
-
     internal SecurityService(IUnitOfWork unitOfWork, IMapper imapper)
     {
         try
@@ -27,6 +27,17 @@ internal class SecurityService : ISecurityService
         }
     }
 
+    public Task<User> GetUserById(int id)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.GetUserById(id);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
     public async Task<List<UserModel>> GetUsersListAsync()
     {
         return await _unitOfWork.SecurityRepository.GetUsersListAsync();
@@ -102,7 +113,7 @@ internal class SecurityService : ISecurityService
     {
         try
         {
-           return await _unitOfWork.SecurityRepository.Delete(id);
+            return await _unitOfWork.SecurityRepository.Delete(id);
         }
         catch (Exception ex)
         {
@@ -207,5 +218,43 @@ internal class SecurityService : ISecurityService
     public Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister)
     {
         return _unitOfWork.SecurityRepository.GenerateEmailConfirmationTokenAsync(userRegister);
+    }
+
+    public async Task<List<UserModel>> GetUsersByGroupId(int groupId)
+    {
+        try
+        {
+            List<UserModel> users = await _unitOfWork.SecurityRepository.GetUsersByGroupIdAsync(groupId);
+            return users;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+
+    public async Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole)
+    {
+        try
+        {
+            RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+            List<UserModel> list = new List<UserModel>();
+
+            if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+            {
+                list = await GetAllUsersAsync();
+            }
+            else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
+            {
+                User user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                list = GetUsersByGroupId(user.GroupId).Result;
+            }
+
+            return list;
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 }

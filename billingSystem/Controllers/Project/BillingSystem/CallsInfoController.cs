@@ -1,12 +1,9 @@
 ﻿using Acorna.Controllers.Base;
-using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Services;
-using Acorna.Core.Sheard;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Threading.Tasks;
 
 namespace billingSystem.Controllers.Project.BillingSystem
 {
@@ -28,6 +25,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallDetails(model);
                 return Ok(list);
             }
@@ -43,6 +42,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
                 return Ok(list);
             }
@@ -58,6 +59,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
+                this.PrepareCallsInfoFilterModel(model);
+
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallFinance(model);
                 return Ok(list);
             }
@@ -65,6 +68,17 @@ namespace billingSystem.Controllers.Project.BillingSystem
             {
                 return BadRequest(ex);
             }
+        }
+
+        private void PrepareCallsInfoFilterModel(CallsInfoFilterModel model)
+		{
+            model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;
+            model.UserId = model.UserId != null && model.UserId.Value > 0 ? model.UserId.Value : (int?)null;
+            model.ServiceTypeId = model.ServiceTypeId != null && model.ServiceTypeId.Value > 0 ? model.ServiceTypeId.Value : (int?)null;
+            model.CountryId = model.CountryId != null && model.CountryId.Value > 0 ? model.CountryId.Value : (int?)null;
+            model.CountryIdExclude = model.CountryIdExclude != null && model.CountryIdExclude.Value > 0 ? model.CountryIdExclude.Value : (int?)null;
+            model.TypePhoneNumberId = model.TypePhoneNumberId != null && model.TypePhoneNumberId.Value > 0 ? model.TypePhoneNumberId.Value : (int?)null;
+            model.IsSubmitted = model.IsSubmitted != null && model.IsSubmitted.Value != false ? model.IsSubmitted.Value : (bool?)null;
         }
     }
 }

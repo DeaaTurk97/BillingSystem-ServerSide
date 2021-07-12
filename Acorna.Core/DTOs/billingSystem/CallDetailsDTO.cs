@@ -1,14 +1,12 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acorna.Core.Entity.Project.BillingSystem
 {
     public class CallDetailsDTO
     {
-		public int Id { get; set; }
-		public int UserId { get; set; }
-		public string UserName { get; set; }
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
         public string PhoneNumber { get; set; }
         public int GroupId { get; set; }
         public string GroupNameEn { get; set; }
@@ -20,10 +18,10 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public decimal CallDiscountPrice { get; set; }
         public int TypePhoneNumberId { get; set; }
         public int ServiceTypeId { get; set; }
-        public string ServiceNameAr { get; set; }
-        public string ServiceNameEn { get; set; }
-		public int BillId { get; set; }
-		public int BillYear { get; set; }
+        public string ServiceTypeNameAr { get; set; }
+        public string ServiceTypeNameEn { get; set; }
+        public int BillId { get; set; }
+        public int BillYear { get; set; }
         public int BillMonth { get; set; }
     }
 }
