@@ -11,7 +11,8 @@
         public int? CountryIdExclude { get; set; }
         public int? TypePhoneNumberId { get; set; }
         public bool? IsSubmitted { get; set; }
-        public int? PageIndex { get; set; } = 0;
+		public string ReportType { get; set; }
+		public int? PageIndex { get; set; } = 0;
         public int? PageSize { get; set; } = 10;
     }
 }

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="ReportsDataSet" targetNamespace="http://tempuri.org/ReportsDataSet.xsd" xmlns:mstns="http://tempuri.org/ReportsDataSet.xsd" xmlns="http://tempuri.org/ReportsDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ReportsDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="ReportsDataSet" msprop:Generator_UserDSName="ReportsDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CallSummaryDataTable" msprop:Generator_TableClassName="CallSummaryDataTableDataTable" msprop:Generator_TableVarName="tableCallSummaryDataTable" msprop:Generator_TablePropName="CallSummaryDataTable" msprop:Generator_RowDeletingName="CallSummaryDataTableRowDeleting" msprop:Generator_RowChangingName="CallSummaryDataTableRowChanging" msprop:Generator_RowEvHandlerName="CallSummaryDataTableRowChangeEventHandler" msprop:Generator_RowDeletedName="CallSummaryDataTableRowDeleted" msprop:Generator_UserTableName="CallSummaryDataTable" msprop:Generator_RowChangedName="CallSummaryDataTableRowChanged" msprop:Generator_RowEvArgName="CallSummaryDataTableRowChangeEvent" msprop:Generator_RowClassName="CallSummaryDataTableRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Id" msprop:Generator_ColumnVarNameInTable="columnId" msprop:Generator_ColumnPropNameInRow="Id" msprop:Generator_ColumnPropNameInTable="IdColumn" msprop:Generator_UserColumnName="Id" type="xs:string" minOccurs="0" />
+              <xs:element name="PhoneNumber" msprop:Generator_ColumnVarNameInTable="columnPhoneNumber" msprop:Generator_ColumnPropNameInRow="PhoneNumber" msprop:Generator_ColumnPropNameInTable="PhoneNumberColumn" msprop:Generator_UserColumnName="PhoneNumber" type="xs:string" minOccurs="0" />
+              <xs:element name="UserName" msprop:Generator_ColumnVarNameInTable="columnUserName" msprop:Generator_ColumnPropNameInRow="UserName" msprop:Generator_ColumnPropNameInTable="UserNameColumn" msprop:Generator_UserColumnName="UserName" type="xs:string" minOccurs="0" />
+              <xs:element name="UserEmail" msprop:Generator_ColumnVarNameInTable="columnUserEmail" msprop:Generator_ColumnPropNameInRow="UserEmail" msprop:Generator_ColumnPropNameInTable="UserEmailColumn" msprop:Generator_UserColumnName="UserEmail" type="xs:string" minOccurs="0" />
+              <xs:element name="GroupNameAr" msprop:Generator_ColumnVarNameInTable="columnGroupNameAr" msprop:Generator_ColumnPropNameInRow="GroupNameAr" msprop:Generator_ColumnPropNameInTable="GroupNameArColumn" msprop:Generator_UserColumnName="GroupNameAr" type="xs:string" minOccurs="0" />
+              <xs:element name="GroupNameEn" msprop:Generator_ColumnVarNameInTable="columnGroupNameEn" msprop:Generator_ColumnPropNameInRow="GroupNameEn" msprop:Generator_ColumnPropNameInTable="GroupNameEnColumn" msprop:Generator_UserColumnName="GroupNameEn" type="xs:string" minOccurs="0" />
+              <xs:element name="FreeSum" msprop:Generator_ColumnVarNameInTable="columnFreeSum" msprop:Generator_ColumnPropNameInRow="FreeSum" msprop:Generator_ColumnPropNameInTable="FreeSumColumn" msprop:Generator_UserColumnName="FreeSum" type="xs:string" minOccurs="0" />
+              <xs:element name="OfficialSum" msprop:Generator_ColumnVarNameInTable="columnOfficialSum" msprop:Generator_ColumnPropNameInRow="OfficialSum" msprop:Generator_ColumnPropNameInTable="OfficialSumColumn" msprop:Generator_UserColumnName="OfficialSum" type="xs:string" minOccurs="0" />
+              <xs:element name="PersonalSum" msprop:Generator_ColumnVarNameInTable="columnPersonalSum" msprop:Generator_ColumnPropNameInRow="PersonalSum" msprop:Generator_ColumnPropNameInTable="PersonalSumColumn" msprop:Generator_UserColumnName="PersonalSum" type="xs:string" minOccurs="0" />
+              <xs:element name="UnknownSum" msprop:Generator_ColumnVarNameInTable="columnUnknownSum" msprop:Generator_ColumnPropNameInRow="UnknownSum" msprop:Generator_ColumnPropNameInTable="UnknownSumColumn" msprop:Generator_UserColumnName="UnknownSum" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

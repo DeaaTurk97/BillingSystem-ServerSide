@@ -70,6 +70,8 @@ namespace billingSystem.Controllers.Project.BillingSystem
             }
         }
 
+        
+
         private void PrepareCallsInfoFilterModel(CallsInfoFilterModel model)
 		{
             model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;

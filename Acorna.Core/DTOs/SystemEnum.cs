@@ -32,5 +32,12 @@
             Employee = 4,
             Guest = 5,
         }
+
+        public enum ReportNames
+        {
+            CallSummary,
+            CallFinance,
+            CallDetails
+        }
     }
 }
