@@ -35,7 +35,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
-         
+
         [HttpPost]
         [Route("GetCallSummary")]
         public IActionResult GetCallSummary(CallsInfoFilterModel model)
@@ -73,7 +73,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         
 
         private void PrepareCallsInfoFilterModel(CallsInfoFilterModel model)
-		{
+        {
             model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;
             model.UserId = model.UserId != null && model.UserId.Value > 0 ? model.UserId.Value : (int?)null;
             model.ServiceTypeId = model.ServiceTypeId != null && model.ServiceTypeId.Value > 0 ? model.ServiceTypeId.Value : (int?)null;

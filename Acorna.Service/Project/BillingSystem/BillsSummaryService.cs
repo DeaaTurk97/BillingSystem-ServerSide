@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
+using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
@@ -34,6 +35,28 @@ namespace Acorna.Service.Project.BillingSystem
                     CountRecord = billsSummaryDTO.Count()
                 };
                 return paginationRecord;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool UpdatePayBill(int billId, bool isPaid)
+        {
+            try
+            {
+                Bill bill = _unitOfWork.GetRepository<Bill>().GetSingle(billId);
+
+                if (bill != null)
+                {
+                    bill.IsPaid = isPaid;
+
+                    _unitOfWork.GetRepository<Bill>().Update(bill);
+                    _unitOfWork.SaveChanges();
+                }
+
+                return true;
             }
             catch (Exception ex)
             {

@@ -7,5 +7,6 @@
         public bool IsPaid { get; set; }
         public string? BillNote { get; set; }
         public string? BillStatus { get; set; }
+        public int UserId { get; set; }
     }
 }

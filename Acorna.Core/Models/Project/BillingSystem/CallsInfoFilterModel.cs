@@ -1,7 +1,10 @@
 ﻿namespace Acorna.Core.Models.Project.BillingSystem.Report
 {
-    public class CallsInfoFilterModel : BaseModel
+    public class CallsInfoFilterModel
     {
+        public int? BillId { get; set; }
+        public int? BillMonth { get; set; }
+        public int? BillYear { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
         public int? UserId { get; set; }
