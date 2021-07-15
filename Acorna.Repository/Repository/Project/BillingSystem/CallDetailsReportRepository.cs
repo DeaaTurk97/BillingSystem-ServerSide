@@ -27,6 +27,24 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
                             Direction = System.Data.ParameterDirection.Output,
                         },
                         new SqlParameter() {
+                            ParameterName = "@BillId",
+                            SqlDbType =  System.Data.SqlDbType.BigInt,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = filter.BillId.HasValue ? filter.BillId.Value : System.Data.SqlTypes.SqlInt64.Null
+                        },
+                         new SqlParameter() {
+                            ParameterName = "@BillMonth",
+                            SqlDbType =  System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = filter.BillMonth.HasValue? filter.BillMonth.Value : System.Data.SqlTypes.SqlInt32.Null
+                        },
+                          new SqlParameter() {
+                            ParameterName = "@BillYear",
+                            SqlDbType =  System.Data.SqlDbType.Int,
+                            Direction = System.Data.ParameterDirection.Input,
+                            Value = filter.BillYear.HasValue? filter.BillYear.Value : System.Data.SqlTypes.SqlInt32.Null
+                        },
+                        new SqlParameter() {
                             ParameterName = "@FromDate",
                             SqlDbType =  System.Data.SqlDbType.NVarChar,
                             Direction = System.Data.ParameterDirection.Input,
@@ -89,7 +107,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 
         try
         {
-            List<CallDetailsDTO> callDetailsDTOs = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @TypePhoneNumberId, @PageIndex, @PageSize", param).ToList();
+            List<CallDetailsDTO> callDetailsDTOs = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @BillId, @BillMonth, @BillYear, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @TypePhoneNumberId, @PageIndex, @PageSize", param).ToList();
             countRecord = param[0].Value != null ? Convert.ToInt32(param[0].Value) : 0;
             return callDetailsDTOs;
         }
@@ -98,7 +116,6 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
             throw ex;
         }
     }
-
 
     public List<CallSummaryDTO> GetCallSummary(CallsInfoFilterModel filter, out int countRecord)
     {

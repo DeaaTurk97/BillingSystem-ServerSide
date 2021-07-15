@@ -7,5 +7,6 @@ namespace Acorna.Core.Services.Project.BillingSystem
     public interface IBillsSummaryService
     {
         Task<PaginationRecord<BillsSummaryModel>> GetBillsSummary(int pageIndex, int pageSize, int currentUserId);
+        bool UpdatePayBill(int billId, bool isPaid);
     }
 }

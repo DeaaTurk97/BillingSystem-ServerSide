@@ -112,7 +112,7 @@ internal class SecurityRepository : ISecurityRepository
                     {
                         UserId = user.Id,
                         UserName = user.UserName,
-					}).ToListAsync();
+                    }).ToListAsync();
         }
         catch (Exception)
         {
@@ -559,7 +559,7 @@ internal class SecurityRepository : ISecurityRepository
                 Email = string.Format(phoneNumber + "{0}", "@un.com"),
                 EmailConfirmed = true,
                 PhoneNumber = phoneNumber,
-                PasswordHash = (isDefaultPassword) ? defaultPassword : Utilites.GetRandomPassword(9), 
+                PasswordHash = (isDefaultPassword) ? defaultPassword : Utilites.GetRandomPassword(9),
                 SecurityStamp = Guid.NewGuid().ToString(),
                 IsActive = true,
                 LanguageId = 1,

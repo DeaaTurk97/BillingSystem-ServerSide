@@ -32,5 +32,19 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
+
+        [HttpPut]
+        [Route("UpdatePayBill")]
+        public IActionResult UpdatePayBill(string billId, string isPaid)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillsSummaryService.UpdatePayBill(Convert.ToInt32(billId), Convert.ToBoolean(isPaid)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
