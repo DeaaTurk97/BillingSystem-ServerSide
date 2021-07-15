@@ -17,6 +17,8 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public decimal CallRetailPrice { get; set; }
         public decimal CallDiscountPrice { get; set; }
         public int TypePhoneNumberId { get; set; }
+        public string TypePhoneNumberAr { get; set; }
+        public string TypePhoneNumberEn { get; set; }
         public int ServiceTypeId { get; set; }
         public string ServiceTypeNameAr { get; set; }
         public string ServiceTypeNameEn { get; set; }
