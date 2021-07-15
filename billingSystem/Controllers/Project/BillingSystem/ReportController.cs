@@ -20,14 +20,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
     public class ReportController : TeamControllerBase
     {
         private readonly IUnitOfWorkService _unitOfWorkService;
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IWebHostEnvironment _webHostEnvironment;
         public ReportController(IUnitOfWorkService unitOfWorkService,
-            IHostingEnvironment hostingEnvironment,
             IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWorkService = unitOfWorkService;
-            _hostingEnvironment = hostingEnvironment;
             _webHostEnvironment = webHostEnvironment;
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
         }
@@ -49,7 +46,6 @@ namespace billingSystem.Controllers.Project.BillingSystem
             var report = getLocalReport(reportName);
 
             var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
-            //report.AddDataSource("ReportDataSet", list);
             report.AddDataSource("ReportDataSet", list.DataRecord);
 
             Dictionary<string, string> parameters = new Dictionary<string, string>();
@@ -59,10 +55,6 @@ namespace billingSystem.Controllers.Project.BillingSystem
 
         private LocalReport getLocalReport(string reportName)
 		{
-            string fileDirPath = Assembly.GetExecutingAssembly().Location.Replace("billingSystem.dll", string.Empty);
-            //string rdlcFilePath = string.Format("{0}ReportFiles\\{1}.rdlc", fileDirPath, reportName);
-            //Server.MapPath("~/Report1a.rdlc");
-            string contentRootPath = _hostingEnvironment.ContentRootPath;
             string webRootPath = _webHostEnvironment.ContentRootPath;
             string rdlcFilePath = string.Format("{0}\\ReportFiles\\{1}.rdlc", webRootPath, reportName);
 
