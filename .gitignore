@@ -44,3 +44,7 @@ uploaded-files/
 TeamWork/appsettings.Development.json
 TeamWork/appsettings.release.json
 database-backups/
+
+billingSystem/TempFiles/
+
+
