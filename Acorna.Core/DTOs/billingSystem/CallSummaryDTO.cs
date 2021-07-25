@@ -8,6 +8,7 @@
         public string UserEmail { get; set; }
         public string GroupNameAr { get; set; }
         public string GroupNameEn { get; set; }
+        public string GroupName { get; set; }
         public decimal FreeSum { get; set; }
         public decimal OfficialSum { get; set; }
         public decimal PersonalSum { get; set; }

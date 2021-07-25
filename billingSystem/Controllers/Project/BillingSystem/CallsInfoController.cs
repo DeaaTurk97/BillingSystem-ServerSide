@@ -45,6 +45,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 this.PrepareCallsInfoFilterModel(model);
 
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
+
                 return Ok(list);
             }
             catch (Exception ex)
@@ -74,6 +75,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
 
         private void PrepareCallsInfoFilterModel(CallsInfoFilterModel model)
         {
+            model.CurrentUserId = CurrentUserId;
             model.GroupId = model.GroupId != null && model.GroupId.Value > 0 ? model.GroupId.Value : (int?)null;
             model.UserId = model.UserId != null && model.UserId.Value > 0 ? model.UserId.Value : (int?)null;
             model.ServiceTypeId = model.ServiceTypeId != null && model.ServiceTypeId.Value > 0 ? model.ServiceTypeId.Value : (int?)null;

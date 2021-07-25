@@ -2,6 +2,7 @@
 using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Repository;
+using Acorna.Core.Services;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
 using AutoMapper;
@@ -31,6 +32,7 @@ namespace Acorna.Service.Project.BillingSystem
 		public PaginationRecord<CallDetailsDTO> GetCallDetails(CallsInfoFilterModel filter)
 		{
 			int countRecord = 0;
+			SetReportLanguage(filter);
 			var list = _unitOfWork.CallDetailsReportRepository.GetCallDetails(filter, out countRecord);
 			PaginationRecord<CallDetailsDTO> paginationRecord = new PaginationRecord<CallDetailsDTO>
 			{
@@ -43,6 +45,7 @@ namespace Acorna.Service.Project.BillingSystem
 		public PaginationRecord<CallSummaryDTO> GetCallSummary(CallsInfoFilterModel filter)
 		{
 			int countRecord = 0;
+			SetReportLanguage(filter);
 			var list = _unitOfWork.CallDetailsReportRepository.GetCallSummary(filter, out countRecord);
 			PaginationRecord<CallSummaryDTO> paginationRecord = new PaginationRecord<CallSummaryDTO>
 			{
@@ -55,6 +58,7 @@ namespace Acorna.Service.Project.BillingSystem
 		public PaginationRecord<CallFinanceDTO> GetCallFinance(CallsInfoFilterModel filter)
 		{
 			int countRecord = 0;
+			SetReportLanguage(filter);
 			var list = _unitOfWork.CallDetailsReportRepository.GetCallFinance(filter, out countRecord);
 			PaginationRecord<CallFinanceDTO> paginationRecord = new PaginationRecord<CallFinanceDTO>
 			{
@@ -62,6 +66,15 @@ namespace Acorna.Service.Project.BillingSystem
 				CountRecord = countRecord
 			};
 			return paginationRecord;
+		}
+
+		private void SetReportLanguage(CallsInfoFilterModel filter)
+		{
+			if (String.IsNullOrEmpty(filter.Lang))
+			{
+				var languageModel = _unitOfWork.SecurityRepository.GetLanguageInformations(filter.CurrentUserId);
+				filter.Lang = languageModel.Result.LanguageCode.ToLower();
+			}
 		}
 
 	}

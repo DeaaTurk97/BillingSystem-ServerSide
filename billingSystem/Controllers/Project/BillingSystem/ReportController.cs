@@ -5,12 +5,15 @@ using AspNetCore.Reporting;
 using billingSystem.ReportFiles.Dataset;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using static Acorna.Core.DTOs.SystemEnum;
+
+
 
 namespace billingSystem.Controllers.Project.BillingSystem
 {
@@ -20,77 +23,92 @@ namespace billingSystem.Controllers.Project.BillingSystem
     public class ReportController : TeamControllerBase
     {
         private readonly IUnitOfWorkService _unitOfWorkService;
-        private readonly IHostingEnvironment _hostingEnvironment;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _context;
+
         public ReportController(IUnitOfWorkService unitOfWorkService,
-            IHostingEnvironment hostingEnvironment,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IHttpContextAccessor context)
         {
             _unitOfWorkService = unitOfWorkService;
-            _hostingEnvironment = hostingEnvironment;
             _webHostEnvironment = webHostEnvironment;
-            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+            _context = context;
         }
 
-		[HttpPost]
+        [HttpPost]
         [Route("CallSummaryReport")]
-        public ActionResult GetCallSummaryReportFile(CallsInfoFilterModel model)
-		{
-            var reportName = ReportNames.CallSummary.ToString();
+        public ActionResult GetCallSummaryReport(CallsInfoFilterModel model)
+        {
+            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+            model.Lang = languageModel.Result.LanguageCode.ToLower();
+
+            var baseReportName = ReportNames.CallSummary.ToString();
+            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
+
+            //var reportName =  ReportNames.CallSummary.ToString();
+            var rootPath = _webHostEnvironment.ContentRootPath;
             model.PageIndex = 1;
             model.PageSize = 100000;
-            var returnString = GenerateCallDetailsReport(model, reportName);
-			return File(returnString, System.Net.Mime.MediaTypeNames.Application.Octet, reportName + DateTime.Now.ToString("ddMMyyyyHHmmss") + "." + model.ReportType);
-		}
+            var reportByte = _unitOfWorkService.ReportService.GenerateCallSummaryReport(model, rootPath, reportName);
 
+            var request = _context.HttpContext.Request;
+            var scheme = request.Scheme;
+            var host = request.Host.ToString();
 
-        public byte[] GenerateCallDetailsReport(CallsInfoFilterModel model, string reportName)
-        {
-            var report = getLocalReport(reportName);
+            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
 
-            var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
-            //report.AddDataSource("ReportDataSet", list);
-            report.AddDataSource("ReportDataSet", list.DataRecord);
-
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            var result = report.Execute(GetRenderType(model.ReportType), 1, parameters);
-            return result.MainStream;
+            return Ok(new { urlPath });
         }
 
-        private LocalReport getLocalReport(string reportName)
-		{
-            string fileDirPath = Assembly.GetExecutingAssembly().Location.Replace("billingSystem.dll", string.Empty);
-            //string rdlcFilePath = string.Format("{0}ReportFiles\\{1}.rdlc", fileDirPath, reportName);
-            //Server.MapPath("~/Report1a.rdlc");
-            string contentRootPath = _hostingEnvironment.ContentRootPath;
-            string webRootPath = _webHostEnvironment.ContentRootPath;
-            string rdlcFilePath = string.Format("{0}\\ReportFiles\\{1}.rdlc", webRootPath, reportName);
+        [HttpPost]
+        [Route("CallDetailsReport")]
+        public ActionResult GetCallDetailsReport(CallsInfoFilterModel model)
+        {
+            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+            model.Lang = languageModel.Result.LanguageCode.ToLower();
 
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Encoding.GetEncoding("windows-1252");
-            LocalReport report = new LocalReport(rdlcFilePath);
+            var baseReportName = ReportNames.CallDetails.ToString();
+            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
 
-            return report;
+            //var reportName =  ReportNames.CallSummary.ToString();
+            var rootPath = _webHostEnvironment.ContentRootPath;
+            model.PageIndex = 1;
+            model.PageSize = 100000;
+            var reportByte = _unitOfWorkService.ReportService.GenerateCallDetailsReport(model, rootPath, reportName);
+
+            var request = _context.HttpContext.Request;
+            var scheme = request.Scheme;
+            var host = request.Host.ToString();
+
+            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
+
+            return Ok(new { urlPath });
         }
 
-        private RenderType GetRenderType(string reportType)
+        [HttpPost]
+        [Route("CallFinanceReport")]
+        public ActionResult GetCallFinanceReport(CallsInfoFilterModel model)
         {
-            var renderType = RenderType.Pdf;
-            switch (reportType.ToLower())
-            {
-                default:
-                case "pdf":
-                    renderType = RenderType.Pdf;
-                    break;
-                case "docx":
-                    renderType = RenderType.Word;
-                    break;
-                case "xlsx":
-                    renderType = RenderType.Excel;
-                    break;
-            }
+            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+            model.Lang = languageModel.Result.LanguageCode.ToLower();
 
-            return renderType;
+            var baseReportName = ReportNames.CallFinance.ToString();
+            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
+
+            //var reportName =  ReportNames.CallSummary.ToString();
+            var rootPath = _webHostEnvironment.ContentRootPath;
+            model.PageIndex = 1;
+            model.PageSize = 100000;
+            var reportByte = _unitOfWorkService.ReportService.GenerateCallFinanceReport(model, rootPath, reportName);
+
+            var request = _context.HttpContext.Request;
+            var scheme = request.Scheme;
+            var host = request.Host.ToString();
+
+            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
+
+            return Ok(new { urlPath });
         }
     }
+
 }

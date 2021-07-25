@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="uploaded-files\**" />
+    <Content Remove="uploaded-files\**" />
+    <EmbeddedResource Remove="uploaded-files\**" />
+    <None Remove="uploaded-files\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
@@ -43,7 +50,7 @@
 
   <ItemGroup>
     <Folder Include="ReportFiles\Dataset\" />
-    <Folder Include="uploaded-files\" />
+    <Folder Include="TempFiles\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,7 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="ReportFiles\CallSummary.rdlc">
+    <None Update="ReportFiles\CallSummaryEn.rdlc">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ReportFiles\Dataset\ReportsDataSet.xsd">

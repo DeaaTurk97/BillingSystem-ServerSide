@@ -28,5 +28,6 @@ namespace Acorna.Core.Services
         public IBillsSummaryService BillsSummaryService { get; }
         public ITypePhoneNumberService TypePhoneNumberService { get; }
         public IBillsDetailsService BillsDetailsService { get; }
+        public IReportService ReportService { get; }
     }
 }
