@@ -15,6 +15,8 @@
         public int? TypePhoneNumberId { get; set; }
         public bool? IsSubmitted { get; set; }
 		public string ReportType { get; set; }
+        public string Lang { get; set; }
+		public int CurrentUserId { get; set; }
 		public int? PageIndex { get; set; } = 0;
         public int? PageSize { get; set; } = 10;
     }

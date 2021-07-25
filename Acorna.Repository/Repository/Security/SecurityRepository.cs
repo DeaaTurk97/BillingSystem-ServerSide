@@ -287,7 +287,7 @@ internal class SecurityRepository : ISecurityRepository
                                        {
                                            Id = lang.Id,
                                            LanguageDirection = lang.LanguageDirection,
-
+                                           LanguageCode = lang.LanguageCode
                                        }).SingleOrDefaultAsync();
 
             LanguageModel languageModel = _mapper.Map<LanguageModel>(language);
