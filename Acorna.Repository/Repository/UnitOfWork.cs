@@ -41,13 +41,14 @@ namespace Acorna.Repository.Repository
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
         Lazy<IBillsSummaryRepository> LazyBillsSummaryRepository => new Lazy<IBillsSummaryRepository>(() => new BillsSummaryRepository(_dbFactory, _mapper));
         Lazy<ICallDetailsReportRepository> LazyCallDetailsReportRepository => new Lazy<ICallDetailsReportRepository>(() => new CallDetailsViewRepository(_dbFactory));
+        Lazy<IBillsDetailsRepository> LazyBillsDetailsRepository => new Lazy<IBillsDetailsRepository>(() => new BillsDetailsRepository(_dbFactory, _mapper));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
         public IIncomingNumbersRepository IncomingNumbersRepository => LazyIncomingNumbersRepository.Value;
         public IBillsSummaryRepository BillsSummaryRepository => LazyBillsSummaryRepository.Value;
-
         public ICallDetailsReportRepository CallDetailsReportRepository => LazyCallDetailsReportRepository.Value;
+        public IBillsDetailsRepository BillsDetailsRepository => LazyBillsDetailsRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));
