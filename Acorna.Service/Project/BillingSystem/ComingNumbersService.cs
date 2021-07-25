@@ -42,7 +42,7 @@ namespace Acorna.Service.Project.BillingSystem
                 PaginationRecord<PhoneBookModel> paginationRecordModel = new PaginationRecord<PhoneBookModel>
                 {
                     DataRecord = _mapper.Map<List<PhoneBookModel>>(PhoneBookDTO),
-                    CountRecord = GetCountRecord(),
+                    CountRecord = PhoneBookDTO.Count,
                 };
 
 

@@ -27,5 +27,6 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public int OperatorId { get; set; }
         [Required, Column(TypeName = "nvarchar(50)")]
         public string DataUsage { get; set; }
+        public int BillId { get; set; }
     }
 }

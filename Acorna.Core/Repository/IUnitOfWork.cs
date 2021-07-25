@@ -12,12 +12,12 @@ namespace Acorna.Core.Repository
         IChatRepository ChatRepository { get; }
         ISecurityRepository SecurityRepository { get; }
         INotificationRepository NotificationRepository { get; }
-
         IGovernorateRepository GovernorateRepository { get; }
         IPhoneBookRepository PhoneBookRepository { get; }
         IIncomingNumbersRepository IncomingNumbersRepository { get; }
         IBillsSummaryRepository BillsSummaryRepository { get; }
         ICallDetailsReportRepository CallDetailsReportRepository { get; }
+        IBillsDetailsRepository BillsDetailsRepository { get; }
 
         bool SaveChanges();
     }
