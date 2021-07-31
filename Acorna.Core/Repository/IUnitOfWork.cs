@@ -18,6 +18,7 @@ namespace Acorna.Core.Repository
         IBillsSummaryRepository BillsSummaryRepository { get; }
         ICallDetailsReportRepository CallDetailsReportRepository { get; }
         IBillsDetailsRepository BillsDetailsRepository { get; }
+        IGeneralSettingsRepository GeneralSettingsRepository { get; }
 
         bool SaveChanges();
     }

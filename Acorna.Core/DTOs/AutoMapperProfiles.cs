@@ -12,6 +12,7 @@ using Acorna.Core.Models.SystemDefinition;
 using Acorna.DTOs.Security;
 using AutoMapper;
 using System.Globalization;
+using System.Linq;
 
 namespace Acorna.DTOs
 {
@@ -25,6 +26,7 @@ namespace Acorna.DTOs
 
             //just for test
             CreateMap<Job, JobModel>().ReverseMap();
+
             CreateMap<GeneralSetting, GeneralSettingModel>().ReverseMap();
             CreateMap<Chat, ChatMessageModel>().ReverseMap();
             CreateMap<Language, LanguageModel>().ReverseMap();
@@ -33,7 +35,6 @@ namespace Acorna.DTOs
             CreateMap<Country, CountryModel>().ReverseMap();
             CreateMap<PhoneBook, PhoneBookModel>().ReverseMap();
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
-            CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
             CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
             CreateMap<Bill, BillsSummaryDTO>().ForMember(dest => dest.BillMonth, s => s.MapFrom(x => CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month)))
                                               .ForMember(dest => dest.BillYear, s => s.MapFrom(x => x.BillDate.Year))
@@ -55,6 +56,16 @@ namespace Acorna.DTOs
             CreateMap<GovernorateModel, GovernorateDTO>().ReverseMap();
             CreateMap<PhoneBookModel, PhoneBookDTO>().ReverseMap();
             CreateMap<BillsSummaryModel, BillsSummaryDTO>().ReverseMap();
+
+            //Notification
+            CreateMap<Notifications, NotificationItemModel>()
+                .ForMember(vm => vm.MessageText, m => m.MapFrom(u => u.NotificationsDetails.FirstOrDefault().MessageText))
+                .ReverseMap();
+
+            CreateMap<NotificationType, NotificationTypeModel>().ReverseMap();
+
+            //DTOs
+            CreateMap<ChatMessageModel, ChatMessageDTO>().ReverseMap();
 
 
 

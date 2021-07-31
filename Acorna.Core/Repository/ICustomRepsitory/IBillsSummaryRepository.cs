@@ -8,5 +8,6 @@ namespace Acorna.Core.Repository.ICustomRepsitory
     public interface IBillsSummaryRepository : IRepository<Bill>
     {
         Task<IEnumerable<BillsSummaryDTO>> GetBillsSummary(int pageIndex, int pageSize, int currentUserId);
+        Task<BillsSummaryDTO> GetBillSummaryById(int billId);
     }
 }

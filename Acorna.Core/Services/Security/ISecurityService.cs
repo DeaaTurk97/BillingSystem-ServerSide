@@ -32,5 +32,5 @@ public interface ISecurityService
     Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister);
     Task<List<UserModel>> GetUsersByGroupId(int groupId);
     Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole);
-
+    Task<bool> IsUserExistsByPhoneNumber(string userPhoneNumber);
 }

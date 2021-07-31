@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Acorna.Core.Entity;
+using Acorna.Core.Entity.Notification;
+using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Entity.Security;
+using Acorna.Core.Entity.SystemDefinition;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +14,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Acorna.Core.Entity;
-using Acorna.Core.Entity.Notification;
-using Acorna.Core.Entity.Security;
-using Acorna.Core.Entity.SystemDefinition;
-using Acorna.Core.Entity.Project.BillingSystem;
 
 namespace Acorna.Repository.DataContext
 {
@@ -126,8 +126,8 @@ namespace Acorna.Repository.DataContext
                 },
                 new Role {
                     Id = 4,
-                    Name = "Employees",
-                    NormalizedName = "EMPLOYEES",
+                    Name = "Employee",
+                    NormalizedName = "EMPLOYEE",
                     PowerLevel = 96
                 },
                 new Role {
@@ -145,9 +145,10 @@ namespace Acorna.Repository.DataContext
                 Id = 1, // primary key
                 UserName = "superAdmin",
                 NormalizedUserName = "SUPERADMIN",
+                PhoneNumber = "superAdmin",
                 Email = "SuperAdmin@a.com",
                 NormalizedEmail = "SUPERADMIN@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
+                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -158,9 +159,10 @@ namespace Acorna.Repository.DataContext
                 Id = 2, // primary key
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
+                PhoneNumber = "admin",
                 Email = "Admin@a.com",
                 NormalizedEmail = "Admin@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
+                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 2,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -171,9 +173,10 @@ namespace Acorna.Repository.DataContext
                 Id = 3, // primary key
                 UserName = "adminGroup",
                 NormalizedUserName = "ADMINGROUP",
+                PhoneNumber = "adminGroup",
                 Email = "AdminGroup@a.com",
                 NormalizedEmail = "ADMINGROUP@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
+                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -184,9 +187,10 @@ namespace Acorna.Repository.DataContext
                 Id = 4, // primary key
                 UserName = "employee",
                 NormalizedUserName = "EMPLOYEE",
+                PhoneNumber = "employee",
                 Email = "Employee@a.com",
                 NormalizedEmail = "EMPLOYEE@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
+                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -197,9 +201,10 @@ namespace Acorna.Repository.DataContext
                 Id = 5, // primary key
                 UserName = "guest",
                 NormalizedUserName = "GUEST",
+                PhoneNumber = "guest",
                 Email = "Guest@a.com",
                 NormalizedEmail = "GUEST@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Acorna@#123"),
+                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -264,15 +269,52 @@ namespace Acorna.Repository.DataContext
                 new NotificationType {
                     CreatedBy = 1,
                     Id = 10,
-                    Name = "Chatting",
+                    Name = "PhoneNumbersSubmitted",
                 },
-            });
-
-            builder.Entity<NotificationTemplate>().ToTable("NotificationTemplate").HasData(new List<NotificationTemplate>
-            {
-                new NotificationTemplate {
-                    Id = 1,
-                    NotificationTypeId = 10
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 20,
+                    Name = "PhoneNumbersApproved",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 30,
+                    Name = "PhoneNumbersIprogress",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 40,
+                    Name = "PhoneNumbersRejected",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 50,
+                    Name = "BillUploaded",
+                },
+                  new NotificationType {
+                    CreatedBy = 1,
+                    Id = 60,
+                    Name = "BillSubmitted",
+                },
+                   new NotificationType {
+                    CreatedBy = 1,
+                    Id = 70,
+                    Name = "BillApproved",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 80,
+                    Name = "BillInProgress",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 90,
+                    Name = "BillRejected",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 100,
+                    Name = "Chatting",
                 },
             });
 
@@ -352,14 +394,14 @@ namespace Acorna.Repository.DataContext
         public DbSet<Chat> Chat { get; set; }
         public DbSet<Language> Language { get; set; }
         public DbSet<NotificationType> NotificationType { get; set; }
-        public DbSet<NotificationTemplate> NotificationTemplate { get; set; }
-        public DbSet<NotificationTemplateTranslation> NotificationTemplateTranslation { get; set; }
+        public DbSet<Notifications> Notifications { get; set; }
+        public DbSet<NotificationsDetails> NotificationsDetails { get; set; }
         public DbSet<Bill> Bill { get; set; }
         public DbSet<BillDetails> BillDetails { get; set; }
         public DbSet<ServiceType> ServiceType { get; set; }
         public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }
 
-		public DbQuery<CallDetailsDTO> CallDetails { get; set; }
+        public DbQuery<CallDetailsDTO> CallDetails { get; set; }
         public DbQuery<CallSummaryDTO> CallSummary { get; set; }
         public DbQuery<CallFinanceDTO> CallFinance { get; set; }
 

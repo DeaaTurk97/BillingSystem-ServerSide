@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Acorna.Core.Models.Project.BillingSystem
 {
@@ -14,6 +12,7 @@ namespace Acorna.Core.Models.Project.BillingSystem
         public bool IsTerminal { get; set; }
         public int PaymentTypeId { get; set; }
         public DateTime SubmittedDate { get; set; }
+        public int StatusBillId { get; set; }
         public string? Note { get; set; }
     }
 }

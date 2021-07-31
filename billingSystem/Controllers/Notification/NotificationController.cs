@@ -3,6 +3,7 @@ using Acorna.Core.Models.Notification;
 using Acorna.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace Acorna.Controllers.Notification
 {
@@ -19,12 +20,12 @@ namespace Acorna.Controllers.Notification
         }
 
         [HttpGet]
-        [Route("GetAllUnreadNotification")]
-        public IActionResult GetAllUnreadNotification()
+        [Route("GetUnreadNotification")]
+        public IActionResult GetUnreadNotification()
         {
             try
             {
-                return Ok(_unitOfWorkService.NotificationService.GetAllUnreadNotificationItems(CurrentUserId));
+                return Ok(_unitOfWorkService.NotificationService.GetUnreadNotification(CurrentUserId));
             }
             catch (Exception ex)
             {
@@ -33,12 +34,40 @@ namespace Acorna.Controllers.Notification
         }
 
         [HttpPost]
-        [Route("UpdateAllReadNotifications")]
-        public IActionResult UpdateAllReadNotifications(NotificationItemModel notificationItemModel)
+        [Route("UpdateReadNewNotification")]
+        public IActionResult UpdateReadNewNotification(NotificationItemModel notificationItemModel)
         {
             try
             {
-                return Ok(_unitOfWorkService.NotificationService.UpdateReadNotificationsItems(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId));
+                return Ok(_unitOfWorkService.NotificationService.UpdateReadNewNotification(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpGet]
+        [Route("GetNewNumbersAndBills")]
+        public async Task<IActionResult> GetNewQuestionsAndFatwa()
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.NotificationService.GetNewNumbersAndBills(CurrentUserRole));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateReadNewNumbersAndBills")]
+        public IActionResult UpdateReadNewNumbersAndBills(NotificationItemModel notificationItemModel)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.NotificationService.UpdateReadNewNumbersAndBills(CurrentUserRole, notificationItemModel.NotificationTypeId));
             }
             catch (Exception ex)
             {

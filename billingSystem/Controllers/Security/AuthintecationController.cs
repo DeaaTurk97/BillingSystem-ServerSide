@@ -160,6 +160,21 @@ namespace Acorna.Controllers.Security
             }
         }
 
+        [HttpGet]
+        [Route("IsUserExistsByPhoneNumber")]
+        public async Task<IActionResult> IsUserExistsByPhoneNumber(string userPhoneNumber)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.SecurityService.IsUserExistsByPhoneNumber(userPhoneNumber));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
+            }
+        }
+
         [HttpPost]
         [Route("CompleteResetPassword")]
         [AllowAnonymous]

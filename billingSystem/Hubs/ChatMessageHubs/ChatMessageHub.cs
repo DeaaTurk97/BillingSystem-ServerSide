@@ -34,9 +34,14 @@ namespace Acorna.Hubs
             await Clients.User(recipientId.ToString()).SendAsync("UnreadchattingMessages");
         }
 
-        public async Task UnreadNotificationsRefresh()
+        public async Task ApprovalsCycleNumbersAndBills(List<string> usersId)
         {
-            await Clients.Groups("SuperAdmin").SendAsync("UnreadNotificationsRefresh");
+            await Clients.Users(usersId).SendAsync("ApprovalsCycleNumbersAndBills");
+        }
+
+        public async Task AddedNewNumbersAndBills()
+        {
+            await Clients.Groups("SuperAdmin").SendAsync("AddedNewNumbersAndBills");
         }
 
         public override Task OnConnectedAsync()
@@ -47,6 +52,16 @@ namespace Acorna.Hubs
                 HubConnections.ChatUsers[Context.User.Identity.Name].Add(Context.ConnectionId);
             else if (!string.IsNullOrEmpty(Context.User.Identity.Name))
                 HubConnections.ChatUsers.Add(Context.User.Identity.Name, new List<string> { Context.ConnectionId });
+
+            if (Context.User.IsInRole("SuperAdmin"))
+            {
+                Groups.AddToGroupAsync(Context.ConnectionId, "SuperAdmin");
+            }
+
+            if (Context.User.IsInRole("Admin"))
+            {
+                Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
+            }
 
             return base.OnConnectedAsync();
         }

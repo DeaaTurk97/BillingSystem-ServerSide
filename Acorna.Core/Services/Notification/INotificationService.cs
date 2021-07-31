@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using Acorna.Core.Models.Notification;
+﻿using Acorna.Core.Models.Notification;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Acorna.Core.IServices.Notification
 {
@@ -8,11 +9,13 @@ namespace Acorna.Core.IServices.Notification
         List<NotificationItemModel> GetAllNotificationItems();
         List<NotificationItemModel> GetAllNotificationItems(int userId);
         List<NotificationItemModel> GetAllUnreadNotificationItems();
-        IEnumerable<NotificationItemModel> GetAllUnreadNotificationItems(int userId);
+        IEnumerable<NotificationItemModel> GetUnreadNotification(int userId);
         NotificationItemModel GetNotificationItem(int id);
         int AddNotificationItem(NotificationItemModel model);
         bool ReadNotificationItem(int notificationId);
-        bool UpdateReadNotificationsItems(int receiverId, int senderId, int notificationTypeId);
+        bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId);
         bool DeleteNotificationItem(int id);
+        Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBills(string currentUserRole);
+        bool UpdateReadNewNumbersAndBills(string currentUserRole, int notificationTypeId);
     }
 }

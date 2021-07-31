@@ -8,8 +8,8 @@ namespace Acorna.Core.Services.Project.BillingSystem
     public interface IComingNumbersService
     {
         Task<PaginationRecord<PhoneBookModel>> GetComingNumbers(int pageIndex, int pageSize, int statusNumber, int currentUserId, string currentUserRole);
-        bool ApprovePhoneNumbers(List<int> phoneNumberId, int currentUserId);
-        bool InprogressPhoneNumbers(List<int> phoneNumberId, int currentUserId);
-        bool RejectPhoneNumbers(List<int> phoneNumberId, int currentUserId);
+        List<string> ApprovePhoneNumbers(List<int> phoneNumberId, int currentUserId);
+        List<string> InprogressPhoneNumbers(List<int> phoneNumberId, int currentUserId);
+        List<string> RejectPhoneNumbers(List<int> phoneNumberId, int currentUserId);
     }
 }

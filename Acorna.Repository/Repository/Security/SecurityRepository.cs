@@ -366,11 +366,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public Task<User> FindByEmailAsync(string email)
+    public Task<User> FindByUserNameAsync(string email)
     {
         try
         {
-            return _userManager.FindByEmailAsync(email);
+            return _userManager.FindByNameAsync(email);
         }
         catch (Exception ex)
         {
@@ -454,7 +454,7 @@ internal class SecurityRepository : ISecurityRepository
     {
         try
         {
-            var userManager = await FindByEmailAsync(userLogin.Email);
+            var userManager = await FindUserByPhoneNumber(userLogin.PhoneNumber);
 
             if (userManager == null)
             {
@@ -466,7 +466,7 @@ internal class SecurityRepository : ISecurityRepository
             {
                 return null;
             }
-            var appUser = _userManager.Users.FirstOrDefault(u => u.NormalizedEmail.ToUpper() == userLogin.Email.ToUpper());
+            var appUser = _userManager.Users.FirstOrDefault(u => u.PhoneNumber.ToUpper() == userLogin.PhoneNumber.ToUpper());
             var userToReturn = _mapper.Map<UserList>(appUser);
             return new
             {
@@ -556,14 +556,14 @@ internal class SecurityRepository : ISecurityRepository
             User user = new User
             {
                 UserName = phoneNumber,
-                Email = string.Format(phoneNumber + "{0}", "@un.com"),
+                Email = string.Format(phoneNumber + "{0}", "@unicef.com"),
                 EmailConfirmed = true,
                 PhoneNumber = phoneNumber,
                 PasswordHash = (isDefaultPassword) ? defaultPassword : Utilites.GetRandomPassword(9),
                 SecurityStamp = Guid.NewGuid().ToString(),
                 IsActive = true,
                 LanguageId = 1,
-                GroupId = 1,
+                GroupId = 2,
             };
 
             var resultCreateUser = await _userManager.CreateAsync(user, user.PasswordHash);
@@ -573,7 +573,7 @@ internal class SecurityRepository : ISecurityRepository
                 throw new Exception("Failed to create local user account.");
             }
 
-            var resultCreateRole = await _userManager.AddToRoleAsync(user, "Employees");
+            var resultCreateRole = await _userManager.AddToRoleAsync(user, "Employee");
 
             if (!resultCreateRole.Succeeded)
             {
@@ -594,6 +594,18 @@ internal class SecurityRepository : ISecurityRepository
         {
             IList<string> roles = await _userManager.GetRolesAsync(user);
             return roles;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<User> FindUserByPhoneNumber(string userPhoneNumber)
+    {
+        try
+        {
+            return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == userPhoneNumber);
         }
         catch (Exception ex)
         {
