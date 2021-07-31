@@ -21,7 +21,7 @@ public interface ISecurityRepository
     Task<List<Role>> GetAllRoles();
     Task<bool> UpdateUserRole(UserModel userModel);
     Task<IList<string>> EditRoles(string userName, RoleEdit roleEditDTO);
-    Task<User> FindByEmailAsync(string email);
+    Task<User> FindByUserNameAsync(string email);
     Task<string> GenerateJwtTokenAsync(User user);
     Task<string> GeneratePasswordResetTokenAsync(User user);
     Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
@@ -33,4 +33,5 @@ public interface ISecurityRepository
     Task<bool> IsUserExistsByPhoneNumber(string phoneNumber);
     Task<int> SearchByPhoneNumber(string phoneNumber);
     Task<int> CreateUserUsingPhoneNumber(string phoneNumber);
+    Task<User> FindUserByPhoneNumber(string phoneNumber);
 }

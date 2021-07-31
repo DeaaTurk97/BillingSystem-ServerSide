@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acorna.Core.Entity.Project.BillingSystem
@@ -11,12 +12,14 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         [Required, MaxLength(150)]
         public string PhoneName { get; set; }
         [Required, MaxLength(10)]
-        public int? PersonalUserId { get; set; }
+        public Nullable<int> PersonalUserId { get; set; }
         [Required, MaxLength(10)]
         public int TypePhoneNumberId { get; set; }
         [Required, MaxLength(10)]
         public int StatusNumberId { get; set; }
         [Required, MaxLength(10)]
         public int StatusAdminId { get; set; }
+        [Required, MaxLength(10)]
+        public int? ReferanceNotificationId { get; set; }
     }
 }

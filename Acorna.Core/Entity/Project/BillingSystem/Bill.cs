@@ -25,6 +25,8 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         [Required, Column(TypeName = "int")]
         public int PaymentTypeId { get; set; }
         public DateTime SubmittedDate { get; set; }
+        [Required, Column(TypeName = "int")]
+        public int StatusBillId { get; set; }
         [Column(TypeName = "nvarchar(max)")]
         public string Note { get; set; }
         public virtual ICollection<BillDetails> BillDetails { get; set; }

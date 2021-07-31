@@ -1,5 +1,6 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
 using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -33,6 +34,23 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
+
+                return billsSummary;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<BillsSummaryDTO> GetBillSummaryById(int billId)
+        {
+            try
+            {
+                BillsSummaryDTO billsSummary = await _dbFactory.DataContext.Bill
+                                                                     .Where(x => x.Id == billId)
+                                                                     .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
+                                                                     .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
 
                 return billsSummary;
             }

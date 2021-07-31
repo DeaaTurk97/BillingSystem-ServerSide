@@ -6,7 +6,7 @@ namespace Acorna.Core.Services.Project.BillingSystem
 {
     public interface IBillService
     {
-        bool UploadMTNBills(List<DocumentModel> filesUploaded, int currentUserId);
-        bool UploadSyriaTelBills(List<DocumentModel> filesUploaded, int currentUserId);
+        List<string> UploadMTNBills(List<DocumentModel> filesUploaded, int currentUserId);
+        List<string> UploadSyriaTelBills(List<DocumentModel> filesUploaded, int currentUserId);
     }
 }

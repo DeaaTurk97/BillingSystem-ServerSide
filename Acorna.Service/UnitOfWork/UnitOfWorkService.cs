@@ -34,7 +34,7 @@ namespace Acorna.Service.UnitOfWork
         Lazy<ICountryService> LazyCountryService => new Lazy<ICountryService>(() => new CountryService(_unitOfWork, _mapper));
         Lazy<IGovernorateService> LazyGovernorateService => new Lazy<IGovernorateService>(() => new GovernorateService(_unitOfWork, _mapper));
         Lazy<IGroupService> LazyGroupService => new Lazy<IGroupService>(() => new GroupService(_unitOfWork, _mapper));
-        Lazy<IComingNumbersService> LazyIncomingNumbersService => new Lazy<IComingNumbersService>(() => new ComingNumbersService(_unitOfWork, _mapper));
+        Lazy<IComingNumbersService> LazyIncomingNumbersService => new Lazy<IComingNumbersService>(() => new ComingNumbersService(_unitOfWork));
         Lazy<IOperatorService> LazyOperatorService => new Lazy<IOperatorService>(() => new OperatorService(_unitOfWork, _mapper));
         Lazy<IPhoneBookService> LazyPhoneBookService => new Lazy<IPhoneBookService>(() => new PhoneBookService(_unitOfWork, _mapper));
         Lazy<IEmailService> LazyEmailService => new Lazy<IEmailService>(() => new EmailService(_unitOfWork));
@@ -43,7 +43,7 @@ namespace Acorna.Service.UnitOfWork
         Lazy<IBillsSummaryService> LazyBillsSummaryService => new Lazy<IBillsSummaryService>(() => new BillsSummaryService(_unitOfWork, _mapper));
         Lazy<ITypePhoneNumberService> LazyTypePhoneNumberService => new Lazy<ITypePhoneNumberService>(() => new TypePhoneNumberService(_unitOfWork, _mapper));
         Lazy<ICallDetailsViewService> LazyCallDetailsReportService => new Lazy<ICallDetailsViewService>(() => new CallDetailsViewService(_unitOfWork, _mapper));
-        Lazy<IBillsDetailsService> LazyBillsDetailsService => new Lazy<IBillsDetailsService>(() => new BillsDetailsService(_unitOfWork, _mapper));
+        Lazy<IBillsDetailsService> LazyBillsDetailsService => new Lazy<IBillsDetailsService>(() => new BillsDetailsService(_unitOfWork));
 
         Lazy<IReportService> LazyReportService => new Lazy<IReportService>(() => new ReportService(_unitOfWork, _mapper));
 

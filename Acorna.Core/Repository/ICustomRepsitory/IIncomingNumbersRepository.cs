@@ -1,12 +1,12 @@
-﻿using Acorna.Core.DTOs.billingSystem;
-using System.Collections.Generic;
+﻿using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Sheard;
 using System.Threading.Tasks;
 
 namespace Acorna.Core.Repository.ICustomRepsitory
 {
     public interface IIncomingNumbersRepository
     {
-        Task<List<PhoneBookDTO>> GetAllIncomingNumbers(int pageIndex, int pageSize, int statusNumber);
-        Task<List<PhoneBookDTO>> GetIncomingNumbersByGroupId(int pageIndex, int pageSize, int statusNumber, int userId);
+        Task<PaginationRecord<PhoneBookModel>> GetAllIncomingNumbers(int pageIndex, int pageSize, int statusNumber);
+        Task<PaginationRecord<PhoneBookModel>> GetIncomingNumbersByGroupId(int pageIndex, int pageSize, int statusNumber, int userId);
     }
 }

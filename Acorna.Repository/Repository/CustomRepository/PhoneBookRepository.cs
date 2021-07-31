@@ -1,7 +1,9 @@
-﻿using Acorna.Core.DTOs.billingSystem;
-using Acorna.Core.Entity.Project.BillingSystem;
+﻿using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Entity.Security;
+using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
+using Acorna.Core.Sheard;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,40 +22,45 @@ namespace Acorna.Repository.Repository.CustomRepository
             _dbFactory = dbFactory;
         }
 
-        public async Task<List<PhoneBookDTO>> GetOfficialPhonesBook(int pageIndex, int pageSize)
+        public async Task<PaginationRecord<PhoneBookModel>> GetOfficialPhonesBook(int pageIndex, int pageSize)
         {
             try
             {
-                List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                          join usr in _dbFactory.DataContext.Users on phone.StatusAdminId equals usr.Id
-                                                          where (phone.PersonalUserId == null || phone.PersonalUserId == 0)
-                                                          select new PhoneBookDTO
-                                                          {
-                                                              Id = phone.Id,
-                                                              CreatedDate = phone.CreatedDate,
-                                                              PhoneNumber = phone.PhoneNumber,
-                                                              PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
-                                                              UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
+                List<PhoneBookModel> phoneBookModel = await (from phone in _dbFactory.DataContext.PhoneBook
+                                                             join usr in _dbFactory.DataContext.Users on phone.StatusAdminId equals usr.Id
+                                                             where (phone.PersonalUserId == null || phone.PersonalUserId == 0) && phone.StatusAdminId != 0
+                                                             select new PhoneBookModel
+                                                             {
+                                                                 Id = phone.Id,
+                                                                 CreatedDate = phone.CreatedDate,
+                                                                 PhoneNumber = phone.PhoneNumber,
+                                                                 PhoneName = phone.PhoneName,
+                                                                 TypePhoneNumberId = phone.TypePhoneNumberId,
+                                                                 UserName = usr.UserName,
+                                                                 StatusNumberId = phone.StatusNumberId
 
-                                                          }).OrderByDescending(s => s.Id)
+                                                             }).OrderByDescending(s => s.Id)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
 
 
-                if (phoneBookDTOs.Count > 0)
+                if (phoneBookModel.Count > 0)
                 {
-                    phoneBookDTOs.ForEach(x =>
+                    phoneBookModel.ForEach(x =>
                     {
                         x.TypePhoneNumberName = Enum.GetName(typeof(TypesPhoneNumber), Convert.ToInt32(x.TypePhoneNumberId));
                         x.StatusNumberName = Enum.GetName(typeof(StatusCycleBills), Convert.ToInt32(x.StatusNumberId));
                     });
                 }
 
+                PaginationRecord<PhoneBookModel> paginationRecordModel = new PaginationRecord<PhoneBookModel>
+                {
+                    DataRecord = phoneBookModel,
+                    CountRecord = _dbFactory.DataContext.PhoneBook.Where(x => x.PersonalUserId == null || x.PersonalUserId == 0 && x.StatusAdminId != 0).Count()
+                };
 
-                return phoneBookDTOs;
+                return paginationRecordModel;
             }
             catch (Exception ex)
             {
@@ -61,40 +68,51 @@ namespace Acorna.Repository.Repository.CustomRepository
             }
         }
 
-        public async Task<List<PhoneBookDTO>> GetPhonesBookByGroupId(int pageIndex, int pageSize, int userId)
+        public async Task<PaginationRecord<PhoneBookModel>> GetPhonesBookByGroupId(int pageIndex, int pageSize, int userId)
         {
             try
             {
                 User user = await _dbFactory.DataContext.Users.FindAsync(userId);
+                List<PhoneBookModel> phoneBookModels = new List<PhoneBookModel>();
+                int countRecord = 0;
 
-                List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                          join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
-                                                          where phone.PersonalUserId.ToString() != string.Empty && usr.GroupId == user.GroupId
-                                                          select new PhoneBookDTO
-                                                          {
-                                                              Id = phone.Id,
-                                                              CreatedDate = phone.CreatedDate,
-                                                              PhoneNumber = phone.PhoneNumber,
-                                                              PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
-                                                              UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
+                countRecord = await (from phone in _dbFactory.DataContext.PhoneBook
+                                     join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
+                                     where (phone.PersonalUserId.ToString() != string.Empty || phone.PersonalUserId != 0)
+                                     && usr.GroupId == user.GroupId
+                                     select new PhoneBookModel
+                                     {
+                                         Id = phone.Id,
+                                         CreatedDate = phone.CreatedDate,
+                                         PhoneNumber = phone.PhoneNumber,
+                                         PhoneName = phone.PhoneName,
+                                         TypePhoneNumberId = phone.TypePhoneNumberId,
+                                         UserName = usr.UserName,
+                                         StatusNumberId = phone.StatusNumberId
 
-                                                          }).OrderByDescending(s => s.Id)
+                                     }).CountAsync();
+
+                phoneBookModels = phoneBookModels.OrderByDescending(s => s.Id)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
-                                                                     .ToListAsync();
-                if (phoneBookDTOs.Count > 0)
+                                                                     .ToList();
+
+                if (phoneBookModels.Count > 0)
                 {
-                    phoneBookDTOs.ForEach(x =>
+                    phoneBookModels.ForEach(x =>
                     {
                         x.TypePhoneNumberName = Enum.GetName(typeof(TypesPhoneNumber), Convert.ToInt32(x.TypePhoneNumberId));
                         x.StatusNumberName = Enum.GetName(typeof(StatusCycleBills), Convert.ToInt32(x.StatusNumberName));
                     });
                 }
 
+                PaginationRecord<PhoneBookModel> paginationRecordModel = new PaginationRecord<PhoneBookModel>
+                {
+                    DataRecord = phoneBookModels,
+                    CountRecord = countRecord,
+                };
 
-                return phoneBookDTOs;
+                return paginationRecordModel;
             }
             catch (Exception)
             {
@@ -102,38 +120,44 @@ namespace Acorna.Repository.Repository.CustomRepository
             }
         }
 
-        public async Task<List<PhoneBookDTO>> GetPhonesBookByUserId(int pageIndex, int pageSize, int userId)
+        public async Task<PaginationRecord<PhoneBookModel>> GetPhonesBookByUserId(int pageIndex, int pageSize, int userId)
         {
             try
             {
-                List<PhoneBookDTO> phoneBookDTOs = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                          join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
-                                                          where phone.PersonalUserId == userId
-                                                          select new PhoneBookDTO
-                                                          {
-                                                              Id = phone.Id,
-                                                              CreatedDate = phone.CreatedDate,
-                                                              PhoneNumber = phone.PhoneNumber,
-                                                              PhoneName = phone.PhoneName,
-                                                              TypePhoneNumberId = phone.TypePhoneNumberId,
-                                                              UserName = usr.UserName,
-                                                              StatusNumberId = phone.StatusNumberId
+                List<PhoneBookModel> phoneBookModel = await (from phone in _dbFactory.DataContext.PhoneBook
+                                                             join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
+                                                             where phone.PersonalUserId == userId
+                                                             select new PhoneBookModel
+                                                             {
+                                                                 Id = phone.Id,
+                                                                 CreatedDate = phone.CreatedDate,
+                                                                 PhoneNumber = phone.PhoneNumber,
+                                                                 PhoneName = phone.PhoneName,
+                                                                 TypePhoneNumberId = phone.TypePhoneNumberId,
+                                                                 UserName = usr.UserName,
+                                                                 StatusNumberId = phone.StatusNumberId
 
-                                                          }).OrderByDescending(s => s.Id)
+                                                             }).OrderByDescending(s => s.Id)
                                                                      .Skip(pageSize * (pageIndex - 1))
                                                                      .Take(pageSize)
                                                                      .ToListAsync();
 
-                if (phoneBookDTOs.Count > 0)
+                if (phoneBookModel.Count > 0)
                 {
-                    phoneBookDTOs.ForEach(x =>
+                    phoneBookModel.ForEach(x =>
                     {
                         x.TypePhoneNumberName = Enum.GetName(typeof(TypesPhoneNumber), Convert.ToInt32(x.TypePhoneNumberId));
                         x.StatusNumberName = Enum.GetName(typeof(StatusCycleBills), Convert.ToInt32(x.StatusNumberName));
                     });
                 }
 
-                return phoneBookDTOs;
+                PaginationRecord<PhoneBookModel> paginationRecordModel = new PaginationRecord<PhoneBookModel>
+                {
+                    DataRecord = phoneBookModel,
+                    CountRecord = _dbFactory.DataContext.PhoneBook.Where(x => x.PersonalUserId == userId).Count(),
+                };
+
+                return paginationRecordModel;
             }
             catch (Exception)
             {

@@ -1,4 +1,6 @@
-﻿namespace Acorna.Core.Entity.Project.BillingSystem
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Acorna.Core.Entity.Project.BillingSystem
 {
     public class CallSummaryDTO
     {
@@ -9,9 +11,13 @@
         public string GroupNameAr { get; set; }
         public string GroupNameEn { get; set; }
         public string GroupName { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal FreeSum { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal OfficialSum { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal PersonalSum { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal UnknownSum { get; set; }
 
     }

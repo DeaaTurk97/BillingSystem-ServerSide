@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acorna.Core.Entity.Project.BillingSystem
 {
@@ -15,7 +16,9 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public string DialledNumber { get; set; }
         public DateTime CallDateTime { get; set; }
         public string CallDuration { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal CallRetailPrice { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
         public decimal CallDiscountPrice { get; set; }
         public int TypePhoneNumberId { get; set; }
         public string TypePhoneNumberAr { get; set; }

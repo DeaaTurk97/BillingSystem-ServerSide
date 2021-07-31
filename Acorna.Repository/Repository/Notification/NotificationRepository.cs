@@ -3,12 +3,15 @@ using Acorna.Core.Models.Notification;
 using Acorna.Core.Repository.Notification;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Repository.Repository.Notification
 {
-    internal class NotificationRepository : Repository<NotificationItem>, INotificationRepository
+    internal class NotificationRepository : Repository<Notifications>, INotificationRepository
     {
         private readonly IDbFactory _dbFactory;
         private readonly IMapper _mapper;
@@ -21,25 +24,53 @@ namespace Acorna.Repository.Repository.Notification
 
         public int AddNotificationItem(NotificationItemModel model)
         {
-            NotificationItem notificationItem = _mapper.Map<NotificationItem>(model);
-            List<NotificationTemplateTranslation> notificationTemplateTranslations = GetNotificationTemplateTranslation(model.NotificationTypeId);
-
-            notificationTemplateTranslations.ForEach((NotificationTemplateTranslation notificationTemplateTranslation) =>
+            try
             {
-                notificationItem.NotificationItemTranslations.Add(new NotificationItemTranslation
+                Notifications notificationItem = _mapper.Map<Notifications>(model);
+                notificationItem.NotificationsDetails = new List<NotificationsDetails>();
+
+                notificationItem.NotificationsDetails.Add(new NotificationsDetails
                 {
-                    LanguageCode = notificationTemplateTranslation.LanguageCode,
-                    LanguageId = notificationTemplateTranslation.LanguageId,
-                    MessageText = notificationTemplateTranslation.Name,
+                    MessageText = model.MessageText,
                 });
-            });
-            return Insert(notificationItem);
+
+                Insert(notificationItem);
+                _dbFactory.DataContext.SaveChanges();
+
+                return notificationItem.Id;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public List<NotificationTemplateTranslation> GetNotificationTemplateTranslation(int notificationTypeId)
+        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBills(string currentUserRole)
         {
-            return _dbFactory.DataContext.NotificationTemplateTranslation.
-                        AsNoTracking().Where(s => s.NotificationTypeId == notificationTypeId).ToList();
+            try
+            {
+                RolesType enumRoleName = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+
+                IEnumerable<NotificationItemModel> notifications = await (from n in _dbFactory.DataContext.Notifications
+                                                                          join nd in _dbFactory.DataContext.NotificationsDetails
+                                                                          on n.Id equals nd.NotificationsId
+                                                                          where n.IsRead == false && n.Deleted == false 
+                                                                          &&  n.RecipientRoleId == (int)enumRoleName
+                                                                          select new NotificationItemModel
+                                                                          {
+                                                                              Id = n.Id,
+                                                                              MessageText = nd.MessageText,
+                                                                              NotificationTypeId = n.NotificationTypeId,
+                                                                              ReferenceMassageId = n.ReferenceMassageId,
+                                                                          }).Distinct().ToListAsync();
+
+
+                return notifications;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

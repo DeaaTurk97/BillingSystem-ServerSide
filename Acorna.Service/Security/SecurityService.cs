@@ -177,7 +177,7 @@ internal class SecurityService : ISecurityService
 
     public Task<User> FindByEmailAsync(string email)
     {
-        return _unitOfWork.SecurityRepository.FindByEmailAsync(email);
+        return _unitOfWork.SecurityRepository.FindByUserNameAsync(email);
     }
 
     public Task<string> GenerateJwtTokenAsync(User user)
@@ -255,6 +255,30 @@ internal class SecurityService : ISecurityService
         catch (Exception)
         {
             throw;
+        }
+    }
+
+    public Task<User> FindUserByPhoneNumber(string userPhoneNumber)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.FindUserByPhoneNumber(userPhoneNumber);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<bool> IsUserExistsByPhoneNumber(string userPhoneNumber)
+    {
+        try
+        {
+            return await _unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
         }
     }
 }

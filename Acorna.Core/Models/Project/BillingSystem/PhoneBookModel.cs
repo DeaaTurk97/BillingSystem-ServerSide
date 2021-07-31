@@ -13,5 +13,6 @@
         public int StatusAdminId { get; set; }
         public string GroupNameAr { get; set; }
         public string GroupNameEn { get; set; }
+        public int? BillId { get; set; }
     }
 }

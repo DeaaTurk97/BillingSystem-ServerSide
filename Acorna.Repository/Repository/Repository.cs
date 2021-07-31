@@ -227,7 +227,7 @@ namespace Acorna.Repository.Repository
                 {
                     DbSet.AttachRange(entity);
                     DbSet.UpdateRange(entity);
-                 
+
                     return true;
                 }
                 else
@@ -248,7 +248,7 @@ namespace Acorna.Repository.Repository
                 if (entity != null)
                 {
                     DbSet.Remove(entity);
-                 
+
                 }
 
                 return true;

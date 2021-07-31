@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Notification
 {
@@ -25,7 +27,7 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                List<NotificationItem> notificationItems = _unitOfWork.NotificationRepository.GetAll();
+                List<Notifications> notificationItems = _unitOfWork.NotificationRepository.GetAll();
                 return _imapper.Map<List<NotificationItemModel>>(notificationItems);
             }
             catch (System.Exception)
@@ -38,7 +40,7 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                List<NotificationItem> notificationItems = _unitOfWork.NotificationRepository
+                List<Notifications> notificationItems = _unitOfWork.NotificationRepository
                     .GetWhere(s => s.RecipientId == userId).ToList();
 
                 return _imapper.Map<List<NotificationItemModel>>(notificationItems);
@@ -53,7 +55,7 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                List<NotificationItem> notificationItems = _unitOfWork.NotificationRepository
+                List<Notifications> notificationItems = _unitOfWork.NotificationRepository
                     .GetWhere(s => s.IsRead == false).ToList();
 
                 return _imapper.Map<List<NotificationItemModel>>(notificationItems);
@@ -64,14 +66,14 @@ namespace Acorna.Service.Notification
             }
         }
 
-        public IEnumerable<NotificationItemModel> GetAllUnreadNotificationItems(int userId)
+        public IEnumerable<NotificationItemModel> GetUnreadNotification(int userId)
         {
             try
             {
-                IEnumerable<NotificationItem> notificationItems = _unitOfWork.NotificationRepository
+                IEnumerable<Notifications> notificationItems = _unitOfWork.NotificationRepository
                     .GetAllIncludingWithPredicate(
-                    new Expression<Func<NotificationItem, object>>[] { x => x.NotificationItemTranslations }
-                    , new Expression<Func<NotificationItem, bool>>[] { s => s.IsRead == false & s.RecipientId == userId });
+                    new Expression<Func<Notifications, object>>[] { x => x.NotificationsDetails }
+                    , new Expression<Func<Notifications, bool>>[] { s => s.IsRead == false & s.RecipientId == userId });
 
                 return _imapper.Map<List<NotificationItemModel>>(notificationItems);
             }
@@ -85,7 +87,7 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                NotificationItem notificationItem = _unitOfWork.NotificationRepository.GetSingle(id);
+                Notifications notificationItem = _unitOfWork.NotificationRepository.GetSingle(id);
                 return _imapper.Map<NotificationItemModel>(notificationItem);
             }
             catch (System.Exception)
@@ -112,7 +114,7 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                NotificationItem notificationItem = _unitOfWork.NotificationRepository.GetSingle(notificationId);
+                Notifications notificationItem = _unitOfWork.NotificationRepository.GetSingle(notificationId);
                 notificationItem.IsRead = true;
                 return _unitOfWork.NotificationRepository.Update(notificationItem);
             }
@@ -122,11 +124,11 @@ namespace Acorna.Service.Notification
             }
         }
 
-        public bool UpdateReadNotificationsItems(int receiverId, int senderId, int notificationTypeId)
+        public bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId)
         {
             try
             {
-                List<NotificationItem> notificationItems = _unitOfWork.NotificationRepository
+                List<Notifications> notificationItems = _unitOfWork.NotificationRepository
                     .GetWhere(s => s.IsRead == false && s.CreatedBy == senderId &&
                                    (s.RecipientId == receiverId) && s.NotificationTypeId == notificationTypeId).ToList();
 
@@ -145,12 +147,45 @@ namespace Acorna.Service.Notification
         {
             try
             {
-                NotificationItem notificationItem = _unitOfWork.NotificationRepository.GetSingle(id);
+                Notifications notificationItem = _unitOfWork.NotificationRepository.GetSingle(id);
                 return _unitOfWork.NotificationRepository.Delete(notificationItem);
             }
             catch (System.Exception)
             {
                 throw;
+            }
+        }
+
+        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBills(string currentUserRole)
+        {
+            try
+            {
+                return await _unitOfWork.NotificationRepository.GetNewNumbersAndBills(currentUserRole);
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
+
+        public bool UpdateReadNewNumbersAndBills(string currentUserRole, int notificationTypeId)
+        {
+            try
+            {
+                RolesType enumRoleName = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+
+                List<Notifications> notifications = _unitOfWork.GetRepository<Notifications>()
+                    .GetWhere(s => s.IsRead == false &&
+                                   (s.RecipientRoleId == (int)enumRoleName) && s.NotificationTypeId == notificationTypeId).ToList();
+
+                notifications.ForEach(read => read.IsRead = true);
+
+                _unitOfWork.GetRepository<Notifications>().UpdateRange(notifications);
+                return _unitOfWork.SaveChanges();
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
             }
         }
     }

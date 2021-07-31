@@ -46,5 +46,19 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet]
+        [Route("GetBillSummaryById")]
+        public async Task<IActionResult> GetBillSummaryById(int billId)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.BillsSummaryService.GetBillSummaryById(billId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }

@@ -37,11 +37,25 @@ namespace billingSystem.Controllers.Project.BillingSystem
 
         [HttpPost]
         [Route("DefinitionNewNumbers")]
-        public IActionResult DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers)
+        public IActionResult DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers, string billId)
         {
             try
             {
-                return Ok(_unitOfWorkService.BillsDetailsService.DefinitionNewNumbers(phoneNumbers, CurrentUserId));
+                return Ok(_unitOfWorkService.BillsDetailsService.DefinitionNewNumbers(phoneNumbers, billId, CurrentUserId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPut]
+        [Route("UpdateSubmitBill")]
+        public IActionResult UpdateSubmitBill(string billId)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillsDetailsService.UpdateSubmitBill(Convert.ToInt32(billId)));
             }
             catch (Exception ex)
             {

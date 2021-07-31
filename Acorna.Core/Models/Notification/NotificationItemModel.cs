@@ -10,5 +10,6 @@
         public bool Deleted { get; set; }
         public int NotificationTypeId { get; set; }
         public int ReferenceMassageId { get; set; }
+        public int RecipientRoleId { get; set; }
     }
 }

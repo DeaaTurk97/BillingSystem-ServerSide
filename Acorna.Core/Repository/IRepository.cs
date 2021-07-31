@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Acorna.Core.Entity;
+using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Sheard;
 
 namespace Acorna.Core.Repository

@@ -40,31 +40,24 @@ namespace Acorna.Service.Project.BillingSystem
         public async Task<PaginationRecord<PhoneBookModel>> GetPhonesBook(int pageIndex, int pageSize, int currentUserId, string currentUserRole)
         {
             RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
-            List<PhoneBookDTO> PhoneBookDTO = new List<PhoneBookDTO>();
+            PaginationRecord<PhoneBookModel> PhoneBookModel = new PaginationRecord<PhoneBookModel>();
 
             try
             {
                 if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
                 {
-                    PhoneBookDTO = await _unitOfWork.PhoneBookRepository.GetOfficialPhonesBook(pageIndex, pageSize);
+                    PhoneBookModel = await _unitOfWork.PhoneBookRepository.GetOfficialPhonesBook(pageIndex, pageSize);
                 }
                 else if (rolesType == RolesType.AdminGroup)
                 {
-                    PhoneBookDTO = await _unitOfWork.PhoneBookRepository.GetPhonesBookByGroupId(pageIndex, pageSize, currentUserId);
+                    PhoneBookModel = await _unitOfWork.PhoneBookRepository.GetPhonesBookByGroupId(pageIndex, pageSize, currentUserId);
                 }
                 else if (rolesType == RolesType.Employee)
                 {
-                    PhoneBookDTO = await _unitOfWork.PhoneBookRepository.GetPhonesBookByUserId(pageIndex, pageSize, currentUserId);
+                    PhoneBookModel = await _unitOfWork.PhoneBookRepository.GetPhonesBookByUserId(pageIndex, pageSize, currentUserId);
                 }
 
-                PaginationRecord<PhoneBookModel> paginationRecordModel = new PaginationRecord<PhoneBookModel>
-                {
-                    DataRecord = _mapper.Map<List<PhoneBookModel>>(PhoneBookDTO),
-                    CountRecord = GetCountRecord(),
-                };
-
-
-                return paginationRecordModel;
+                return PhoneBookModel;
             }
             catch (Exception ex)
             {
@@ -152,14 +145,13 @@ namespace Acorna.Service.Project.BillingSystem
                 }
 
 
-                return  (phoneBook.Count > 0) ? true : false;
+                return (phoneBook.Count > 0) ? true : false;
             }
             catch (Exception)
             {
                 throw;
             }
         }
-
 
         public bool UpdatePhoneBook(PhoneBookModel phoneBookModel)
         {
