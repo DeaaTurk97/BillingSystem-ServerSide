@@ -140,6 +140,8 @@ namespace Acorna.Service.Project.BillingSystem
                 if (bill != null)
                 {
                     bill.SubmittedByUser = true;
+                    bill.StatusBillId = (int)SystemEnum.StatusCycleBills.Submit;
+                    bill.SubmittedDate = DateTime.Now;
 
                     _unitOfWork.GetRepository<Bill>().Update(bill);
                     _unitOfWork.SaveChanges();
