@@ -44,6 +44,7 @@ namespace Acorna.Service.UnitOfWork
         Lazy<ITypePhoneNumberService> LazyTypePhoneNumberService => new Lazy<ITypePhoneNumberService>(() => new TypePhoneNumberService(_unitOfWork, _mapper));
         Lazy<ICallDetailsViewService> LazyCallDetailsReportService => new Lazy<ICallDetailsViewService>(() => new CallDetailsViewService(_unitOfWork, _mapper));
         Lazy<IBillsDetailsService> LazyBillsDetailsService => new Lazy<IBillsDetailsService>(() => new BillsDetailsService(_unitOfWork));
+        Lazy<IComingBillsService> LazyComingBillsService => new Lazy<IComingBillsService>(() => new ComingBillsService(_unitOfWork));
 
         Lazy<IReportService> LazyReportService => new Lazy<IReportService>(() => new ReportService(_unitOfWork, _mapper));
 
@@ -69,6 +70,7 @@ namespace Acorna.Service.UnitOfWork
         public IBillsSummaryService BillsSummaryService => LazyBillsSummaryService.Value;
         public ITypePhoneNumberService TypePhoneNumberService => LazyTypePhoneNumberService.Value;
         public IBillsDetailsService BillsDetailsService => LazyBillsDetailsService.Value;
+        public IComingBillsService ComingBillsService => LazyComingBillsService.Value;
 
         public IReportService ReportService => LazyReportService.Value;
 

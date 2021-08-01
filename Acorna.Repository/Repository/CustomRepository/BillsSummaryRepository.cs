@@ -1,6 +1,5 @@
 ﻿using Acorna.Core.DTOs.billingSystem;
 using Acorna.Core.Entity.Project.BillingSystem;
-using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository.ICustomRepsitory;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
