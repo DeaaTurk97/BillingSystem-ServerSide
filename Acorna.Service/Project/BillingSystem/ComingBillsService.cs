@@ -228,5 +228,69 @@ namespace Acorna.Service.Project.BillingSystem
                 throw ex;
             }
         }
+
+        public List<string> PayBills(List<int> billsIds)
+        {
+            try
+            {
+                Bill bill = new Bill();
+                List<Bill> PayBills = new List<Bill>();
+                List<Bill> userNotifications = new List<Bill>();
+                List<string> usersIdToSendPaid = new List<string>();
+
+                billsIds.ForEach(id =>
+                {
+                    bill = _unitOfWork.GetRepository<Bill>().GetSingle(id);
+
+                    if (bill.SubmittedByAdmin && !bill.IsPaid)
+                    {
+                        bill.IsPaid = true;
+
+                        PayBills.Add(bill);
+
+                        if (!userNotifications.Exists(x => x.Id == bill.Id))
+                        {
+                            userNotifications.Add(bill);
+                        }
+
+                        if (!usersIdToSendPaid.Contains(Convert.ToString(bill.Id)))
+                        {
+                            usersIdToSendPaid.Add(Convert.ToString(bill.Id));
+                        }
+                    }
+                    
+                });
+
+
+                if (PayBills.Count > 0)
+                {
+                    _unitOfWork.GetRepository<Bill>().UpdateRange(PayBills);
+                    _unitOfWork.SaveChanges();
+
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+                    {
+                        userNotifications.ForEach(info =>
+                        {
+                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            {
+                                MessageText = "BillsSubmittedWasPaid",
+                                IsRead = false,
+                                Deleted = false,
+                                RecipientId = info.UserId,
+                                NotificationTypeId = (int)SystemEnum.NotificationType.BillPaid,
+                                RecipientRoleId = 0,
+                                ReferenceMassageId = info.Id
+                            });
+                        });
+                    }
+                }
+
+                return usersIdToSendPaid;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -158,11 +158,11 @@ internal class SecurityService : ISecurityService
         }
     }
 
-    public Task<bool> UpdateUserRole(UserModel userModel)
+    public Task<bool> UpdateUserRole(UserRegister userRegister)
     {
         try
         {
-            return _unitOfWork.SecurityRepository.UpdateUserRole(userModel);
+            return _unitOfWork.SecurityRepository.UpdateUserRole(userRegister);
         }
         catch (Exception ex)
         {
@@ -177,7 +177,14 @@ internal class SecurityService : ISecurityService
 
     public Task<User> FindByEmailAsync(string email)
     {
-        return _unitOfWork.SecurityRepository.FindByUserNameAsync(email);
+        try
+        {
+            return _unitOfWork.SecurityRepository.FindByEmailAsync(email);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task<string> GenerateJwtTokenAsync(User user)
@@ -202,12 +209,38 @@ internal class SecurityService : ISecurityService
 
     public Task<object> Login(UserLogin userLogin)
     {
-        return _unitOfWork.SecurityRepository.Login(userLogin);
+        try
+        {
+            return _unitOfWork.SecurityRepository.Login(userLogin);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
-    public Task<IdentityResult> CreateUserAsync(UserRegister userRegister)
+    public Task<IdentityResult> AddUserAsync(UserRegister userRegister)
     {
-        return _unitOfWork.SecurityRepository.CreateUserAsync(userRegister);
+        try
+        {
+            return _unitOfWork.SecurityRepository.AddUserAsync(userRegister);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public Task<IdentityResult> UpdateUserAsync(UserRegister userRegister)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.UpdateUserAsync(userRegister);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     public Task AddToRoleAsync(UserRegister userRegister, string roleName)

@@ -1,5 +1,4 @@
-﻿using Acorna.Core.Entity.Project.BillingSystem;
-using Acorna.Core.IServices.Chat;
+﻿using Acorna.Core.IServices.Chat;
 using Acorna.Core.IServices.Notification;
 using Acorna.Core.IServices.Project;
 using Acorna.Core.IServices.SystemDefinition;
@@ -79,6 +78,7 @@ namespace Acorna.Service.UnitOfWork
         public IChatService ChatService => LazyChatService.Value;
         public ILanguageService LanguageService => LazyLanguageService.Value;
         public INotificationService NotificationService => LazyNotificationService.Value;
+
 
     }
 }

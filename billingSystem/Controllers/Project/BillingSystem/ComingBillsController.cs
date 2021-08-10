@@ -78,5 +78,20 @@ namespace billingSystem.Controllers.Project.BillingSystem
             }
 
         }
+
+        [HttpPut]
+        [Route("PayBills")]
+        public IActionResult PayBills(List<int> phoneNumberId)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.ComingBillsService.PayBills(phoneNumberId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+
+        }
     }
 }

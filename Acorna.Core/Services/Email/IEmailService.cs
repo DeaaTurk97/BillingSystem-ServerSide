@@ -15,6 +15,7 @@ namespace Acorna.Core.Services.Email
         Task<bool> ReminderEndPeriodSubmittBillEmail(string ToEmail);
         Task<bool> ConfirmationEmail(string ToEmail, string confirmationLink);
         Task<bool> ResetPasswordEmail(string ToEmail, string confirmationLink);
+        Task<bool> SendEmailForgotPasswordAsync(string toEmails, string emailSubject, string emailBody);
 
         Task<bool> SendTestEmail();
     }

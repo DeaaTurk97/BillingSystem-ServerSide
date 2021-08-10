@@ -90,6 +90,10 @@ internal class SecurityRepository : ISecurityRepository
             {
                 UserId = x.Id,
                 UserName = x.UserName,
+                Email = x.Email,
+                PhoneNumber = x.PhoneNumber,
+                GroupId = x.GroupId,
+                LanguageId = x.LanguageId,
                 RoleId = x.UserRoles.Select(x => x.RoleId).FirstOrDefault(),
                 RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
 
@@ -313,11 +317,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<bool> UpdateUserRole(UserModel userModel)
+    public async Task<bool> UpdateUserRole(UserRegister userRegister)
     {
         try
         {
-            User user = await _dbFactory.DataContext.Users.FindAsync(userModel.UserId);
+            User user = await _dbFactory.DataContext.Users.FindAsync(userRegister.Id);
             IEnumerable<string> roles = await _userManager.GetRolesAsync(user);
 
             if (roles != null)
@@ -327,7 +331,7 @@ internal class SecurityRepository : ISecurityRepository
                 if (isDeleted.Succeeded)
                 {
                     List<Role> roleList = await GetAllRoles();
-                    string roleName = roleList.Find(x => x.Id == userModel.RoleId).Name;
+                    string roleName = roleList.Find(x => x.Id == userRegister.RoleId).Name;
                     await _userManager.AddToRoleAsync(user, roleName);
                 }
             }
@@ -366,11 +370,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public Task<User> FindByUserNameAsync(string email)
+    public async Task<User> FindByEmailAsync(string email)
     {
         try
         {
-            return _userManager.FindByNameAsync(email);
+            return await _userManager.FindByEmailAsync(email);
         }
         catch (Exception ex)
         {
@@ -480,12 +484,52 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public Task<IdentityResult> CreateUserAsync(UserRegister userRegister)
+    public async Task<IdentityResult> AddUserAsync(UserRegister userRegister)
     {
         try
         {
+            userRegister.IsActive = true;
+            userRegister.SecurityStamp = Guid.NewGuid().ToString();
+
+            Role roles = await _dbFactory.DataContext.Roles.FirstOrDefaultAsync(x => x.Id == userRegister.RoleId);
             User userToCreate = _mapper.Map<User>(userRegister);
-            return _userManager.CreateAsync(userToCreate, userRegister.PasswordHash);
+            IdentityResult result = _userManager.CreateAsync(userToCreate, userRegister.PasswordHash).Result;
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(userToCreate, roles.Name);
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<IdentityResult> UpdateUserAsync(UserRegister userRegister)
+    {
+        try
+        {
+            Role roles = await _dbFactory.DataContext.Roles.FirstOrDefaultAsync(x => x.Id == userRegister.RoleId);
+            User user =  _userManager.FindByIdAsync(Convert.ToString(userRegister.Id)).Result;
+
+            user.UserName = userRegister.UserName;
+            user.Email = userRegister.Email;
+            user.PhoneNumber = userRegister.PhoneNumber;
+            user.GroupId = userRegister.GroupId;
+            user.LanguageId = userRegister.LanguageId;
+            userRegister.SecurityStamp = user.SecurityStamp;
+
+            IdentityResult result = _userManager.UpdateAsync(user).Result;
+
+            if (result.Succeeded)
+            {
+                await UpdateUserRole(userRegister);
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
@@ -497,7 +541,7 @@ internal class SecurityRepository : ISecurityRepository
     {
         try
         {
-            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.UserName == phoneNumber);
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == phoneNumber);
             return (user != null) ? true : false;
         }
         catch (Exception ex)

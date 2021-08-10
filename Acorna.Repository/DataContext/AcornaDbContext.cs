@@ -314,6 +314,11 @@ namespace Acorna.Repository.DataContext
                  new NotificationType {
                     CreatedBy = 1,
                     Id = 100,
+                    Name = "BillPaid",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 110,
                     Name = "Chatting",
                 },
             });

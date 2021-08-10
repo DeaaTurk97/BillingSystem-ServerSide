@@ -337,5 +337,26 @@ namespace Acorna.Service.Email
                 throw ex;
             }
         }
+
+        public async Task<bool> SendEmailForgotPasswordAsync(string toEmails, string emailSubject, string emailBody)
+        {
+            try
+            {
+                List<GeneralSetting> generalSettingModels = await _unitOfWork.GetRepository<GeneralSetting>().GetAllAsync();
+
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = toEmails,
+                    Subject = emailSubject,
+                    Body = emailBody,
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

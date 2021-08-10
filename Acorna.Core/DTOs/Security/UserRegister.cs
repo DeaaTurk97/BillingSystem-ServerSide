@@ -27,6 +27,9 @@ namespace Acorna.DTOs.Security
         public string NormalizedUserName { get; set; }
         public bool LockoutEnabled { get; set; }
         public int AccessFailedCount { get; set; }
+        public int GroupId { get; set; }
         public int LanguageId { get; set; }
+        public int RoleId { get; set; }
+
     }
 }

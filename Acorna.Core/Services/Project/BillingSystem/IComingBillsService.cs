@@ -11,5 +11,6 @@ namespace Acorna.Core.Services.Project.BillingSystem
         List<string> ApproveBills(List<int> billId);
         List<string> InprogressBills(List<int> billId);
         List<string> RejectBills(List<int> billId);
+        List<string> PayBills(List<int> billId);
     }
 }

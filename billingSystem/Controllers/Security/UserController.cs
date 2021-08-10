@@ -9,6 +9,7 @@ using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Sheard;
 using Acorna.Core.Services;
+using Acorna.DTOs.Security;
 
 namespace Acorna.Controllers.Security
 {
@@ -70,8 +71,8 @@ namespace Acorna.Controllers.Security
         }
 
         [HttpGet]
-        [Route("Get")]
-        public async Task<IActionResult> Get(int pageIndex = 1, int pageSize = 10)
+        [Route("GetUsers")]
+        public async Task<IActionResult> GetUsers(int pageIndex = 1, int pageSize = 10)
         {
             try
             {
@@ -90,16 +91,31 @@ namespace Acorna.Controllers.Security
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody] UserModel userModel)
+        [Route("AddUser")]
+        public async Task<IActionResult> AddUser([FromBody] UserRegister userRegister)
         {
-
-            return Ok(userModel.UserId);
+            try
+            {
+                return Ok(await _unitOfWorkService.SecurityService.AddUserAsync(userRegister));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPut]
-        public IActionResult Put(int id, [FromBody] UserModel userModel)
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUser([FromBody] UserRegister userRegister)
         {
-            return Ok("true");
+            try
+            {
+              return Ok(await _unitOfWorkService.SecurityService.UpdateUserAsync(userRegister));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpDelete]
@@ -163,11 +179,11 @@ namespace Acorna.Controllers.Security
 
         [HttpPut]
         [Route("UpdateUserRole")]
-        public async Task<IActionResult> UpdateUserRole(UserModel userModel)
+        public async Task<IActionResult> UpdateUserRole(UserRegister userRegister)
         {
             try
             {
-                return Ok(await _unitOfWorkService.SecurityService.UpdateUserRole(userModel));
+                return Ok(await _unitOfWorkService.SecurityService.UpdateUserRole(userRegister));
             }
             catch (Exception ex)
             {
