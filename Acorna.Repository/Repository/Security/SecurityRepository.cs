@@ -46,11 +46,12 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<User> GetUserById(int id)
+    public async Task<UserModel> GetUserById(int id)
     {
         try
         {
-            return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+            User user =  await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+            return _mapper.Map<UserModel>(user);
         }
         catch (Exception ex)
         {
@@ -64,7 +65,7 @@ internal class SecurityRepository : ISecurityRepository
                 orderby user.Id
                 select new UserModel
                 {
-                    UserId = user.Id,
+                    Id = user.Id,
                     UserName = user.UserName,
                 }).ToListAsync();
     }
@@ -74,7 +75,7 @@ internal class SecurityRepository : ISecurityRepository
         return (from user in _dbFactory.DataContext.Users
                 select new UserModel
                 {
-                    UserId = user.Id,
+                    Id = user.Id,
                     UserName = user.UserName,
                 }).Where(x => x.UserName == searchUserName).ToListAsync();
     }
@@ -88,7 +89,7 @@ internal class SecurityRepository : ISecurityRepository
 
             return users.Select(x => new UserModel
             {
-                UserId = x.Id,
+                Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
@@ -114,7 +115,7 @@ internal class SecurityRepository : ISecurityRepository
                     orderby user.UserName
                     select new UserModel
                     {
-                        UserId = user.Id,
+                        Id = user.Id,
                         UserName = user.UserName,
                     }).ToListAsync();
         }
@@ -211,7 +212,7 @@ internal class SecurityRepository : ISecurityRepository
 
             return users.Select(x => new UserModel
             {
-                UserId = x.Id,
+                Id = x.Id,
                 UserName = x.UserName,
 
             }).ToList();

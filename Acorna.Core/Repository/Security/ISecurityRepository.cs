@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public interface ISecurityRepository
 {
-    Task<User> GetUserById(int id);
+    Task<UserModel> GetUserById(int id);
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
     Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10);

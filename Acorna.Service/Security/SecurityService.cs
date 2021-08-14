@@ -27,7 +27,7 @@ internal class SecurityService : ISecurityService
         }
     }
 
-    public Task<User> GetUserById(int id)
+    public Task<UserModel> GetUserById(int id)
     {
         try
         {
@@ -277,10 +277,15 @@ internal class SecurityService : ISecurityService
             {
                 list = await GetAllUsersAsync();
             }
-            else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
+            else if (rolesType == RolesType.AdminGroup)
             {
-                User user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                UserModel user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
                 list = GetUsersByGroupId(user.GroupId).Result;
+            }
+            else if (rolesType == RolesType.Employee)
+            {
+                UserModel user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                list.Add(user);
             }
 
             return list;

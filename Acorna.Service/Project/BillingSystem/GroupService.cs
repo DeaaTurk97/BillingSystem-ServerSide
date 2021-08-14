@@ -1,6 +1,6 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
-using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Models.Security;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
@@ -12,7 +12,7 @@ using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-	internal class GroupService : IGroupService
+    internal class GroupService : IGroupService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -71,14 +71,13 @@ namespace Acorna.Service.Project.BillingSystem
 		{
 			try
 			{
-                User currentUser = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                Group group = new Group();
+                UserModel currentUser = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+
                 if (currentUser == null)
                     return null;
-                Group group = currentUser.Group;
-                if(group == null)
-				{
-                    group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.GroupId);
-                }
+              
+                group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.GroupId);
                 return _mapper.Map<GroupModel>(group);
 			}
 			catch (Exception)

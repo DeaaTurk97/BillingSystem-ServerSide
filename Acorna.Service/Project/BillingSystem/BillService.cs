@@ -36,7 +36,7 @@ namespace Acorna.Service.Project.BillingSystem
                 List<Bill> bills = new List<Bill>();
                 List<BillDetails> billsDetails = new List<BillDetails>();
                 List<string> usersIDUplodedBills = new List<string>();
-                string phoneBookId = string.Empty;
+                int phoneBookId = 0;
                 string dialedNumber = string.Empty;
                 int TypePhoneNumberId = 0;
                 int serviceTypeId = 0;
@@ -91,7 +91,7 @@ namespace Acorna.Service.Project.BillingSystem
 
                                     if (phoneBook != null)
                                     {
-                                        phoneBookId = Convert.ToString(phoneBook.Id);
+                                        phoneBookId = phoneBook.Id;
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
                                         operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
@@ -100,7 +100,7 @@ namespace Acorna.Service.Project.BillingSystem
                                     }
                                     else
                                     {
-                                        phoneBookId = string.Empty;
+                                        phoneBookId = 0;
                                         TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                         operatrId = 0;
                                     }
@@ -108,7 +108,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 else
                                 {
                                     dialedNumber = Convert.ToString(reader.GetValue(2)).Trim();
-                                    phoneBookId = string.Empty;
+                                    phoneBookId = 0;
                                     TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                     operatrId = 0;
                                 }
@@ -249,7 +249,7 @@ namespace Acorna.Service.Project.BillingSystem
             List<Bill> bills = new List<Bill>();
             List<BillDetails> billsDetails = new List<BillDetails>();
             List<string> usersIDUplodedBills = new List<string>();
-            string phoneBookId = string.Empty;
+            int phoneBookId = 0;
             string dialedNumber = string.Empty;
             int TypePhoneNumberId = 0;
             int serviceTypeId = 0;
@@ -310,7 +310,7 @@ namespace Acorna.Service.Project.BillingSystem
 
                                     if (phoneBook != null)
                                     {
-                                        phoneBookId = Convert.ToString(phoneBook.Id);
+                                        phoneBookId = phoneBook.Id;
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
                                         operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
@@ -319,7 +319,7 @@ namespace Acorna.Service.Project.BillingSystem
                                     }
                                     else
                                     {
-                                        phoneBookId = string.Empty;
+                                        phoneBookId = 0;
                                         TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                         operatrId = 0;
                                     }
@@ -327,7 +327,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 else
                                 {
                                     dialedNumber = Convert.ToString(dataTable.Rows[index]["Column1"]).Trim();
-                                    phoneBookId = string.Empty;
+                                    phoneBookId = 0;
                                     TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                     operatrId = 0;
                                 }

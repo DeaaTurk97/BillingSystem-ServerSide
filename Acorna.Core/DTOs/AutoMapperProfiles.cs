@@ -8,6 +8,7 @@ using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Chat;
 using Acorna.Core.Models.Notification;
 using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.DTOs.Security;
 using AutoMapper;
@@ -23,6 +24,7 @@ namespace Acorna.DTOs
             CreateMap<User, UserList>().ReverseMap();
             CreateMap<User, UserRegister>().ReverseMap();
             CreateMap<User, UserLogin>().ReverseMap();
+            CreateMap<User, UserModel>().ReverseMap();
 
             //just for test
             CreateMap<Job, JobModel>().ReverseMap();

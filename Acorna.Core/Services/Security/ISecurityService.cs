@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public interface ISecurityService
 {
-    Task<User> GetUserById(int id);
+    Task<UserModel> GetUserById(int id);
     int GetUsersCountRecord();
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
