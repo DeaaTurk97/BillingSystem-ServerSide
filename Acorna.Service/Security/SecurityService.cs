@@ -2,6 +2,7 @@ using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
+using Acorna.Core.Sheard;
 using Acorna.DTOs.Security;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +28,7 @@ internal class SecurityService : ISecurityService
         }
     }
 
-    public Task<User> GetUserById(int id)
+    public Task<UserModel> GetUserById(int id)
     {
         try
         {
@@ -48,11 +49,11 @@ internal class SecurityService : ISecurityService
         return await _unitOfWork.SecurityRepository.GetUserBySearchNameAsync(searchUserName);
     }
 
-    public Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
+    public Task<PaginationRecord<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10, int currentUserId = 0, string currentUserRole = "")
     {
         try
         {
-            return _unitOfWork.SecurityRepository.GetAllUsersAsync(pageNumber, pageSize);
+            return _unitOfWork.SecurityRepository.GetAllUsersAsync(pageNumber, pageSize, currentUserId, currentUserRole);
         }
         catch (Exception)
         {
@@ -273,14 +274,19 @@ internal class SecurityService : ISecurityService
             RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
             List<UserModel> list = new List<UserModel>();
 
-            if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+            if (rolesType == RolesType.SuperAdmin)
             {
-                list = await GetAllUsersAsync();
+                list = await GetUsersListAsync();
             }
-            else if (rolesType == RolesType.AdminGroup || rolesType == RolesType.Employee)
+            else if (rolesType == RolesType.AdminGroup)
             {
-                User user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                UserModel user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
                 list = GetUsersByGroupId(user.GroupId).Result;
+            }
+            else if (rolesType == RolesType.Employee)
+            {
+                UserModel user = await _unitOfWork.SecurityRepository.GetUserById(currentUserId);
+                list.Add(user);
             }
 
             return list;

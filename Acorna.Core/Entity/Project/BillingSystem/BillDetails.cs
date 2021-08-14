@@ -6,8 +6,8 @@ namespace Acorna.Core.Entity.Project.BillingSystem
 {
     public class BillDetails : BaseEntity
     {
-        [Required, Column(TypeName = "nvarchar(250)")]
-        public string PhoneBookId { get; set; }
+        [Required, Column(TypeName = "int")]
+        public int? PhoneBookId { get; set; }
         [Required, Column(TypeName = "datetime")]
         public DateTime CallDateTime { get; set; }
         [Required, Column(TypeName = "nvarchar(250)")]

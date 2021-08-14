@@ -4,6 +4,7 @@ using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Repository;
+using Acorna.Core.Sheard;
 using Acorna.DTOs.Security;
 using Acorna.Repository.Repository;
 using AutoMapper;
@@ -19,6 +20,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 internal class SecurityRepository : ISecurityRepository
 {
@@ -46,11 +48,20 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<User> GetUserById(int id)
+    public List<GeneralSetting> GeneralSettings
+    {
+        get
+        {
+            return _dbFactory.DataContext.GeneralSetting.ToList();
+        }
+    }
+
+    public async Task<UserModel> GetUserById(int id)
     {
         try
         {
-            return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == id);
+            return _mapper.Map<UserModel>(user);
         }
         catch (Exception ex)
         {
@@ -64,7 +75,7 @@ internal class SecurityRepository : ISecurityRepository
                 orderby user.Id
                 select new UserModel
                 {
-                    UserId = user.Id,
+                    Id = user.Id,
                     UserName = user.UserName,
                 }).ToListAsync();
     }
@@ -74,21 +85,42 @@ internal class SecurityRepository : ISecurityRepository
         return (from user in _dbFactory.DataContext.Users
                 select new UserModel
                 {
-                    UserId = user.Id,
+                    Id = user.Id,
                     UserName = user.UserName,
                 }).Where(x => x.UserName == searchUserName).ToListAsync();
     }
 
-    public async Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10)
+    public async Task<PaginationRecord<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10, int currentUserId = 0, string currentUserRole = "")
     {
         try
         {
-            IEnumerable<User> users = await GetAllAsync(pageNumber, pageSize, x => x.Id, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+            RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
+            IEnumerable<User> users = new List<User>();
+            List<UserModel> userModels = new List<UserModel>();
+            int countUsers = 0;
+
+            if (rolesType == RolesType.SuperAdmin)
+            {
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                countUsers = _userManager.Users.Count();
+            }
+            else if (rolesType == RolesType.AdminGroup)
+            {
+                User userGroup = _userManager.FindByIdAsync(Convert.ToString(currentUserId)).Result;
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.GroupId == userGroup.GroupId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                countUsers = _userManager.Users.Where(x => x.GroupId == userGroup.GroupId).Count();
+            }
+            else if (rolesType == RolesType.Employee)
+            {
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.Id == currentUserId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                countUsers = 1;
+            }
+
             List<Role> roles = await _dbFactory.DataContext.Roles.ToListAsync();
 
-            return users.Select(x => new UserModel
+            users.Select(x => new UserModel
             {
-                UserId = x.Id,
+                Id = x.Id,
                 UserName = x.UserName,
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
@@ -98,10 +130,19 @@ internal class SecurityRepository : ISecurityRepository
                 RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
 
             }).ToList();
+
+
+            PaginationRecord<UserModel> paginationRecordModel = new PaginationRecord<UserModel>
+            {
+                DataRecord = _mapper.Map<List<UserModel>>(users),
+                CountRecord = countUsers
+            };
+
+            return paginationRecordModel;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw;
+            throw ex;
         }
     }
 
@@ -114,7 +155,7 @@ internal class SecurityRepository : ISecurityRepository
                     orderby user.UserName
                     select new UserModel
                     {
-                        UserId = user.Id,
+                        Id = user.Id,
                         UserName = user.UserName,
                     }).ToListAsync();
         }
@@ -158,7 +199,7 @@ internal class SecurityRepository : ISecurityRepository
         try
         {
             var entities = IncludeProperties(includeProperties);
-            entities = (predicate != null) ? PredicateProperties(predicate) : entities;
+            entities = (predicate != null) ? PredicateProperties(predicate, entities) : entities;
             entities = (orderBy == OrderBy.Ascending) ? entities.OrderBy(keySelector) : entities.OrderByDescending(keySelector);
             return entities;
         }
@@ -168,11 +209,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    private IQueryable<User> PredicateProperties(Expression<Func<User, bool>>[] predicateProperties)
+    private IQueryable<User> PredicateProperties(Expression<Func<User, bool>>[] predicateProperties, IQueryable<User> entitiesJoin)
     {
         try
         {
-            IQueryable<User> entities = _dbFactory.DataContext.Users;
+            IQueryable<User> entities = entitiesJoin;// _dbFactory.DataContext.Users;
             foreach (var predicate in predicateProperties)
             {
                 entities = entities.Where(predicate);
@@ -211,7 +252,7 @@ internal class SecurityRepository : ISecurityRepository
 
             return users.Select(x => new UserModel
             {
-                UserId = x.Id,
+                Id = x.Id,
                 UserName = x.UserName,
 
             }).ToList();
@@ -488,6 +529,15 @@ internal class SecurityRepository : ISecurityRepository
     {
         try
         {
+            if (Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsDefaultPassword")?.SettingValue))
+            {
+                userRegister.PasswordHash = Convert.ToString(GeneralSettings.Find(x => x.SettingName == "DefaultPassword")?.SettingValue);
+            }
+            else
+            {
+                userRegister.PasswordHash = Utilites.GetRandomPassword(9);
+            }
+
             userRegister.IsActive = true;
             userRegister.SecurityStamp = Guid.NewGuid().ToString();
 
@@ -513,7 +563,7 @@ internal class SecurityRepository : ISecurityRepository
         try
         {
             Role roles = await _dbFactory.DataContext.Roles.FirstOrDefaultAsync(x => x.Id == userRegister.RoleId);
-            User user =  _userManager.FindByIdAsync(Convert.ToString(userRegister.Id)).Result;
+            User user = _userManager.FindByIdAsync(Convert.ToString(userRegister.Id)).Result;
 
             user.UserName = userRegister.UserName;
             user.Email = userRegister.Email;
@@ -650,6 +700,19 @@ internal class SecurityRepository : ISecurityRepository
         try
         {
             return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == userPhoneNumber);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<string> GetEmailByUserId(string userId)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == Convert.ToInt32(userId));
+            return user.Email;
         }
         catch (Exception ex)
         {

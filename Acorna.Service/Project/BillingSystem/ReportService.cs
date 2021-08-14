@@ -1,17 +1,13 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
-using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Repository;
-using Acorna.Core.Services;
 using Acorna.Core.Services.Project.BillingSystem;
-using Acorna.Core.Sheard;
+using AspNetCore.Reporting;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using AspNetCore.Reporting;
-using System.Text;
-using Acorna.Core.Models.Project.BillingSystem.Report;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 namespace Acorna.Service.Project.BillingSystem

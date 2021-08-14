@@ -23,18 +23,11 @@ namespace Acorna.Service.Project.BillingSystem
             _mapper = mapper;
         }
 
-        public async Task<PaginationRecord<BillsSummaryModel>> GetBillsSummary(int pageIndex, int pageSize, int currentUserId)
+        public async Task<PaginationRecord<BillsSummaryDTO>> GetBillsSummary(int pageIndex, int pageSize, int currentUserId, string currentUserRole)
         {
             try
             {
-                IEnumerable<BillsSummaryDTO> billsSummaryDTO = await _unitOfWork.BillsSummaryRepository.GetBillsSummary(pageIndex, pageSize, currentUserId);
-
-                PaginationRecord<BillsSummaryModel> paginationRecord = new PaginationRecord<BillsSummaryModel>
-                {
-                    DataRecord = _mapper.Map<IEnumerable<BillsSummaryModel>>(billsSummaryDTO),
-                    CountRecord = billsSummaryDTO.Count()
-                };
-                return paginationRecord;
+                return  await _unitOfWork.BillsSummaryRepository.GetBillsSummary(pageIndex, pageSize, currentUserId, currentUserRole);
             }
             catch (Exception ex)
             {

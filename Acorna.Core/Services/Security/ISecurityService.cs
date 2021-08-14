@@ -1,6 +1,7 @@
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Sheard;
 using Acorna.DTOs.Security;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using System.Threading.Tasks;
 
 public interface ISecurityService
 {
-    Task<User> GetUserById(int id);
+    Task<UserModel> GetUserById(int id);
     int GetUsersCountRecord();
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
-    Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10);
+    Task<PaginationRecord<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10, int currentUserId = 0, string currentUserRole = "");
     Task<List<UserModel>> GetAllSuperAdminsAsync();
     Task<List<UserModel>> GetAllAdminsAsync();
     Task<bool> Delete(int id);

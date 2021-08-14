@@ -7,6 +7,7 @@ using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static Acorna.Core.DTOs.SystemEnum;
 
@@ -28,7 +29,7 @@ namespace Acorna.Service.Project.BillingSystem
 
             try
             {
-                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+                if (rolesType == RolesType.SuperAdmin)
                 {
                     PhoneBookModel = await _unitOfWork.IncomingNumbersRepository.GetAllIncomingNumbers(pageIndex, pageSize, statusNumber);
                 }
@@ -64,6 +65,8 @@ namespace Acorna.Service.Project.BillingSystem
                 PhoneBook phoneNumber = new PhoneBook();
                 List<PhoneBook> approvePhoneNumbers = new List<PhoneBook>();
                 List<PhoneBook> userNotifications = new List<PhoneBook>();
+                List<PhoneBook> phoneBooksToUpdateBillsDetails = new List<PhoneBook>();
+                List<List<BillDetails>> billDetailsToUpdate = new List<List<BillDetails>>();
                 List<string> usersIdToSendApproved = new List<string>();
 
                 phoneNumberId.ForEach(id =>
@@ -83,12 +86,35 @@ namespace Acorna.Service.Project.BillingSystem
                     {
                         usersIdToSendApproved.Add(Convert.ToString(phoneNumber.CreatedBy));
                     }
+
+                    if (!phoneBooksToUpdateBillsDetails.Contains(phoneNumber))
+                    {
+                        phoneBooksToUpdateBillsDetails.Add(phoneNumber);
+                    }
+
+                    //adding this to update phone number type
+                    // ReferanceNotificationId refer to billId;
+                    List<BillDetails> billDetails = _unitOfWork.GetRepository<BillDetails>().GetWhere( x => x.BillId == phoneNumber.ReferanceNotificationId && x.PhoneNumber ==  phoneNumber.PhoneNumber).ToList();
+                    billDetails.ForEach(details =>
+                    {
+                        details.TypePhoneNumberId = (int)TypesPhoneNumber.Official;
+                        details.PhoneBookId = phoneNumber.Id;
+                    });
+                    billDetailsToUpdate.Add(billDetails);
+
                 });
 
                 if (approvePhoneNumbers.Count > 0)
                 {
                     _unitOfWork.GetRepository<PhoneBook>().UpdateRange(approvePhoneNumbers);
                     _unitOfWork.SaveChanges();
+
+                    //adding this to update bills details phone number type 
+                    for (int i = 0; i < billDetailsToUpdate.Count; i++)
+                    {
+                        _unitOfWork.GetRepository<BillDetails>().UpdateRange(billDetailsToUpdate[i]);
+                        _unitOfWork.SaveChanges();
+                    }
 
                     if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
                     {
@@ -107,10 +133,6 @@ namespace Acorna.Service.Project.BillingSystem
                         });
                     }
 
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
-                    {
-
-                    }
                 }
 
                 return usersIdToSendApproved;
@@ -229,6 +251,14 @@ namespace Acorna.Service.Project.BillingSystem
                                 RecipientRoleId = 0,
                                 ReferenceMassageId = (int)info.ReferanceNotificationId
                             });
+                        });
+                    }
+
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                    {
+                        usersIdToSendRejected.ForEach(userId =>
+                        {
+                            _unitOfWork.EmailRepository.RejectNumberEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
                         });
                     }
                 }

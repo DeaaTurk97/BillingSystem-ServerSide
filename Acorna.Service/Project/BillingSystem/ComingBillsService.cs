@@ -28,7 +28,7 @@ namespace Acorna.Service.Project.BillingSystem
 
             try
             {
-                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+                if (rolesType == RolesType.SuperAdmin)
                 {
                     comingBillsDTO = await _unitOfWork.ComingBillsRepository.GetAllComingBills(pageIndex, pageSize, statusNumber);
                 }
@@ -94,13 +94,7 @@ namespace Acorna.Service.Project.BillingSystem
                             });
                         });
                     }
-
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
-                    {
-
-                    }
                 }
-
                 return usersIdToSendApproved;
             }
             catch (Exception ex)
@@ -258,7 +252,7 @@ namespace Acorna.Service.Project.BillingSystem
                             usersIdToSendPaid.Add(Convert.ToString(bill.Id));
                         }
                     }
-                    
+
                 });
 
 
@@ -281,6 +275,14 @@ namespace Acorna.Service.Project.BillingSystem
                                 RecipientRoleId = 0,
                                 ReferenceMassageId = info.Id
                             });
+                        });
+                    }
+
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                    {
+                        usersIdToSendPaid.ForEach(userId =>
+                        {
+                            _unitOfWork.EmailRepository.PaidEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
                         });
                     }
                 }

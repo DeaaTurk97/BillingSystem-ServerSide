@@ -2,12 +2,14 @@
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Repository;
 using Acorna.Core.Repository.Chat;
+using Acorna.Core.Repository.Email;
 using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Core.Repository.Notification;
 using Acorna.Core.Repository.Project.BillingSystem.Report;
 using Acorna.Core.Services.Email;
 using Acorna.Repository.Repository.Chat;
 using Acorna.Repository.Repository.CustomRepository;
+using Acorna.Repository.Repository.Email;
 using Acorna.Repository.Repository.Notification;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -40,11 +42,12 @@ namespace Acorna.Repository.Repository
         Lazy<IGovernorateRepository> LazyGovernorateRepository => new Lazy<IGovernorateRepository>(() => new GovernorateRepository(_dbFactory, _mapper));
         Lazy<IPhoneBookRepository> LazyPhoneBookRepository => new Lazy<IPhoneBookRepository>(() => new PhoneBookRepository(_dbFactory));
         Lazy<IIncomingNumbersRepository> LazyIncomingNumbersRepository => new Lazy<IIncomingNumbersRepository>(() => new IncomingNumbersRepository(_dbFactory));
-        Lazy<IBillsSummaryRepository> LazyBillsSummaryRepository => new Lazy<IBillsSummaryRepository>(() => new BillsSummaryRepository(_dbFactory, _mapper));
+        Lazy<IBillsSummaryRepository> LazyBillsSummaryRepository => new Lazy<IBillsSummaryRepository>(() => new BillsSummaryRepository(_dbFactory, _mapper, _userManager));
         Lazy<ICallDetailsReportRepository> LazyCallDetailsReportRepository => new Lazy<ICallDetailsReportRepository>(() => new CallDetailsViewRepository(_dbFactory));
         Lazy<IBillsDetailsRepository> LazyBillsDetailsRepository => new Lazy<IBillsDetailsRepository>(() => new BillsDetailsRepository(_dbFactory));
         Lazy<IGeneralSettingsRepository> LazyGeneralSettingsRepository => new Lazy<IGeneralSettingsRepository>(() => new GeneralSettingsRepository(_dbFactory));
         Lazy<IComingBillsRepository> LazyComingBillsRepository => new Lazy<IComingBillsRepository>(() => new ComingBillsRepository(_dbFactory, _mapper));
+        Lazy<IEmailRepository> LazyEmailRepository => new Lazy<IEmailRepository>(() => new EmailRepository(_dbFactory));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
@@ -54,6 +57,7 @@ namespace Acorna.Repository.Repository
         public IBillsDetailsRepository BillsDetailsRepository => LazyBillsDetailsRepository.Value;
         public IGeneralSettingsRepository GeneralSettingsRepository => LazyGeneralSettingsRepository.Value;
         public IComingBillsRepository ComingBillsRepository => LazyComingBillsRepository.Value;
+        public IEmailRepository EmailRepository => LazyEmailRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));

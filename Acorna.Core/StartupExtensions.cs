@@ -12,6 +12,7 @@ namespace Acorna.Core.DependencyInjection
             IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
             {
                 opt.User.RequireUniqueEmail = true;
+                opt.User.AllowedUserNameCharacters = "";
                 opt.Password.RequireDigit = false;
                 opt.Password.RequiredLength = 9;
                 opt.Password.RequireNonAlphanumeric = false;

@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.Entity.SystemDefinition;
+using Acorna.Core.Repository;
 using Acorna.Core.Repository.ICustomRepsitory;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ namespace Acorna.Repository.Repository.CustomRepository
     public class GeneralSettingsRepository : Repository<GeneralSetting>, IGeneralSettingsRepository
     {
         private readonly IDbFactory _dbFactory;
+        private readonly IUnitOfWork _unitOfWork;
 
         public GeneralSettingsRepository(IDbFactory dbFactory) : base(dbFactory)
         {
@@ -88,6 +90,18 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsReminderByEmail")?.SettingValue);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public string GetDefaultPassword()
+        {
+            try
+            {
+                return Convert.ToString(GeneralSettings.Find(x => x.SettingName == "DefaultPassword")?.SettingValue);
             }
             catch (Exception ex)
             {

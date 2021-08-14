@@ -31,7 +31,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                List<UserModel> userModels = await _unitOfWorkService.SecurityService.GetAllUsersAsync();
+                List<UserModel> userModels = new List<UserModel>();// await _unitOfWorkService.SecurityService.GetAllUsersAsync();
                 return Ok(userModels);
             }
             catch (Exception ex)
@@ -76,13 +76,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-                PaginationRecord<UserModel> paginationRecord = new PaginationRecord<UserModel>
-                {
-                    DataRecord = await _unitOfWorkService.SecurityService.GetAllUsersAsync(pageIndex, pageSize),
-                    CountRecord = _unitOfWorkService.SecurityService.GetUsersCountRecord(),
-                };
-
-                return Ok(paginationRecord);
+                return Ok(await _unitOfWorkService.SecurityService.GetAllUsersAsync(pageIndex, pageSize, CurrentUserId, CurrentUserRole));
             }
             catch (Exception ex)
             {
@@ -110,7 +104,7 @@ namespace Acorna.Controllers.Security
         {
             try
             {
-              return Ok(await _unitOfWorkService.SecurityService.UpdateUserAsync(userRegister));
+                return Ok(await _unitOfWorkService.SecurityService.UpdateUserAsync(userRegister));
             }
             catch (Exception ex)
             {

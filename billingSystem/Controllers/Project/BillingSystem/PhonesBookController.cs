@@ -40,8 +40,6 @@ namespace billingSystem.Controllers.Project.BillingSystem
         [Route("GetPhonesBook")]
         public async Task<IActionResult> GetPhonesBook(int pageIndex = 1, int pageSize = 10)
         {
-            PaginationRecord<PhoneBookModel> phoneBookModel = new PaginationRecord<PhoneBookModel>();
-
             try
             {
                 return Ok(await _unitOfWorkService.PhoneBookService.GetPhonesBook(pageIndex, pageSize, CurrentUserId, CurrentUserRole));

@@ -1,5 +1,6 @@
 ﻿using Acorna.Core.Entity;
 using Acorna.Core.Repository.Chat;
+using Acorna.Core.Repository.Email;
 using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Core.Repository.Notification;
 using Acorna.Core.Repository.Project.BillingSystem.Report;
@@ -20,6 +21,7 @@ namespace Acorna.Core.Repository
         ICallDetailsReportRepository CallDetailsReportRepository { get; }
         IBillsDetailsRepository BillsDetailsRepository { get; }
         IGeneralSettingsRepository GeneralSettingsRepository { get; }
+        IEmailRepository EmailRepository { get; }
 
         bool SaveChanges();
     }

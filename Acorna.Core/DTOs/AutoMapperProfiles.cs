@@ -8,6 +8,7 @@ using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Chat;
 using Acorna.Core.Models.Notification;
 using Acorna.Core.Models.Project.BillingSystem;
+using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.DTOs.Security;
 using AutoMapper;
@@ -23,6 +24,9 @@ namespace Acorna.DTOs
             CreateMap<User, UserList>().ReverseMap();
             CreateMap<User, UserRegister>().ReverseMap();
             CreateMap<User, UserLogin>().ReverseMap();
+            CreateMap<User, UserModel>().ForMember(dest => dest.RoleId, s => s.MapFrom(x => x.UserRoles.FirstOrDefault().Role.Id))
+                                        .ForMember(dest => dest.RoleName, s => s.MapFrom(x => x.UserRoles.FirstOrDefault().Role.Name))
+                                        .ReverseMap();
 
             //just for test
             CreateMap<Job, JobModel>().ReverseMap();
@@ -43,6 +47,9 @@ namespace Acorna.DTOs
                                               .ForMember(dest => dest.BillStatus, s => s.MapFrom(x => (x.SubmittedByUser == true && x.SubmittedByAdmin == false) ? "Submitted"
                                               : x.SubmittedByUser == false || x.SubmittedByUser == null ? "Not Submitted"
                                               : (x.SubmittedByUser == true && x.SubmittedByAdmin == true) ? "Approved" : ""))
+                                              .ForMember(dest => dest.userName, s => s.MapFrom(x => x.User.UserName))
+                                              .ForMember(dest => dest.GroupId, s => s.MapFrom(x => x.User.Group.Id))
+                                              .ForMember(dest => dest.GroupName, s => s.MapFrom(x => x.User.Group.GroupNameEn))
                                               .ReverseMap();
 
             CreateMap<TypePhoneNumber, TypePhoneNumberModel>().ReverseMap();

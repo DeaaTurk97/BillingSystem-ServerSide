@@ -44,7 +44,7 @@ namespace Acorna.Service.Project.BillingSystem
 
             try
             {
-                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin)
+                if (rolesType == RolesType.SuperAdmin)
                 {
                     PhoneBookModel = await _unitOfWork.PhoneBookRepository.GetOfficialPhonesBook(pageIndex, pageSize);
                 }
@@ -96,7 +96,7 @@ namespace Acorna.Service.Project.BillingSystem
 
             try
             {
-                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin || rolesType == RolesType.AdminGroup)
+                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.AdminGroup)
                 {
                     phoneBookModel.StatusNumberId = (int)StatusCycleBills.Approved;
                     phoneBookModel.TypePhoneNumberId = (int)TypesPhoneNumber.Official;
@@ -132,7 +132,7 @@ namespace Acorna.Service.Project.BillingSystem
                 RolesType rolesType = (RolesType)Enum.Parse(typeof(RolesType), currentUserRole);
                 List<PhoneBook> phoneBook = new List<PhoneBook>();
 
-                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.Admin || rolesType == RolesType.AdminGroup)
+                if (rolesType == RolesType.SuperAdmin || rolesType == RolesType.AdminGroup)
                 {
                     phoneBook = _unitOfWork.GetRepository<PhoneBook>().GetWhere(x => x.PhoneNumber == phoneNumber
                                                                                 && x.TypePhoneNumberId == (int)TypesPhoneNumber.Official).ToList();

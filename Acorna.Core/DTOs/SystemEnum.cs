@@ -37,10 +37,8 @@
         public enum RolesType
         {
             SuperAdmin = 1,
-            Admin = 2,
-            AdminGroup = 3,
-            Employee = 4,
-            Guest = 5,
+            AdminGroup = 2,
+            Employee = 3,
         }
         public enum ReportNames
         {

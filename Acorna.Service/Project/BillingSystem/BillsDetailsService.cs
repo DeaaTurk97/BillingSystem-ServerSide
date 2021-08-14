@@ -160,6 +160,11 @@ namespace Acorna.Service.Project.BillingSystem
                     }
                 }
 
+                if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                {
+                    _unitOfWork.EmailRepository.SubmittedBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToString(bill.UserId)).Result);
+                }
+
                 return true;
             }
             catch (Exception ex)

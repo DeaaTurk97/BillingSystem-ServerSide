@@ -1,16 +1,11 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Services;
-using AspNetCore.Reporting;
-using billingSystem.ReportFiles.Dataset;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using static Acorna.Core.DTOs.SystemEnum;
 
 
@@ -39,75 +34,97 @@ namespace billingSystem.Controllers.Project.BillingSystem
         [Route("CallSummaryReport")]
         public ActionResult GetCallSummaryReport(CallsInfoFilterModel model)
         {
-            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
-            model.Lang = languageModel.Result.LanguageCode.ToLower();
+            try
+            {
+                var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+                model.Lang = languageModel.Result.LanguageCode.ToLower();
 
-            var baseReportName = ReportNames.CallSummary.ToString();
-            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
+                var baseReportName = ReportNames.CallSummary.ToString();
+                var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
 
-            //var reportName =  ReportNames.CallSummary.ToString();
-            var rootPath = _webHostEnvironment.ContentRootPath;
-            model.PageIndex = 1;
-            model.PageSize = 100000;
-            var reportByte = _unitOfWorkService.ReportService.GenerateCallSummaryReport(model, rootPath, reportName);
+                //var reportName =  ReportNames.CallSummary.ToString();
+                var rootPath = _webHostEnvironment.ContentRootPath;
+                model.PageIndex = 1;
+                model.PageSize = 100000;
+                var reportByte = _unitOfWorkService.ReportService.GenerateCallSummaryReport(model, rootPath, reportName);
 
-            var request = _context.HttpContext.Request;
-            var scheme = request.Scheme;
-            var host = request.Host.ToString();
+                var request = _context.HttpContext.Request;
+                var scheme = request.Scheme;
+                var host = request.Host.ToString();
 
-            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
+                var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
 
-            return Ok(new { urlPath });
+                return Ok(new { urlPath });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPost]
         [Route("CallDetailsReport")]
         public ActionResult GetCallDetailsReport(CallsInfoFilterModel model)
         {
-            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
-            model.Lang = languageModel.Result.LanguageCode.ToLower();
+            try
+            {
+                var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+                model.Lang = languageModel.Result.LanguageCode.ToLower();
 
-            var baseReportName = ReportNames.CallDetails.ToString();
-            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
+                var baseReportName = ReportNames.CallDetails.ToString();
+                var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
 
-            //var reportName =  ReportNames.CallSummary.ToString();
-            var rootPath = _webHostEnvironment.ContentRootPath;
-            model.PageIndex = 1;
-            model.PageSize = 100000;
-            var reportByte = _unitOfWorkService.ReportService.GenerateCallDetailsReport(model, rootPath, reportName);
+                //var reportName =  ReportNames.CallSummary.ToString();
+                var rootPath = _webHostEnvironment.ContentRootPath;
+                model.PageIndex = 1;
+                model.PageSize = 100000;
+                var reportByte = _unitOfWorkService.ReportService.GenerateCallDetailsReport(model, rootPath, reportName);
 
-            var request = _context.HttpContext.Request;
-            var scheme = request.Scheme;
-            var host = request.Host.ToString();
+                var request = _context.HttpContext.Request;
+                var scheme = request.Scheme;
+                var host = request.Host.ToString();
 
-            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
+                var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
 
-            return Ok(new { urlPath });
+                return Ok(new { urlPath });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPost]
         [Route("CallFinanceReport")]
         public ActionResult GetCallFinanceReport(CallsInfoFilterModel model)
         {
-            var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
-            model.Lang = languageModel.Result.LanguageCode.ToLower();
+            try
+            {
+                var languageModel = _unitOfWorkService.SecurityService.GetLanguageInformations(CurrentUserId);
+                model.Lang = languageModel.Result.LanguageCode.ToLower();
 
-            var baseReportName = ReportNames.CallFinance.ToString();
-            var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
+                var baseReportName = ReportNames.CallFinance.ToString();
+                var reportName = model.Lang == Languages.ar.ToString() ? $"{baseReportName}Ar" : $"{baseReportName}En";
 
-            //var reportName =  ReportNames.CallSummary.ToString();
-            var rootPath = _webHostEnvironment.ContentRootPath;
-            model.PageIndex = 1;
-            model.PageSize = 100000;
-            var reportByte = _unitOfWorkService.ReportService.GenerateCallFinanceReport(model, rootPath, reportName);
+                //var reportName =  ReportNames.CallSummary.ToString();
+                var rootPath = _webHostEnvironment.ContentRootPath;
+                model.PageIndex = 1;
+                model.PageSize = 100000;
+                var reportByte = _unitOfWorkService.ReportService.GenerateCallFinanceReport(model, rootPath, reportName);
 
-            var request = _context.HttpContext.Request;
-            var scheme = request.Scheme;
-            var host = request.Host.ToString();
+                var request = _context.HttpContext.Request;
+                var scheme = request.Scheme;
+                var host = request.Host.ToString();
 
-            var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
+                var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
 
-            return Ok(new { urlPath });
+                return Ok(new { urlPath });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            
         }
     }
 

@@ -25,7 +25,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
         {
             try
             {
-                return Ok(await _unitOfWorkService.BillsSummaryService.GetBillsSummary(pageIndex, pageSize, CurrentUserId));
+                return Ok(await _unitOfWorkService.BillsSummaryService.GetBillsSummary(pageIndex, pageSize, CurrentUserId, CurrentUserRole));
             }
             catch (Exception ex)
             {

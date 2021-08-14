@@ -1,6 +1,7 @@
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Security;
 using Acorna.Core.Models.SystemDefinition;
+using Acorna.Core.Sheard;
 using Acorna.DTOs.Security;
 using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
@@ -8,10 +9,10 @@ using System.Threading.Tasks;
 
 public interface ISecurityRepository
 {
-    Task<User> GetUserById(int id);
+    Task<UserModel> GetUserById(int id);
     Task<List<UserModel>> GetUsersListAsync();
     Task<List<UserModel>> GetUserBySearchNameAsync(string userName);
-    Task<List<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10);
+    Task<PaginationRecord<UserModel>> GetAllUsersAsync(int pageNumber = 1, int pageSize = 10, int currentUserId = 0, string currentUserRole = "");
     Task<List<UserModel>> GetUsersByGroupIdAsync(int groupId);
     Task<List<UserModel>> GetAllUsersByTypeAsync(string userType);
     int GetUsersCountRecord();
@@ -35,4 +36,5 @@ public interface ISecurityRepository
     Task<int> SearchByPhoneNumber(string phoneNumber);
     Task<int> CreateUserUsingPhoneNumber(string phoneNumber);
     Task<User> FindUserByPhoneNumber(string phoneNumber);
+    Task<string> GetEmailByUserId(string userId);
 }

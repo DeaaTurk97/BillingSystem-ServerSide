@@ -114,28 +114,16 @@ namespace Acorna.Repository.DataContext
                 },
                 new Role {
                     Id = 2,
-                    Name = "Admin",
-                    NormalizedName = "ADMIN",
+                    Name = "AdminGroup",
+                    NormalizedName = "ADMINGROUP",
                     PowerLevel = 98
                 },
                 new Role {
                     Id = 3,
-                    Name = "AdminGroup",
-                    NormalizedName = "ADMINGROUP",
-                    PowerLevel = 97
-                },
-                new Role {
-                    Id = 4,
                     Name = "Employee",
                     NormalizedName = "EMPLOYEE",
-                    PowerLevel = 96
-                },
-                new Role {
-                    Id = 5,
-                    Name = "Guest",
-                    NormalizedName = "GUEST",
-                    PowerLevel = 95
-                },
+                    PowerLevel = 97
+                }
             });
 
             //Create New Users
@@ -157,20 +145,6 @@ namespace Acorna.Repository.DataContext
             new User
             {
                 Id = 2, // primary key
-                UserName = "admin",
-                NormalizedUserName = "ADMIN",
-                PhoneNumber = "admin",
-                Email = "Admin@a.com",
-                NormalizedEmail = "Admin@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
-                IsActive = true,
-                LanguageId = 2,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                GroupId = 1
-            },
-            new User
-            {
-                Id = 3, // primary key
                 UserName = "adminGroup",
                 NormalizedUserName = "ADMINGROUP",
                 PhoneNumber = "adminGroup",
@@ -184,26 +158,12 @@ namespace Acorna.Repository.DataContext
             },
             new User
             {
-                Id = 4, // primary key
+                Id = 3, // primary key
                 UserName = "employee",
                 NormalizedUserName = "EMPLOYEE",
                 PhoneNumber = "employee",
                 Email = "Employee@a.com",
                 NormalizedEmail = "EMPLOYEE@A.COM",
-                PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
-                IsActive = true,
-                LanguageId = 1,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                GroupId = 2
-            },
-            new User
-            {
-                Id = 5, // primary key
-                UserName = "guest",
-                NormalizedUserName = "GUEST",
-                PhoneNumber = "guest",
-                Email = "Guest@a.com",
-                NormalizedEmail = "GUEST@A.COM",
                 PasswordHash = hasher.HashPassword(null, "Unicef@#123"),
                 IsActive = true,
                 LanguageId = 1,
@@ -228,16 +188,6 @@ namespace Acorna.Repository.DataContext
             {
                 RoleId = 3,
                 UserId = 3
-            },
-            new UserRole
-            {
-                RoleId = 4,
-                UserId = 4
-            },
-            new UserRole
-            {
-                RoleId = 5,
-                UserId = 5
             }
             );
 
