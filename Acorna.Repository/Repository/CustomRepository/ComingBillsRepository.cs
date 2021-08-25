@@ -29,7 +29,7 @@ namespace Acorna.Repository.Repository.CustomRepository
         {
             try
             {
-                List<BillsSummaryDTO> comingBillsDTO = await _dbFactory.DataContext.Bill
+                List<BillsSummaryDTO> comingBillsDTO = await _dbFactory.DataContext.Bill.Include(x => x.User.Group)
                                                                     .Where(x => x.StatusBillId == statusBill)
                                                                     .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
                                                                     .OrderByDescending(s => s.Id)

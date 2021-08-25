@@ -37,4 +37,5 @@ public interface ISecurityRepository
     Task<int> CreateUserUsingPhoneNumber(string phoneNumber);
     Task<User> FindUserByPhoneNumber(string phoneNumber);
     Task<string> GetEmailByUserId(string userId);
+    Task<List<string>> GetSuperAdminWithAdminGropByUserId(int userId);
 }

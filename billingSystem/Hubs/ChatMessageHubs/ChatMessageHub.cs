@@ -36,12 +36,10 @@ namespace Acorna.Hubs
 
         public async Task ApprovalsCycleNumbersAndBills(List<string> usersId)
         {
-            await Clients.Users(usersId).SendAsync("ApprovalsCycleNumbersAndBills");
-        }
-
-        public async Task AddedNewNumbersAndBills()
-        {
-            await Clients.Groups("SuperAdmin").SendAsync("AddedNewNumbersAndBills");
+            if (usersId.Count > 0)
+            {
+                await Clients.Users(usersId).SendAsync("ApprovalsCycleNumbersAndBills");
+            }
         }
 
         public override Task OnConnectedAsync()

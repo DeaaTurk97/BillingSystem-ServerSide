@@ -156,11 +156,11 @@ namespace Acorna.Service.Notification
             }
         }
 
-        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBills(string currentUserRole)
+        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBillsByRoleId(string currentUserRole)
         {
             try
             {
-                return await _unitOfWork.NotificationRepository.GetNewNumbersAndBills(currentUserRole);
+                return await _unitOfWork.NotificationRepository.GetNewNumbersAndBillsByRoleId(currentUserRole);
             }
             catch (System.Exception)
             {

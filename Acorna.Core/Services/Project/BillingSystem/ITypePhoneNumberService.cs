@@ -7,5 +7,6 @@ namespace Acorna.Core.Services.Project.BillingSystem
     public interface ITypePhoneNumberService
     {
         Task<List<TypePhoneNumberModel>> GetAllTypesPhoneNumber();
+        Task<List<TypePhoneNumberModel>> GetAllTypesWithoutFreeType();
     }
 }

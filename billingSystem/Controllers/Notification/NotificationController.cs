@@ -48,12 +48,12 @@ namespace Acorna.Controllers.Notification
         }
 
         [HttpGet]
-        [Route("GetNewNumbersAndBills")]
-        public async Task<IActionResult> GetNewQuestionsAndFatwa()
+        [Route("GetNewNumbersAndBillsByRoleId")]
+        public async Task<IActionResult> GetNewNumbersAndBillsByRoleId()
         {
             try
             {
-                return Ok(await _unitOfWorkService.NotificationService.GetNewNumbersAndBills(CurrentUserRole));
+                return Ok(await _unitOfWorkService.NotificationService.GetNewNumbersAndBillsByRoleId(CurrentUserRole));
             }
             catch (Exception ex)
             {

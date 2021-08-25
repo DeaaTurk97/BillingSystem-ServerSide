@@ -45,7 +45,7 @@ namespace Acorna.Repository.Repository.Notification
             }
         }
 
-        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBills(string currentUserRole)
+        public async Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBillsByRoleId(string currentUserRole)
         {
             try
             {

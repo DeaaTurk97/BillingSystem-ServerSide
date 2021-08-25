@@ -11,6 +11,6 @@ namespace Acorna.Core.Repository.ICustomRepsitory
         bool IsReminderBySystem();
         bool IsReminderByEmail();
         string GetDefaultPassword();
-
+        bool IsDeleteFreeTypeNumber();
     }
 }

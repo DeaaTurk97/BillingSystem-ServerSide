@@ -6,6 +6,7 @@ using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
@@ -25,6 +26,26 @@ namespace Acorna.Service.Project.BillingSystem
             try
             {
                 List<TypePhoneNumber> typePhoneNumbers = await _unitOfWork.GetRepository<TypePhoneNumber>().GetAllAsync();
+                return _mapper.Map<List<TypePhoneNumberModel>>(typePhoneNumbers);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<List<TypePhoneNumberModel>> GetAllTypesWithoutFreeType()
+        {
+            try
+            {
+                List<TypePhoneNumber> typePhoneNumbers = await _unitOfWork.GetRepository<TypePhoneNumber>().GetAllAsync();
+
+                if (_unitOfWork.GeneralSettingsRepository.IsDeleteFreeTypeNumber())
+                {
+                    int indexFreeType = typePhoneNumbers.FindIndex(x => x.Id == (int)TypesPhoneNumber.Free);
+                    typePhoneNumbers.RemoveAt(indexFreeType);
+                }
+
                 return _mapper.Map<List<TypePhoneNumberModel>>(typePhoneNumbers);
             }
             catch (Exception ex)

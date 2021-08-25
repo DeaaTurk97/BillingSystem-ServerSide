@@ -8,7 +8,7 @@ namespace Acorna.Core.Services.Project.BillingSystem
     public interface IBillsDetailsService
     {
         Task<PaginationRecord<UnDefinedNumbersDTO>> GetAllUndefinedNumbers(int billId);
-        bool DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers, string billId, int currentUserId);
-        bool UpdateSubmitBill(int billId);
+        List<string> DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers, string billId, int currentUserId);
+        List<string> UpdateSubmitBill(int billId);
     }
 }

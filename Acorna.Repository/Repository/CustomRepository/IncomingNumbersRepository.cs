@@ -79,9 +79,9 @@ namespace Acorna.Repository.Repository.CustomRepository
                 int countRecord = 0;
 
                 List<PhoneBookModel> phoneBookModel = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                             join usr in _dbFactory.DataContext.Users on phone.PersonalUserId equals usr.Id
+                                                             join usr in _dbFactory.DataContext.Users on phone.CreatedBy equals usr.Id
                                                              join grop in _dbFactory.DataContext.Group on usr.GroupId equals grop.Id
-                                                             where phone.PersonalUserId.ToString() != string.Empty
+                                                             where (phone.PersonalUserId == null || phone.PersonalUserId == 0)
                                                              && usr.GroupId == user.GroupId
                                                              && phone.StatusNumberId == statusNumber
                                                              select new PhoneBookModel

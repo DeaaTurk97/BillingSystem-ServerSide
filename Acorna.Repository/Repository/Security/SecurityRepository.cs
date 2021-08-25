@@ -719,4 +719,34 @@ internal class SecurityRepository : ISecurityRepository
             throw ex;
         }
     }
+
+    public async Task<List<string>> GetSuperAdminWithAdminGropByUserId(int userId)
+    {
+        try
+        {
+            UserModel userModel = GetUserById(userId).Result;
+            List<string> usersId = new List<string>();
+
+            List<UserModel> usersModel = await (from user in _dbFactory.DataContext.Users
+                                                join uRole in _dbFactory.DataContext.UserRoles on user.Id equals uRole.UserId
+                                                join role in _dbFactory.DataContext.Roles on uRole.RoleId equals role.Id
+                                                where (user.GroupId == userModel.GroupId && uRole.RoleId == (int)RolesType.AdminGroup) 
+                                                || uRole.RoleId == (int)RolesType.SuperAdmin
+                                                select new UserModel
+                                                {
+                                                    Id = user.Id,
+                                                }).ToListAsync();
+
+            usersModel.ForEach(user =>
+            {
+                usersId.Add(Convert.ToString(user.Id));
+            });
+
+            return usersId;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
 }

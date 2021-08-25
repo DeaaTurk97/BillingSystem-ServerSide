@@ -108,5 +108,17 @@ namespace Acorna.Repository.Repository.CustomRepository
                 throw ex;
             }
         }
+
+        public bool IsDeleteFreeTypeNumber()
+        {
+            try
+            {
+                return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsDeleteFreeTypeNumber")?.SettingValue);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

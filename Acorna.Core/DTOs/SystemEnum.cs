@@ -39,6 +39,7 @@
             SuperAdmin = 1,
             AdminGroup = 2,
             Employee = 3,
+            Finance = 4,
         }
         public enum ReportNames
         {

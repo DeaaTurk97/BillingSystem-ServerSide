@@ -123,6 +123,12 @@ namespace Acorna.Repository.DataContext
                     Name = "Employee",
                     NormalizedName = "EMPLOYEE",
                     PowerLevel = 97
+                },
+                 new Role {
+                    Id = 4,
+                    Name = "Finance",
+                    NormalizedName = "FINANCE",
+                    PowerLevel = 96
                 }
             });
 

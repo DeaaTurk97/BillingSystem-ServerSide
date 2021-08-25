@@ -33,7 +33,7 @@ namespace Acorna.Service.Project.BillingSystem
             }
         }
 
-        public bool DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers, string billId, int currentUserId)
+        public List<string> DefinitionNewNumbers(List<UnDefinedNumbersDTO> phoneNumbers, string billId, int currentUserId)
         {
             try
             {
@@ -41,6 +41,7 @@ namespace Acorna.Service.Project.BillingSystem
                 List<PhoneBook> addPhoneBookPrivate = new List<PhoneBook>();
                 List<PhoneBook> updatePhoneBookOfficial = new List<PhoneBook>();
                 List<PhoneBook> updatePhoneBookPrivate = new List<PhoneBook>();
+                List<string> usersId = new List<string>();
 
                 phoneNumbers.ForEach(item =>
                 {
@@ -111,19 +112,33 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
                     {
-                        _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                        usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
+
+                        usersId.ForEach(userId =>
                         {
-                            MessageText = "NewPhoneNumbersWasSubmitted",
-                            IsRead = false,
-                            Deleted = false,
-                            ReferenceMassageId = Convert.ToInt32(billId),
-                            NotificationTypeId = (int)SystemEnum.NotificationType.PhoneNumbersSubmitted,
-                            RecipientRoleId = (int)SystemEnum.RolesType.SuperAdmin
+                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            {
+                                MessageText = "NewPhoneNumbersWasSubmitted",
+                                IsRead = false,
+                                Deleted = false,
+                                ReferenceMassageId = Convert.ToInt32(billId),
+                                NotificationTypeId = (int)SystemEnum.NotificationType.PhoneNumbersSubmitted,
+                                RecipientId = Convert.ToInt32(userId)
+                            });
+                        });
+
+                    }
+
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                    {
+                        usersId.ForEach(userId =>
+                        {
+                            _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+
                         });
                     }
                 }
-
-                return true;
+                return usersId;
             }
             catch (Exception ex)
             {
@@ -131,11 +146,12 @@ namespace Acorna.Service.Project.BillingSystem
             }
         }
 
-        public bool UpdateSubmitBill(int billId)
+        public List<string> UpdateSubmitBill(int billId)
         {
             try
             {
                 Bill bill = _unitOfWork.GetRepository<Bill>().GetSingle(billId);
+                List<string> usersId = new List<string>();
 
                 if (bill != null)
                 {
@@ -148,24 +164,33 @@ namespace Acorna.Service.Project.BillingSystem
 
                     if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
                     {
-                        _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                        usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(bill.UserId).Result;
+
+                        usersId.ForEach(userId =>
                         {
-                            MessageText = "NewBillsWasSubmitted",
-                            IsRead = false,
-                            Deleted = false,
-                            ReferenceMassageId = Convert.ToInt32(billId),
-                            NotificationTypeId = (int)SystemEnum.NotificationType.BillSubmitted,
-                            RecipientRoleId = (int)SystemEnum.RolesType.SuperAdmin
+                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            {
+                                MessageText = "NewBillsWasSubmitted",
+                                IsRead = false,
+                                Deleted = false,
+                                ReferenceMassageId = Convert.ToInt32(billId),
+                                NotificationTypeId = (int)SystemEnum.NotificationType.BillSubmitted,
+                                RecipientId = Convert.ToInt32(userId)
+                            });
                         });
                     }
                 }
 
                 if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                 {
-                    _unitOfWork.EmailRepository.SubmittedBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToString(bill.UserId)).Result);
+                    usersId.ForEach(userId =>
+                    {
+                        _unitOfWork.EmailRepository.SubmittedBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+
+                    });
                 }
 
-                return true;
+                return usersId;
             }
             catch (Exception ex)
             {

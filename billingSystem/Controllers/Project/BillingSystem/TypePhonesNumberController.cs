@@ -32,5 +32,19 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 return BadRequest(ex);
             }
         }
+
+        [HttpGet]
+        [Route("GetAllTypesWithoutFreeType")]
+        public async Task<IActionResult> GetAllTypesWithoutFreeType()
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.TypePhoneNumberService.GetAllTypesWithoutFreeType());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
