@@ -49,6 +49,20 @@ namespace billingSystem.Controllers.Project.BillingSystem
             }
         }
 
+        [HttpPost]
+        [Route("ServicesSubmitted")]
+        public IActionResult ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproved, string billId)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillsDetailsService.ServicesSubmitted(servicesNeedApproved, billId, CurrentUserId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
         [HttpPut]
         [Route("UpdateSubmitBill")]
         public IActionResult UpdateSubmitBill(string billId)
@@ -56,6 +70,20 @@ namespace billingSystem.Controllers.Project.BillingSystem
             try
             {
                 return Ok(_unitOfWorkService.BillsDetailsService.UpdateSubmitBill(Convert.ToInt32(billId)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetServicesNeedApproval")]
+        public async Task<IActionResult> GetServicesNeedApproval(int billId)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.BillsDetailsService.GetServicesNeedApproval(billId));
             }
             catch (Exception ex)
             {

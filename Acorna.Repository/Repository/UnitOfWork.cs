@@ -6,7 +6,6 @@ using Acorna.Core.Repository.Email;
 using Acorna.Core.Repository.ICustomRepsitory;
 using Acorna.Core.Repository.Notification;
 using Acorna.Core.Repository.Project.BillingSystem.Report;
-using Acorna.Core.Services.Email;
 using Acorna.Repository.Repository.Chat;
 using Acorna.Repository.Repository.CustomRepository;
 using Acorna.Repository.Repository.Email;
@@ -48,6 +47,7 @@ namespace Acorna.Repository.Repository
         Lazy<IGeneralSettingsRepository> LazyGeneralSettingsRepository => new Lazy<IGeneralSettingsRepository>(() => new GeneralSettingsRepository(_dbFactory));
         Lazy<IComingBillsRepository> LazyComingBillsRepository => new Lazy<IComingBillsRepository>(() => new ComingBillsRepository(_dbFactory, _mapper));
         Lazy<IEmailRepository> LazyEmailRepository => new Lazy<IEmailRepository>(() => new EmailRepository(_dbFactory));
+        Lazy<IComingServicesRepository> LazyComingServicesRepository => new Lazy<IComingServicesRepository>(() => new ComingServicesRepository(_dbFactory));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
@@ -58,6 +58,7 @@ namespace Acorna.Repository.Repository
         public IGeneralSettingsRepository GeneralSettingsRepository => LazyGeneralSettingsRepository.Value;
         public IComingBillsRepository ComingBillsRepository => LazyComingBillsRepository.Value;
         public IEmailRepository EmailRepository => LazyEmailRepository.Value;
+        public IComingServicesRepository ComingServicesRepository => LazyComingServicesRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));

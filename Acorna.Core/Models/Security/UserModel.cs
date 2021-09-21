@@ -12,6 +12,7 @@ namespace Acorna.Core.Models.Security
         public bool IsActive { get; set; }
         public DateTime DateOfBirth { get; set; }
         public int GroupId { get; set; }
+        public string GroupName { get; set; }
         public int LanguageId { get; set; }
         public int RoleId { get; set; }
         public string? RoleName { get; set; }

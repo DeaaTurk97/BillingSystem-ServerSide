@@ -22,6 +22,7 @@ namespace Acorna.Core.Repository
         IBillsDetailsRepository BillsDetailsRepository { get; }
         IGeneralSettingsRepository GeneralSettingsRepository { get; }
         IEmailRepository EmailRepository { get; }
+        IComingServicesRepository ComingServicesRepository { get; }
 
         bool SaveChanges();
     }

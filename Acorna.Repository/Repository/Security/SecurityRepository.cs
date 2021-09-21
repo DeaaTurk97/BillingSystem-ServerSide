@@ -101,18 +101,18 @@ internal class SecurityRepository : ISecurityRepository
 
             if (rolesType == RolesType.SuperAdmin)
             {
-                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles, x => x.Group });
                 countUsers = _userManager.Users.Count();
             }
             else if (rolesType == RolesType.AdminGroup)
             {
                 User userGroup = _userManager.FindByIdAsync(Convert.ToString(currentUserId)).Result;
-                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.GroupId == userGroup.GroupId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.GroupId == userGroup.GroupId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles, x => x.Group });
                 countUsers = _userManager.Users.Where(x => x.GroupId == userGroup.GroupId).Count();
             }
             else if (rolesType == RolesType.Employee)
             {
-                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.Id == currentUserId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles });
+                users = await GetAllAsync(pageNumber, pageSize, x => x.Id, new Expression<Func<User, bool>>[] { x => x.Id == currentUserId }, OrderBy.Descending, new Expression<Func<User, object>>[] { x => x.UserRoles, x => x.Group });
                 countUsers = 1;
             }
 
@@ -125,6 +125,7 @@ internal class SecurityRepository : ISecurityRepository
                 Email = x.Email,
                 PhoneNumber = x.PhoneNumber,
                 GroupId = x.GroupId,
+                GroupName = x.Group.GroupNameEn,
                 LanguageId = x.LanguageId,
                 RoleId = x.UserRoles.Select(x => x.RoleId).FirstOrDefault(),
                 RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
@@ -279,9 +280,6 @@ internal class SecurityRepository : ISecurityRepository
                 throw new Exception("User Not Exist!");
             }
 
-            //Delete User
-            await _userManager.DeleteAsync(user);
-
             var rolesForUser = await GetRolesAsync(user);
 
             if (rolesForUser.Count() > 0)
@@ -292,6 +290,9 @@ internal class SecurityRepository : ISecurityRepository
                     var result = await _userManager.RemoveFromRoleAsync(user, role);
                 }
             }
+
+            //Delete User
+            await _userManager.DeleteAsync(user);
 
             return true;
         }
@@ -730,7 +731,7 @@ internal class SecurityRepository : ISecurityRepository
             List<UserModel> usersModel = await (from user in _dbFactory.DataContext.Users
                                                 join uRole in _dbFactory.DataContext.UserRoles on user.Id equals uRole.UserId
                                                 join role in _dbFactory.DataContext.Roles on uRole.RoleId equals role.Id
-                                                where (user.GroupId == userModel.GroupId && uRole.RoleId == (int)RolesType.AdminGroup) 
+                                                where (user.GroupId == userModel.GroupId && uRole.RoleId == (int)RolesType.AdminGroup)
                                                 || uRole.RoleId == (int)RolesType.SuperAdmin
                                                 select new UserModel
                                                 {

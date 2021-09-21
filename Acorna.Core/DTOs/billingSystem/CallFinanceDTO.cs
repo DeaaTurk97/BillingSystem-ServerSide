@@ -12,12 +12,12 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public string GroupNameEn { get; set; }
         public string GroupName { get; set; }
         [Column(TypeName = "decimal(18, 3)")]
-        public decimal FreeSum { get; set; }
+        public decimal FreeServicesSum { get; set; }
         [Column(TypeName = "decimal(18, 3)")]
-        public decimal OfficialSum { get; set; }
+        public decimal OfficialServicesSum { get; set; }
         [Column(TypeName = "decimal(18, 3)")]
-        public decimal PersonalSum { get; set; }
+        public decimal PersonalServicesSum { get; set; }
         [Column(TypeName = "decimal(18, 3)")]
-        public decimal UnknownSum { get; set; }
+        public decimal UnknownServicesSum { get; set; }
     }
 }

@@ -9,7 +9,7 @@
         public string ToDate { get; set; }
         public int? UserId { get; set; }
         public int? GroupId { get; set; }
-        public int? ServiceTypeId { get; set; }
+        public int? ServiceUsedId { get; set; }
         public int? CountryId { get; set; }
         public int? CountryIdExclude { get; set; }
         public int? TypePhoneNumberId { get; set; }

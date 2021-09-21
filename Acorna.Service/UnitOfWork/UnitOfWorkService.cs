@@ -38,12 +38,13 @@ namespace Acorna.Service.UnitOfWork
         Lazy<IPhoneBookService> LazyPhoneBookService => new Lazy<IPhoneBookService>(() => new PhoneBookService(_unitOfWork, _mapper));
         Lazy<IEmailService> LazyEmailService => new Lazy<IEmailService>(() => new EmailService(_unitOfWork));
         Lazy<IBillService> LazyBillService => new Lazy<IBillService>(() => new BillService(_unitOfWork, _mapper));
-        Lazy<IServiceType> LazyServiceTypeService => new Lazy<IServiceType>(() => new ServiceTypeService(_unitOfWork, _mapper));
+        Lazy<IServiceUsed> LazyServiceUsedService => new Lazy<IServiceUsed>(() => new ServiceUsedService(_unitOfWork, _mapper));
         Lazy<IBillsSummaryService> LazyBillsSummaryService => new Lazy<IBillsSummaryService>(() => new BillsSummaryService(_unitOfWork, _mapper));
         Lazy<ITypePhoneNumberService> LazyTypePhoneNumberService => new Lazy<ITypePhoneNumberService>(() => new TypePhoneNumberService(_unitOfWork, _mapper));
         Lazy<ICallDetailsViewService> LazyCallDetailsReportService => new Lazy<ICallDetailsViewService>(() => new CallDetailsViewService(_unitOfWork, _mapper));
         Lazy<IBillsDetailsService> LazyBillsDetailsService => new Lazy<IBillsDetailsService>(() => new BillsDetailsService(_unitOfWork));
         Lazy<IComingBillsService> LazyComingBillsService => new Lazy<IComingBillsService>(() => new ComingBillsService(_unitOfWork));
+        Lazy<IComingServicesService> LazyComingServicesService => new Lazy<IComingServicesService>(() => new ComingServicesService(_unitOfWork));
 
         Lazy<IReportService> LazyReportService => new Lazy<IReportService>(() => new ReportService(_unitOfWork, _mapper));
 
@@ -65,11 +66,12 @@ namespace Acorna.Service.UnitOfWork
         public IEmailService EmailService => LazyEmailService.Value;
         public IBillService BillService => LazyBillService.Value;
         public ICallDetailsViewService CallDetailsViewService => LazyCallDetailsReportService.Value;
-        public IServiceType ServiceTypeService => LazyServiceTypeService.Value;
+        public IServiceUsed ServiceUsedService => LazyServiceUsedService.Value;
         public IBillsSummaryService BillsSummaryService => LazyBillsSummaryService.Value;
         public ITypePhoneNumberService TypePhoneNumberService => LazyTypePhoneNumberService.Value;
         public IBillsDetailsService BillsDetailsService => LazyBillsDetailsService.Value;
         public IComingBillsService ComingBillsService => LazyComingBillsService.Value;
+        public IComingServicesService ComingServicesService => LazyComingServicesService.Value;
 
         public IReportService ReportService => LazyReportService.Value;
 

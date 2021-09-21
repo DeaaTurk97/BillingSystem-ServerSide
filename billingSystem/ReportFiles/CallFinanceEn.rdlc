@@ -37,20 +37,20 @@
           <DataField>GroupName</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="FreeSum">
-          <DataField>FreeSum</DataField>
+        <Field Name="FreeServicesSum">
+          <DataField>FreeServicesSum</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="OfficialSum">
-          <DataField>OfficialSum</DataField>
+        <Field Name="OfficialServicesSum">
+          <DataField>OfficialServicesSum</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="PersonalSum">
-          <DataField>PersonalSum</DataField>
+        <Field Name="PersonalServicesSum">
+          <DataField>PersonalServicesSum</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
-        <Field Name="UnknownSum">
-          <DataField>UnknownSum</DataField>
+        <Field Name="UnknownServicesSum">
+          <DataField>UnknownServicesSum</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
       </Fields>
@@ -398,7 +398,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Free Sum</Value>
+                                  <Value>Free Services Amount</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -447,7 +447,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Official Sum</Value>
+                                  <Value>Official Services Amount</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -496,7 +496,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Personal Sum</Value>
+                                  <Value>Personal Services Amount</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -545,7 +545,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Unknown Sum</Value>
+                                  <Value>Unknown Services Amount</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -847,14 +847,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="FreeSum">
+                        <Textbox Name="FreeServicesSum">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!FreeSum.Value</Value>
+                                  <Value>=Fields!FreeServicesSum.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -863,7 +863,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>FreeSum</rd:DefaultName>
+                          <rd:DefaultName>FreeServicesSum</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -898,14 +898,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="OfficialSum">
+                        <Textbox Name="OfficialServicesSum">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!OfficialSum.Value</Value>
+                                  <Value>=Fields!OfficialServicesSum.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -914,7 +914,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>OfficialSum</rd:DefaultName>
+                          <rd:DefaultName>OfficialServicesSum</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -949,14 +949,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="PersonalSum">
+                        <Textbox Name="PersonalServicesSum">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!PersonalSum.Value</Value>
+                                  <Value>=Fields!PersonalServicesSum.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -965,7 +965,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>PersonalSum</rd:DefaultName>
+                          <rd:DefaultName>PersonalServicesSum</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>
@@ -1000,14 +1000,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="UnknownSum">
+                        <Textbox Name="UnknownServicesSum">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=Fields!UnknownSum.Value</Value>
+                                  <Value>=Fields!UnknownServicesSum.Value</Value>
                                   <Style />
                                 </TextRun>
                               </TextRuns>
@@ -1016,7 +1016,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>UnknownSum</rd:DefaultName>
+                          <rd:DefaultName>UnknownServicesSum</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>Solid</Style>

@@ -104,8 +104,8 @@ namespace Acorna.Service.Project.BillingSystem
 
             var urlPath = $"{_baseURL}/api/DownloadFile/Download?file={fileName}";
 
-            if(deleteOldTempFiles)
-			{
+            if (deleteOldTempFiles)
+            {
                 _rootPath = rootPath;
                 DeleteOldTempFilesThread();
             }
@@ -155,7 +155,7 @@ namespace Acorna.Service.Project.BillingSystem
         /// This for delete old temp reports files
         /// </summary>
         private void DeleteOldTempFiles()
-		{
+        {
             var path = System.IO.Path.Combine(_rootPath, _baseTempFolder);
 
             string[] files = Directory.GetFiles(path);
@@ -170,12 +170,12 @@ namespace Acorna.Service.Project.BillingSystem
 
 
         private string GetGroupName(CallsInfoFilterModel model)
-		{
+        {
             var groupName = "";
             if (model.GroupId != null)
             {
                 var group = _unitOfWork.GetRepository<Group>().FirstOrDefault(a => a.Id == model.GroupId.Value);
-                if(group != null)
+                if (group != null)
                     groupName = group != null ? (model.Lang == "ar" ? group.GroupNameAr : group.GroupNameEn) : groupName;
             }
             return groupName;
@@ -187,8 +187,8 @@ namespace Acorna.Service.Project.BillingSystem
             if (model.UserId != null)
             {
                 var user = _unitOfWork.SecurityRepository.GetUserById(model.UserId.Value).Result;
-                if(user != null)
-                    userName = user != null ?  user.UserName: userName;
+                if (user != null)
+                    userName = user != null ? user.UserName : userName;
             }
             return userName;
         }
@@ -196,11 +196,11 @@ namespace Acorna.Service.Project.BillingSystem
         private string GetServiceTypeName(CallsInfoFilterModel model)
         {
             var serviceTypeName = "";
-            if (model.ServiceTypeId != null)
+            if (model.ServiceUsedId != null)
             {
-                var serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(a => a.Id == model.ServiceTypeId.Value);
+                var serviceType = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(a => a.Id == model.ServiceUsedId.Value);
                 if (serviceType != null)
-                    serviceTypeName = serviceType != null ? (model.Lang == "ar" ? serviceType.ServiceTypeNameAr : serviceType.ServiceTypeNameEn) : serviceTypeName;
+                    serviceTypeName = serviceType != null ? (model.Lang == "ar" ? serviceType.ServiceUsedNameAr : serviceType.ServiceUsedNameEn) : serviceTypeName;
             }
 
             return serviceTypeName;
@@ -211,9 +211,9 @@ namespace Acorna.Service.Project.BillingSystem
             var countryName = "";
             if (model.CountryId != null)
             {
-                var country = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(a => a.Id == model.CountryId.Value);
+                var country = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(a => a.Id == model.CountryId.Value);
                 if (country != null)
-                    countryName = country != null ? (model.Lang == "ar" ? country.ServiceTypeNameAr : country.ServiceTypeNameEn) : countryName;
+                    countryName = country != null ? (model.Lang == "ar" ? country.ServiceUsedNameAr : country.ServiceUsedNameEn) : countryName;
             }
 
             return countryName;
@@ -233,7 +233,7 @@ namespace Acorna.Service.Project.BillingSystem
         }
 
         private string GetIsSubmitted(CallsInfoFilterModel model)
-		{
+        {
             var isSubmitted = "";
             if (model.IsSubmitted != null)
             {

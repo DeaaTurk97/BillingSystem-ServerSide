@@ -26,6 +26,7 @@ namespace Acorna.DTOs
             CreateMap<User, UserLogin>().ReverseMap();
             CreateMap<User, UserModel>().ForMember(dest => dest.RoleId, s => s.MapFrom(x => x.UserRoles.FirstOrDefault().Role.Id))
                                         .ForMember(dest => dest.RoleName, s => s.MapFrom(x => x.UserRoles.FirstOrDefault().Role.Name))
+                                        .ForMember(dest => dest.GroupName, s => s.MapFrom(x => x.Group.GroupNameEn))
                                         .ReverseMap();
 
             //just for test
@@ -39,7 +40,7 @@ namespace Acorna.DTOs
             CreateMap<Country, CountryModel>().ReverseMap();
             CreateMap<PhoneBook, PhoneBookModel>().ReverseMap();
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
-            CreateMap<ServiceType, ServiceTypeModel>().ReverseMap();
+            CreateMap<ServiceUsed, ServiceUsedModel>().ReverseMap();
             CreateMap<Bill, BillsSummaryDTO>().ForMember(dest => dest.BillMonth, s => s.MapFrom(x => CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month)))
                                               .ForMember(dest => dest.BillYear, s => s.MapFrom(x => x.BillDate.Year))
                                               .ForMember(dest => dest.IsPaid, s => s.MapFrom(x => x.IsPaid))

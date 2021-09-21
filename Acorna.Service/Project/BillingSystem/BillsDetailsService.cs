@@ -146,6 +146,66 @@ namespace Acorna.Service.Project.BillingSystem
             }
         }
 
+        public List<string> ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproved, string billId, int currentUserId)
+        {
+            try
+            {
+                List<BillDetails> updateCallDetails = new List<BillDetails>();
+                List<string> usersId = new List<string>();
+
+                servicesNeedApproved.ForEach(callDetails =>
+                {
+                    BillDetails billDetails = _unitOfWork.GetRepository<BillDetails>().GetSingleAsync(callDetails.Id).Result;
+
+                    if (billDetails != null && callDetails.TypeServiceUsedId != (int)TypesPhoneNumber.Unknown)
+                    {
+                        billDetails.TypeServiceUsedId = callDetails.TypeServiceUsedId;
+                        billDetails.StatusServiceUsedId = (int)StatusCycleBills.Submit;
+                        updateCallDetails.Add(billDetails);
+                    }
+                });
+
+                _unitOfWork.GetRepository<BillDetails>().UpdateRange(updateCallDetails);
+                _unitOfWork.SaveChanges();
+
+                if (updateCallDetails.Count > 0)
+                {
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+                    {
+                        usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
+
+                        usersId.ForEach(userId =>
+                        {
+                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            {
+                                MessageText = "NewServicesWasSubmitted",
+                                IsRead = false,
+                                Deleted = false,
+                                ReferenceMassageId = Convert.ToInt32(billId),
+                                NotificationTypeId = (int)SystemEnum.NotificationType.ServicesSubmitted,
+                                RecipientId = Convert.ToInt32(userId)
+                            });
+                        });
+
+                    }
+
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                    {
+                        usersId.ForEach(userId =>
+                        {
+                            _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+
+                        });
+                    }
+                }
+                return usersId;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public List<string> UpdateSubmitBill(int billId)
         {
             try
@@ -191,6 +251,18 @@ namespace Acorna.Service.Project.BillingSystem
                 }
 
                 return usersId;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<PaginationRecord<ServicesNeedApprovedDTO>> GetServicesNeedApproval(int billId)
+        {
+            try
+            {
+                return await _unitOfWork.BillsDetailsRepository.GetServicesNeedApproval(billId);
             }
             catch (Exception ex)
             {

@@ -23,11 +23,15 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public int TypePhoneNumberId { get; set; }
         public string TypePhoneNumberAr { get; set; }
         public string TypePhoneNumberEn { get; set; }
-        public string TypePhoneNumber { get; set; }
-        public int ServiceTypeId { get; set; }
-        public string ServiceTypeNameAr { get; set; }
-        public string ServiceTypeNameEn { get; set; }
-        public string ServiceTypeName { get; set; }
+        public string TypePhoneNumberName { get; set; }
+        public int ServiceUsedId { get; set; }
+        public string ServiceUsedNameAr { get; set; }
+        public string ServiceUsedNameEn { get; set; }
+        public string ServiceUsedName { get; set; }
+        public int TypeServiceUsedId { get; set; }
+        public string TypeServiceUsedNameAr { get; set; }
+        public string TypeServiceUsedNameEn { get; set; }
+        public string TypeServiceUsedName { get; set; }
         public int BillId { get; set; }
         public int BillYear { get; set; }
         public int BillMonth { get; set; }

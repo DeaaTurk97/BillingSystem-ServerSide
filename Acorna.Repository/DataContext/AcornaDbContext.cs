@@ -277,6 +277,26 @@ namespace Acorna.Repository.DataContext
                     Id = 110,
                     Name = "Chatting",
                 },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 120,
+                    Name = "ServicesSubmitted",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 130,
+                    Name = "ServicesApproved",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 140,
+                    Name = "ServicesInProgress",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 150,
+                    Name = "ServicesRejected",
+                },
             });
 
             //Create New Groups
@@ -295,18 +315,18 @@ namespace Acorna.Repository.DataContext
             });
 
             //Create New ServiceType
-            builder.Entity<ServiceType>().ToTable("ServicesTypes").HasData(new List<ServiceType>
+            builder.Entity<ServiceUsed>().ToTable("ServicesUsed").HasData(new List<ServiceUsed>
             {
-                new ServiceType {
+                new ServiceUsed {
                     Id = 1,
-                    ServiceTypeNameAr = "فارغ",
-                    ServiceTypeNameEn = "Empty",
+                    ServiceUsedNameAr = "فارغ",
+                    ServiceUsedNameEn = "Empty",
                     IsCalculatedValue = false,
                 },
-                new ServiceType {
+                new ServiceUsed {
                     Id = 2,
-                    ServiceTypeNameAr = "EBU_حزمة",
-                    ServiceTypeNameEn = "EBU_Bundel",
+                    ServiceUsedNameAr = "EBU_حزمة",
+                    ServiceUsedNameEn = "EBU_Bundel",
                     IsCalculatedValue = false,
                 },
 
@@ -359,7 +379,7 @@ namespace Acorna.Repository.DataContext
         public DbSet<NotificationsDetails> NotificationsDetails { get; set; }
         public DbSet<Bill> Bill { get; set; }
         public DbSet<BillDetails> BillDetails { get; set; }
-        public DbSet<ServiceType> ServiceType { get; set; }
+        public DbSet<ServiceUsed> ServiceUsed { get; set; }
         public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }
 
         public DbQuery<CallDetailsDTO> CallDetails { get; set; }

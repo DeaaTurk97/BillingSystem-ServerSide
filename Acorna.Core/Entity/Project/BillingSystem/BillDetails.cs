@@ -23,7 +23,11 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         [Required, Column(TypeName = "int")]
         public int TypePhoneNumberId { get; set; }
         [Required, Column(TypeName = "int")]
-        public int ServiceTypeId { get; set; }
+        public int ServiceUsedId { get; set; }
+        public bool IsServiceUsedNeedApproved { get; set; }
+        public int StatusServiceUsedId { get; set; }
+        public int StatusServiceUsedBy { get; set; }
+        public int TypeServiceUsedId { get; set; }
         public int OperatorId { get; set; }
         [Required, Column(TypeName = "nvarchar(50)")]
         public string DataUsage { get; set; }

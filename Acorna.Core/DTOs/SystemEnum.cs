@@ -15,6 +15,10 @@
             BillRejected = 90,
             BillPaid = 100,
             Chatting = 110,
+            ServicesSubmitted = 120,
+            ServicesApproved = 130,
+            ServicesInProgress = 140,
+            ServicesRejected = 150
         }
 
         public enum TypesPhoneNumber

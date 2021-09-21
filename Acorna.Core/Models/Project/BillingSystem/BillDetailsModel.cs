@@ -13,7 +13,7 @@ namespace Acorna.Core.Models.Project.BillingSystem
         public decimal CallDiscountPrice { get; set; }
         public string PhoneNumber { get; set; }
         public int TypePhoneNumberId { get; set; }
-        public int ServiceTypeID { get; set; }
+        public int ServiceTypeId { get; set; }
         public int OperatorId { get; set; }
         public string DataUsage { get; set; }
     }

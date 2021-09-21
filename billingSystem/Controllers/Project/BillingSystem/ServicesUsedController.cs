@@ -10,22 +10,22 @@ namespace billingSystem.Controllers.Project.BillingSystem
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ServicesTypesController : ControllerBase
+    public class ServicesUsedController : ControllerBase
     {
         private readonly IUnitOfWorkService _unitOfWorkService;
 
-        public ServicesTypesController(IUnitOfWorkService unitOfWorkService)
+        public ServicesUsedController(IUnitOfWorkService unitOfWorkService)
         {
             _unitOfWorkService = unitOfWorkService;
         }
 
         [HttpGet]
-        [Route("GetAllServicesTypes")]
-        public async Task<IActionResult> GetAllServicesTypes()
+        [Route("GetAllServicesUsed")]
+        public async Task<IActionResult> GetAllServicesUsed()
         {
             try
             {
-                return Ok(await _unitOfWorkService.ServiceTypeService.GetAllServicesTypes());
+                return Ok(await _unitOfWorkService.ServiceUsedService.GetAllServicesUsed());
             }
             catch (Exception ex)
             {
@@ -34,12 +34,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
         }
 
         [HttpGet]
-        [Route("GetServicesTypes")]
-        public async Task<IActionResult> GetServicesTypes(int pageIndex = 1, int pageSize = 10)
+        [Route("GetServicesUsed")]
+        public async Task<IActionResult> GetServicesUsed(int pageIndex = 1, int pageSize = 10)
         {
             try
             {
-                return Ok(await _unitOfWorkService.ServiceTypeService.GetServicesTypes(pageIndex, pageSize));
+                return Ok(await _unitOfWorkService.ServiceUsedService.GetServicesUsed(pageIndex, pageSize));
             }
             catch (Exception ex)
             {
@@ -48,12 +48,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
         }
 
         [HttpGet]
-        [Route("GetServiceTypeId")]
-        public async Task<IActionResult> GetServiceTypeId(int serviceTypeId)
+        [Route("GetServiceUsedId")]
+        public async Task<IActionResult> GetServiceUsedId(int serviceUsedId)
         {
             try
             {
-                return Ok(await _unitOfWorkService.ServiceTypeService.GetServiceTypeId(serviceTypeId));
+                return Ok(await _unitOfWorkService.ServiceUsedService.GetServiceUsedId(serviceUsedId));
             }
             catch (Exception ex)
             {
@@ -62,12 +62,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
         }
 
         [HttpPost]
-        [Route("AddServiceType")]
-        public IActionResult AddServiceType(ServiceTypeModel serviceTypeModel)
+        [Route("AddServiceUsed")]
+        public IActionResult AddServiceUsed(ServiceUsedModel serviceUsedModel)
         {
             try
             {
-                return Ok(_unitOfWorkService.ServiceTypeService.AddServiceType(serviceTypeModel));
+                return Ok(_unitOfWorkService.ServiceUsedService.AddServiceUsed(serviceUsedModel));
             }
             catch (Exception ex)
             {
@@ -76,12 +76,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
         }
 
         [HttpPut]
-        [Route("UpdateServiceType")]
-        public IActionResult UpdateServiceType(ServiceTypeModel serviceTypeModel)
+        [Route("UpdateServiceUsed")]
+        public IActionResult UpdateServiceUsed(ServiceUsedModel serviceUsedModel)
         {
             try
             {
-                return Ok(_unitOfWorkService.ServiceTypeService.UpdateServiceType(serviceTypeModel));
+                return Ok(_unitOfWorkService.ServiceUsedService.UpdateServiceUsed(serviceUsedModel));
             }
             catch (Exception ex)
             {
@@ -91,12 +91,12 @@ namespace billingSystem.Controllers.Project.BillingSystem
         }
 
         [HttpDelete]
-        [Route("DeleteServiceType")]
-        public IActionResult DeleteServiceType(int id)
+        [Route("DeleteServiceUsed")]
+        public IActionResult DeleteServiceUsed(int id)
         {
             try
             {
-                return Ok(_unitOfWorkService.ServiceTypeService.DeleteServiceType(id));
+                return Ok(_unitOfWorkService.ServiceUsedService.DeleteServiceUsed(id));
             }
             catch (Exception ex)
             {

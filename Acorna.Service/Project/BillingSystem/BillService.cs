@@ -40,6 +40,7 @@ namespace Acorna.Service.Project.BillingSystem
                 string dialedNumber = string.Empty;
                 int TypePhoneNumberId = 0;
                 int serviceTypeId = 0;
+                bool isServiceNeedApproved = false;
                 int operatrId = 0;
                 string operatorKey = string.Empty;
                 string dataUsage = string.Empty;
@@ -95,7 +96,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
                                         operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
-                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
+                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt64(operatorKey));
                                         operatrId = operatr != null ? operatr.Id : 0;
                                     }
                                     else
@@ -116,36 +117,51 @@ namespace Acorna.Service.Project.BillingSystem
 
                                 if (!string.IsNullOrEmpty(Convert.ToString(reader.GetValue(6)).Trim()))
                                 {
-                                    ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == Convert.ToString(reader.GetValue(6)) || x.ServiceTypeNameEn == Convert.ToString(reader.GetValue(6)));
-                                    if (serviceType != null)
+                                    ServiceUsed serviceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(reader.GetValue(6)) || x.ServiceUsedNameEn == Convert.ToString(reader.GetValue(6)));
+
+                                    if (serviceUsed != null)
                                     {
-                                        serviceTypeId = serviceType.Id;
+                                        //Adding this to check if (call_source) column is a service, if not get value of (serviceType)
+                                        ServiceUsed sourceServiceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(reader.GetValue(5)) || x.ServiceUsedNameEn == Convert.ToString(reader.GetValue(5)));
+
+                                        if (sourceServiceUsed != null)
+                                        {
+                                            serviceTypeId = sourceServiceUsed.Id;
+                                            isServiceNeedApproved = sourceServiceUsed.IsNeedApproved;
+                                        }
+                                        else
+                                        {
+                                            serviceTypeId = serviceUsed.Id;
+                                            isServiceNeedApproved = serviceUsed.IsNeedApproved;
+                                        }
                                     }
                                     else
                                     {
                                         //adding a new service type if type Not Exist
-                                        ServiceType addingServiceType = new ServiceType
+                                        ServiceUsed addingServiceUsed = new ServiceUsed
                                         {
-                                            ServiceTypeNameAr = Convert.ToString(reader.GetValue(6)).Trim(),
-                                            ServiceTypeNameEn = Convert.ToString(reader.GetValue(6)).Trim(),
-                                            IsCalculatedValue = true
+                                            ServiceUsedNameAr = Convert.ToString(reader.GetValue(6)).Trim(),
+                                            ServiceUsedNameEn = Convert.ToString(reader.GetValue(6)).Trim(),
+                                            IsCalculatedValue = true,
+                                            IsNeedApproved = false
                                         };
 
-                                        _unitOfWork.GetRepository<ServiceType>().Insert(addingServiceType);
+                                        _unitOfWork.GetRepository<ServiceUsed>().Insert(addingServiceUsed);
 
                                         if (!_unitOfWork.SaveChanges())
                                         {
                                             throw new Exception("Error occurred when inserting a new service");
                                         }
 
-                                        serviceTypeId = addingServiceType.Id;
+                                        serviceTypeId = addingServiceUsed.Id;
+                                        isServiceNeedApproved = addingServiceUsed.IsNeedApproved;
                                     }
                                 }
                                 else
                                 {
                                     if (Convert.ToString(reader.GetValue(2)).Trim().Contains("bundle"))
                                     {
-                                        ServiceType serviceBundle = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == "EBU_حزمة" || x.ServiceTypeNameEn == "Bundel");
+                                        ServiceUsed serviceBundle = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == "EBU_حزمة" || x.ServiceUsedNameEn == "Bundel");
                                         serviceTypeId = serviceBundle.Id;
                                     }
                                     else
@@ -176,10 +192,14 @@ namespace Acorna.Service.Project.BillingSystem
                                     CallRetailPrice = Convert.ToDecimal(reader.GetValue(9)),
                                     PhoneNumber = dialedNumber,
                                     TypePhoneNumberId = TypePhoneNumberId,
-                                    ServiceTypeId = serviceTypeId,
+                                    ServiceUsedId = serviceTypeId,
+                                    IsServiceUsedNeedApproved = isServiceNeedApproved,
+                                    TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                    StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
                                     OperatorId = operatrId,
                                     DataUsage = dataUsage,
                                 });
+
                             }
 
                             if (billsDetails.Count > 0)
@@ -232,7 +252,7 @@ namespace Acorna.Service.Project.BillingSystem
 
                 if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                 {
-                    usersIDUplodedBills.ForEach(userId => 
+                    usersIDUplodedBills.ForEach(userId =>
                     {
                         _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
                     });
@@ -242,11 +262,6 @@ namespace Acorna.Service.Project.BillingSystem
             }
             catch (Exception ex)
             {
-                using (StreamWriter writer = System.IO.File.AppendText("C:\\Inetpub\\wwwroot\\MukalamatSyria.Api\\uploaded-files\\logger.txt"))
-                {
-                    writer.WriteLine("log message : " + ex);
-                }
-
                 throw ex;
             }
         }
@@ -261,6 +276,7 @@ namespace Acorna.Service.Project.BillingSystem
             string dialedNumber = string.Empty;
             int TypePhoneNumberId = 0;
             int serviceTypeId = 0;
+            bool isServiceNeedApproved = false;
             int operatrId = 0;
             string operatorKey = string.Empty;
             string dataUsage = string.Empty;
@@ -342,29 +358,32 @@ namespace Acorna.Service.Project.BillingSystem
 
                                 if (!string.IsNullOrEmpty(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim()) && Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() != "????")
                                 {
-                                    ServiceType serviceType = _unitOfWork.GetRepository<ServiceType>().FirstOrDefault(x => x.ServiceTypeNameAr == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() || x.ServiceTypeNameEn == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
-                                    if (serviceType != null)
+                                    ServiceUsed serviceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() || x.ServiceUsedNameEn == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
+                                    if (serviceUsed != null)
                                     {
-                                        serviceTypeId = serviceType.Id;
+                                        serviceTypeId = serviceUsed.Id;
+                                        isServiceNeedApproved = serviceUsed.IsNeedApproved;
                                     }
                                     else
                                     {
                                         //adding a new service type if type Not Exist
-                                        ServiceType addingServiceType = new ServiceType
+                                        ServiceUsed addingServiceUsed = new ServiceUsed
                                         {
-                                            ServiceTypeNameAr = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
-                                            ServiceTypeNameEn = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
-                                            IsCalculatedValue = true
+                                            ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
+                                            ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
+                                            IsCalculatedValue = true,
+                                            IsNeedApproved = false
                                         };
 
-                                        _unitOfWork.GetRepository<ServiceType>().Insert(addingServiceType);
+                                        _unitOfWork.GetRepository<ServiceUsed>().Insert(addingServiceUsed);
 
                                         if (!_unitOfWork.SaveChanges())
                                         {
                                             throw new Exception("Error occurred when inserting a new service");
                                         }
 
-                                        serviceTypeId = addingServiceType.Id;
+                                        serviceTypeId = addingServiceUsed.Id;
+                                        isServiceNeedApproved = serviceUsed.IsNeedApproved;
                                     }
                                 }
                                 else
@@ -395,7 +414,10 @@ namespace Acorna.Service.Project.BillingSystem
                                     CallRetailPrice = Convert.ToDecimal(dataTable.Rows[index]["Column3"]),
                                     PhoneNumber = dialedNumber,
                                     TypePhoneNumberId = TypePhoneNumberId,
-                                    ServiceTypeId = serviceTypeId,
+                                    ServiceUsedId = serviceTypeId,
+                                    IsServiceUsedNeedApproved = isServiceNeedApproved,
+                                    TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                    StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
                                     OperatorId = operatrId,
                                     DataUsage = dataUsage,
                                 });

@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Acorna.Core.Entity.Project.BillingSystem
 {
-    [Table("ServicesTypes")]
-    public class ServiceType : BaseEntity
+    [Table("ServicesUsed")]
+    public class ServiceUsed : BaseEntity
     {
         [Required, MaxLength(150)]
-        public string ServiceTypeNameAr { get; set; }
+        public string ServiceUsedNameAr { get; set; }
         [Required, MaxLength(150)]
-        public string ServiceTypeNameEn { get; set; }
+        public string ServiceUsedNameEn { get; set; }
         public bool IsCalculatedValue { get; set; }
+        public bool IsNeedApproved { get; set; }
     }
 }

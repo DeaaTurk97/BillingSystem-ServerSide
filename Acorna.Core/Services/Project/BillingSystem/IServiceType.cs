@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace Acorna.Core.Services.Project.BillingSystem
 {
-    public interface IServiceType
+    public interface IServiceUsed
     {
-        Task<List<ServiceTypeModel>> GetAllServicesTypes();
-        Task<PaginationRecord<ServiceTypeModel>> GetServicesTypes(int pageIndex, int pageSize);
-        Task<ServiceTypeModel> GetServiceTypeId(int serviceTypeId);
-        int AddServiceType(ServiceTypeModel serviceTypeModel);
-        bool UpdateServiceType(ServiceTypeModel serviceTypeModel);
-        bool DeleteServiceType(int id);
+        Task<List<ServiceUsedModel>> GetAllServicesUsed();
+        Task<PaginationRecord<ServiceUsedModel>> GetServicesUsed(int pageIndex, int pageSize);
+        Task<ServiceUsedModel> GetServiceUsedId(int serviceTypeId);
+        int AddServiceUsed(ServiceUsedModel serviceTypeModel);
+        bool UpdateServiceUsed(ServiceUsedModel serviceTypeModel);
+        bool DeleteServiceUsed(int id);
     }
 }

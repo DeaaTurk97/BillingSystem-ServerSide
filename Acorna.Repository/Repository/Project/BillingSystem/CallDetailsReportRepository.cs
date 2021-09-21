@@ -69,10 +69,10 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
                             Value = filter.GroupId.HasValue? filter.GroupId.Value : System.Data.SqlTypes.SqlInt32.Null
                         },
                         new SqlParameter() {
-                            ParameterName = "@ServiceTypeId",
+                            ParameterName = "@ServiceUsedId",
                             SqlDbType =  System.Data.SqlDbType.Int,
                             Direction = System.Data.ParameterDirection.Input,
-                            Value = filter.ServiceTypeId.HasValue? filter.ServiceTypeId.Value : System.Data.SqlTypes.SqlInt32.Null
+                            Value = filter.ServiceUsedId.HasValue? filter.ServiceUsedId.Value : System.Data.SqlTypes.SqlInt32.Null
                         },
                         new SqlParameter() {
                             ParameterName = "@CountryId",
@@ -113,7 +113,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 
         try
         {
-            List<CallDetailsDTO> callDetailsDTOs = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @BillId, @BillMonth, @BillYear, @FromDate, @ToDate, @UserId, @GroupId, @ServiceTypeId, @CountryId, @CountryIdExclude, @TypePhoneNumberId, @Lang, @PageIndex, @PageSize", param).ToList();
+            List<CallDetailsDTO> callDetailsDTOs = _dbFactory.DataContext.CallDetails.FromSqlRaw("[dbo].[GetCallDetails] @Count OUTPUT, @BillId, @BillMonth, @BillYear, @FromDate, @ToDate, @UserId, @GroupId, @ServiceUsedId, @CountryId, @CountryIdExclude, @TypePhoneNumberId, @Lang, @PageIndex, @PageSize", param).ToList();
             countRecord = param[0].Value != null ? Convert.ToInt32(param[0].Value) : 0;
             return callDetailsDTOs;
         }
@@ -270,7 +270,7 @@ internal class CallDetailsViewRepository : ICallDetailsReportRepository
 
         try
         {
-            List<CallFinanceDTO> callFinanceDTOs = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetCallSummary] @Count OUTPUT, @FromCallDate, @ToCallDate, @FromBillDate, @ToBillDate, @GroupId, @IsSubmitted, @Lang, @PageIndex, @PageSize", param).ToList();
+            List<CallFinanceDTO> callFinanceDTOs = _dbFactory.DataContext.CallFinance.FromSqlRaw("[dbo].[GetFinanceSummary] @Count OUTPUT, @FromCallDate, @ToCallDate, @FromBillDate, @ToBillDate, @GroupId, @IsSubmitted, @Lang, @PageIndex, @PageSize", param).ToList();
             countRecord = param[0].Value != null ? Convert.ToInt32(param[0].Value) : 0;
             return callFinanceDTOs;
         }
