@@ -38,8 +38,7 @@ namespace Acorna.Service.Project.BillingSystem
                 }
                 else if (rolesType == RolesType.Finance)
                 {
-                    //
-                    //comingBillsDTO = await _unitOfWork.ComingBillsRepository.GetAllComingBills(pageIndex, pageSize, statusNumber);
+                    comingBillsDTO = await _unitOfWork.ComingBillsRepository.GetComingBillsFinance(pageIndex, pageSize);
                 }
 
                 return comingBillsDTO;

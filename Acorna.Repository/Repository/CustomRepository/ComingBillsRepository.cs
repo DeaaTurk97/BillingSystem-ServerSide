@@ -30,7 +30,7 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 List<BillsSummaryDTO> comingBillsDTO = await _dbFactory.DataContext.Bill.Include(x => x.User.Group)
-                                                                    .Where(x => x.StatusBillId == statusBill)
+                                                                    .Where(x => x.StatusBillId == statusBill && x.IsPaid != true)
                                                                     .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
                                                                     .OrderByDescending(s => s.Id)
                                                                     .Skip(pageSize * (pageIndex - 1))
@@ -56,7 +56,7 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 List<BillsSummaryDTO> comingBillsDTO = await _dbFactory.DataContext.Bill
-                                                                   .Where(x => x.StatusBillId == (int)StatusCycleBills.Submit)
+                                                                   .Where(x => x.StatusBillId == (int)StatusCycleBills.Submit && x.IsPaid != true)
                                                                    .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
                                                                    .OrderByDescending(s => s.Id)
                                                                    .Skip(pageSize * (pageIndex - 1))
@@ -67,6 +67,32 @@ namespace Acorna.Repository.Repository.CustomRepository
                 {
                     DataRecord = comingBillsDTO,
                     CountRecord = _dbFactory.DataContext.Bill.Where(x => x.StatusBillId == (int)SystemEnum.StatusCycleBills.Submit).Count()
+                };
+
+                return paginationRecordModel;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<PaginationRecord<BillsSummaryDTO>> GetComingBillsFinance(int pageIndex, int pageSize)
+        {
+            try
+            {
+                List<BillsSummaryDTO> comingBillsDTO = await _dbFactory.DataContext.Bill.Include(x => x.User.Group)
+                                                                    .Where(x => x.StatusBillId == (int)SystemEnum.StatusCycleBills.Approved && x.IsPaid != true)
+                                                                    .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
+                                                                    .OrderByDescending(s => s.Id)
+                                                                    .Skip(pageSize * (pageIndex - 1))
+                                                                    .Take(pageSize)
+                                                                    .ToListAsync();
+
+                PaginationRecord<BillsSummaryDTO> paginationRecordModel = new PaginationRecord<BillsSummaryDTO>
+                {
+                    DataRecord = comingBillsDTO,
+                    CountRecord = _dbFactory.DataContext.Bill.Where(x => x.StatusBillId == (int)SystemEnum.StatusCycleBills.Approved).Count()
                 };
 
                 return paginationRecordModel;
