@@ -31,5 +31,9 @@ namespace Acorna.Core.Services
         public IReportService ReportService { get; }
         public IComingBillsService ComingBillsService { get; }
         public IComingServicesService ComingServicesService { get; }
+        public IAllocatedServicesService AllocatedServicesService { get; }
+        public ISimCardTypeService SimCardTypeService { get; }
+        public ISimProfileService SimProfileService { get; }
+
     }
 }

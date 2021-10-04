@@ -1,4 +1,5 @@
 using Acorna.CommonMember;
+using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Entity.Security;
 using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Security;
@@ -127,6 +128,8 @@ internal class SecurityRepository : ISecurityRepository
                 GroupId = x.GroupId,
                 GroupName = x.Group.GroupNameEn,
                 LanguageId = x.LanguageId,
+                SimCardTypeId = x.SimCardTypeId,
+                SimProfileId = x.SimProfileId,
                 RoleId = x.UserRoles.Select(x => x.RoleId).FirstOrDefault(),
                 RoleName = roles.Find(role => role.Id == x.UserRoles.Select(rId => rId.RoleId).FirstOrDefault())?.Name ?? string.Empty
 
@@ -572,12 +575,15 @@ internal class SecurityRepository : ISecurityRepository
             user.GroupId = userRegister.GroupId;
             user.LanguageId = userRegister.LanguageId;
             userRegister.SecurityStamp = user.SecurityStamp;
+            user.SimCardTypeId = userRegister.SimCardTypeId;
+            user.SimProfileId = userRegister.SimProfileId;
 
             IdentityResult result = _userManager.UpdateAsync(user).Result;
 
             if (result.Succeeded)
             {
                 await UpdateUserRole(userRegister);
+                await AddUserServices(userRegister.ServicesUsedId, user.Id);
             }
 
             return result;
@@ -744,6 +750,34 @@ internal class SecurityRepository : ISecurityRepository
             });
 
             return usersId;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
+    public async Task<bool> AddUserServices(int[] servicesId, int userId)
+    {
+        try
+        {
+            List<AllocatedUsersService> addUserServices = new List<AllocatedUsersService>();
+            List<AllocatedUsersService> userServices = _dbFactory.DataContext.AllocatedUsersService.Where(x => x.User.Id == userId).ToList();
+            _dbFactory.DataContext.AllocatedUsersService.RemoveRange(userServices);
+
+            servicesId.ToList().ForEach(serviceId =>
+            {
+                addUserServices.Add(new AllocatedUsersService
+                {
+                    ServiceUsedId = serviceId,
+                    UserId = userId,
+                });
+            });
+
+            await _dbFactory.DataContext.AllocatedUsersService.AddRangeAsync(addUserServices);
+           int saveServices = await _dbFactory.DataContext.SaveChangesAsync();
+
+            return (saveServices > 0) ?  true : false;
         }
         catch (Exception ex)
         {

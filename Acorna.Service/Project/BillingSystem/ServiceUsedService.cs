@@ -108,6 +108,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     serviceUsed.ServiceUsedNameAr = serviceUsedModel.ServiceUsedNameAr;
                     serviceUsed.ServiceUsedNameEn = serviceUsedModel.ServiceUsedNameEn;
+                    serviceUsed.ServicePrice = serviceUsedModel.ServicePrice;
                     serviceUsed.IsCalculatedValue = serviceUsedModel.IsCalculatedValue;
                     serviceUsed.IsNeedApproved = serviceUsedModel.IsNeedApproved;
 

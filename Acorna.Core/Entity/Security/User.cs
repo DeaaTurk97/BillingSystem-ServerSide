@@ -30,7 +30,14 @@ namespace Acorna.Core.Entity.Security
         public int GroupId { get; set; }
         [ForeignKey("GroupId")]
         public virtual Group Group { get; set; }
+        public int SimCardTypeId { get; set; }
+        [ForeignKey("SimCardTypeId")]
+        public virtual SimCardType SimCardType { get; set; }
+        public int SimProfileId { get; set; }
+        [ForeignKey("SimProfileId")]
+        public virtual SimProfile SimProfile { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; }
+        public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }
     }
 }

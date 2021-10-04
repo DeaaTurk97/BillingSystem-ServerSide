@@ -74,6 +74,12 @@ namespace Acorna.DTOs
 
             //DTOs
             CreateMap<ChatMessageModel, ChatMessageDTO>().ReverseMap();
+            CreateMap<AllocatedUsersService, AllocatedUsersServiceModel>().ForMember(dest => dest.UserId, s => s.MapFrom(y => y.User.Id))
+                                                                            .ForMember(dest => dest.ServiceId, s => s.MapFrom(y => y.ServiceUsed.Id))
+                                                                            .ReverseMap();
+
+            CreateMap<SimCardType, SimCardTypeModel>().ReverseMap();
+            CreateMap<SimProfile, SimProfileModel>().ReverseMap();
 
 
 

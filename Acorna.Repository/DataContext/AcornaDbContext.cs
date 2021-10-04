@@ -146,7 +146,9 @@ namespace Acorna.Repository.DataContext
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                GroupId = 1
+                GroupId = 1,
+                SimCardTypeId = 1,
+                SimProfileId = 1
             },
             new User
             {
@@ -160,7 +162,9 @@ namespace Acorna.Repository.DataContext
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                GroupId = 1
+                GroupId = 1,
+                SimCardTypeId = 1,
+                SimProfileId = 1
             },
             new User
             {
@@ -174,7 +178,9 @@ namespace Acorna.Repository.DataContext
                 IsActive = true,
                 LanguageId = 1,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                GroupId = 2
+                GroupId = 2,
+                SimCardTypeId = 1,
+                SimProfileId = 1
             }
             );
 
@@ -358,6 +364,37 @@ namespace Acorna.Repository.DataContext
 
             });
 
+            //Create New SIM Card type
+            builder.Entity<SimCardType>().ToTable("SimCardTypes").HasData(new List<SimCardType>
+            {
+                new SimCardType {
+                    Id = 1,
+                    TypeName = "Voice",
+                },
+                new SimCardType {
+                    Id = 2,
+                    TypeName = "Data",
+                },
+            });
+
+
+            //Create New SIM Profiles
+            builder.Entity<SimProfile>().ToTable("SimProfiles").HasData(new List<SimProfile>
+            {
+                new SimProfile {
+                    Id = 1,
+                    ProfileName = "Activated",
+                },
+                new SimProfile {
+                    Id = 2,
+                    ProfileName = "Deactivate",
+                },
+                 new SimProfile {
+                    Id = 3,
+                    ProfileName = "Stock",
+                },
+            });
+
             //Rename All Tables Identity
             builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
             builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
@@ -381,6 +418,9 @@ namespace Acorna.Repository.DataContext
         public DbSet<BillDetails> BillDetails { get; set; }
         public DbSet<ServiceUsed> ServiceUsed { get; set; }
         public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }
+        public DbSet<AllocatedUsersService> AllocatedUsersService { get; set; }
+        public DbSet<SimCardType> SimCardType { get; set; }
+        public DbSet<SimProfile> SimProfile { get; set; }
 
         public DbQuery<CallDetailsDTO> CallDetails { get; set; }
         public DbQuery<CallSummaryDTO> CallSummary { get; set; }
