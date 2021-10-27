@@ -1,5 +1,4 @@
 using Acorna.Controllers.Base;
-using Acorna.Core.IServices.Project;
 using Acorna.Core.Models.SystemDefinition;
 using Acorna.Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +20,9 @@ namespace Acorna.Controllers.SystemDefinition
         {
             _unitOfWorkService = unitOfWorkService;
         }
+
         [HttpGet]
+        [Route("GetGeneralSettings")]
         public async Task<IActionResult> GetGeneralSettings()
         {
             try
@@ -33,6 +34,7 @@ namespace Acorna.Controllers.SystemDefinition
                 throw ex;
             }
         }
+
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] List<GeneralSettingModel> generalSettingModel)
         {
@@ -46,6 +48,20 @@ namespace Acorna.Controllers.SystemDefinition
             }
 
             return Ok(true);
+        }
+
+        [HttpGet]
+        [Route("GetSettingValueFromSettingName")]
+        public async Task<IActionResult> GetSettingValueFromSettingName(string settingName)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.GeneralSettingsService.GetSettingValueFromSettingName(settingName));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

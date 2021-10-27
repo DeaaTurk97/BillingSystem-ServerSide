@@ -1,4 +1,5 @@
 ﻿using Acorna.Core.Entity.SystemDefinition;
+using System.Threading.Tasks;
 
 namespace Acorna.Core.Repository.ICustomRepsitory
 {
@@ -12,5 +13,8 @@ namespace Acorna.Core.Repository.ICustomRepsitory
         bool IsReminderByEmail();
         string GetDefaultPassword();
         bool IsDeleteFreeTypeNumber();
+        Task<string> GetSettingValueFromSettingName(string settingName);
+        bool IsAutomatedApprovalOfNumbers();
+        bool IsAutomatedApprovalServices();
     }
 }

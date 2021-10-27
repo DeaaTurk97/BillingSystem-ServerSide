@@ -1,9 +1,11 @@
 ﻿using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Repository;
 using Acorna.Core.Repository.ICustomRepsitory;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Acorna.Repository.Repository.CustomRepository
 {
@@ -21,7 +23,7 @@ namespace Acorna.Repository.Repository.CustomRepository
         {
             get
             {
-                return _dbFactory.DataContext.GeneralSetting.ToList();
+                return  _dbFactory.DataContext.GeneralSetting.ToList();
             }
         }
 
@@ -114,6 +116,42 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsDeleteFreeTypeNumber")?.SettingValue);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<string> GetSettingValueFromSettingName(string settingName)
+        {
+            try
+            {
+                return await _dbFactory.DataContext.GeneralSetting.Where(x => x.SettingName == settingName).Select(x => x.SettingValue).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool IsAutomatedApprovalOfNumbers()
+        {
+            try
+            {
+                return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsAutomatedApprovalPhoneNumbers")?.SettingValue);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool IsAutomatedApprovalServices()
+        {
+            try
+            {
+                return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsAutomatedApprovalServices")?.SettingValue);
             }
             catch (Exception ex)
             {

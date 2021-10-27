@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Acorna.CommonMember
 {
-    public static class Utilites
+    public static class SyriaUtilites
     {
         public static bool IsStringNumber(string calledNumber)
         {

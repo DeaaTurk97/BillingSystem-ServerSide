@@ -56,5 +56,16 @@
             ar,
             en
         }
+        public enum SimType
+        {
+            Voice = 1,
+            Data = 2,
+        }
+        public enum SimProfileType
+        {
+            Activated = 1,
+            Deactivate = 2,
+            Stock = 3,
+        }
     }
 }

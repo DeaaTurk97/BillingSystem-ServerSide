@@ -2,6 +2,7 @@
 using Acorna.Core.DTOs;
 using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Models.Notification;
+using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
 using AutoMapper;
@@ -12,6 +13,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using static Acorna.Core.DTOs.SystemEnum;
 
 
@@ -27,6 +29,8 @@ namespace Acorna.Service.Project.BillingSystem
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
+        #region Syria ...
 
         public List<string> UploadMTNBills(List<DocumentModel> filesUploaded, int currentUserId)
         {
@@ -71,7 +75,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 }
 
                                 //check if this user is Exist or not
-                                userPhoneNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(1)).Trim());
+                                userPhoneNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(1)).Trim());
                                 if (userId == 0)
                                 {
                                     if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
@@ -80,14 +84,14 @@ namespace Acorna.Service.Project.BillingSystem
                                     }
                                     else
                                     {
-                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber).Result;
+                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber, (int)SimType.Voice, (int)SimProfileType.Activated).Result;
                                     }
                                 }
 
                                 //check if current row for called_number column is number
-                                if (Utilites.IsStringNumber(Convert.ToString(reader.GetValue(2)).Trim()))
+                                if (SyriaUtilites.IsStringNumber(Convert.ToString(reader.GetValue(2)).Trim()))
                                 {
-                                    dialedNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(2)).Trim());
+                                    dialedNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(reader.GetValue(2)).Trim());
                                     PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == dialedNumber);
 
                                     if (phoneBook != null)
@@ -95,7 +99,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         phoneBookId = phoneBook.Id;
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
-                                        operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
+                                        operatorKey = SyriaUtilites.GetOperatorKeyFromNumber(Convert.ToString(reader.GetValue(2)).Trim());
                                         Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt64(operatorKey));
                                         operatrId = operatr != null ? operatr.Id : 0;
                                     }
@@ -205,12 +209,12 @@ namespace Acorna.Service.Project.BillingSystem
                             if (billsDetails.Count > 0)
                             {
                                 //chicking if current bill is added
-                                if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)), userId))
+                                if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)), userId))
                                 {
                                     bills.Add(new Bill
                                     {
                                         UserId = userId,
-                                        BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)),
+                                        BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(reader.GetValue(3), enUsDateFormat)),
                                         SubmittedByAdmin = false,
                                         SubmittedByUser = false,
                                         IsPaid = false,
@@ -313,7 +317,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 }
 
                                 //check if this user is Exist or not
-                                userPhoneNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column5"]).Trim());
+                                userPhoneNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column5"]).Trim());
                                 if (userId == 0)
                                 {
                                     if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
@@ -322,14 +326,14 @@ namespace Acorna.Service.Project.BillingSystem
                                     }
                                     else
                                     {
-                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber).Result;
+                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber, (int)SimType.Voice, (int)SimProfileType.Activated).Result;
                                     }
                                 }
 
                                 //check if current row for called_number column is number
-                                if (Utilites.IsStringNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim()))
+                                if (SyriaUtilites.IsStringNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim()))
                                 {
-                                    dialedNumber = Utilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
+                                    dialedNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
                                     PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == dialedNumber);
 
                                     if (phoneBook != null)
@@ -337,7 +341,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         phoneBookId = phoneBook.Id;
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
-                                        operatorKey = Utilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
+                                        operatorKey = SyriaUtilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
                                         Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
                                         operatrId = operatr != null ? operatr.Id : 0;
                                     }
@@ -383,7 +387,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         }
 
                                         serviceTypeId = addingServiceUsed.Id;
-                                        isServiceNeedApproved = serviceUsed.IsNeedApproved;
+                                        isServiceNeedApproved = addingServiceUsed.IsNeedApproved;
                                     }
                                 }
                                 else
@@ -426,15 +430,15 @@ namespace Acorna.Service.Project.BillingSystem
                                 if (index + 1 < dataTable.Rows.Count)
                                 {
                                     // Adding this condition to check if next row is a new number,
-                                    if (Utilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column5"].ToString().Trim()) != Utilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column5"].ToString().Trim()))
+                                    if (SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column5"].ToString().Trim()) != SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column5"].ToString().Trim()))
                                     {
                                         //chicking if current bill is Exist
-                                        if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
+                                        if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
                                         {
                                             bills.Add(new Bill
                                             {
                                                 UserId = userId,
-                                                BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
+                                                BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
                                                 SubmittedByAdmin = false,
                                                 SubmittedByUser = false,
                                                 IsPaid = false,
@@ -451,12 +455,12 @@ namespace Acorna.Service.Project.BillingSystem
                                 else
                                 {
                                     //chicking if current bill is added
-                                    if (!IsBillExist(Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
+                                    if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
                                     {
                                         bills.Add(new Bill
                                         {
                                             UserId = userId,
-                                            BillDate = Utilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
+                                            BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
                                             SubmittedByAdmin = false,
                                             SubmittedByUser = false,
                                             IsPaid = false,
@@ -511,6 +515,312 @@ namespace Acorna.Service.Project.BillingSystem
                 throw ex;
             }
         }
+        #endregion
+
+        #region Lebanon ...
+
+        public bool UploadCallsAndRoamingLebanon(List<DocumentModel> filesUploaded, string billType, int currentUserId)
+        {
+            IFormatProvider enUsDateFormat = new CultureInfo("en-US").DateTimeFormat;
+            List<Bill> bills = new List<Bill>();
+            List<BillDetails> billsDetails = new List<BillDetails>();
+            int phoneBookId = 0;
+            string dialedNumber = string.Empty;
+            int TypePhoneNumberId = 0;
+            int serviceTypeId = 0;
+            bool isServiceNeedApproved = false;
+            int operatrId = 0;
+            string operatorKey = string.Empty;
+            string dataUsage = string.Empty;
+            string callDuration = string.Empty;
+            string userPhoneNumber = string.Empty;
+            int userId = 0;
+
+            try
+            {
+                foreach (DocumentModel file in filesUploaded)
+                {
+                    using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
+                    {
+                        using (var reader = ExcelReaderFactory.CreateReader(stream))
+                        {
+
+                            DataSet datasetBills = reader.AsDataSet();
+                            DataTable dataTable = datasetBills.Tables[0];
+
+
+                            dataTable = dataTable.AsEnumerable()
+                                                 .GroupBy(r => r.Field<object>("Column0"))
+                                                 .SelectMany(x => x)
+                                                 .CopyToDataTable();
+
+
+
+                            for (int index = 0; index < dataTable.Rows.Count; index++)
+                            {
+
+                                if (Convert.ToString(dataTable.Rows[index]["Column0"]).Trim().Contains("SUBNO"))
+                                {
+                                    continue;
+                                }
+
+                                //check if this user is Exist or not
+                                userPhoneNumber = LebanonUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column0"]).Trim());
+                                if (userId == 0)
+                                {
+                                    if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
+                                    {
+                                        userId = _unitOfWork.SecurityRepository.SearchByPhoneNumber(userPhoneNumber).Result;
+                                    }
+                                    else
+                                    {
+                                        userId = _unitOfWork.SecurityRepository.CreateUserUsingPhoneNumber(userPhoneNumber, (int)SimType.Voice, (int)SimProfileType.Activated).Result;
+                                    }
+                                }
+
+                                //check if current row for dialed number(DESTINATION_NUMBER) column is number
+                                if (LebanonUtilites.IsStringNumber(Convert.ToString(dataTable.Rows[index]["Column3"]).Trim()))
+                                {
+                                    dialedNumber = LebanonUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column3"]).Trim());
+                                    PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == dialedNumber);
+
+                                    if (phoneBook != null)
+                                    {
+                                        phoneBookId = phoneBook.Id;
+                                        TypePhoneNumberId = phoneBook.TypePhoneNumberId;
+
+                                        operatorKey = LebanonUtilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column3"]).Trim());
+                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
+                                        operatrId = operatr != null ? operatr.Id : 0;
+                                    }
+                                    else
+                                    {
+                                        phoneBookId = 0;
+                                        TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
+                                        operatrId = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    dialedNumber = Convert.ToString(dataTable.Rows[index]["Column3"]).Trim();
+                                    phoneBookId = 0;
+                                    TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
+                                    operatrId = 0;
+                                }
+
+
+                                //check on service type (CHARGETYPE)
+                                ServiceUsed serviceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(dataTable.Rows[index]["Column5"]).Trim() || x.ServiceUsedNameEn == Convert.ToString(dataTable.Rows[index]["Column5"]).Trim());
+                                if (serviceUsed != null)
+                                {
+                                    serviceTypeId = serviceUsed.Id;
+                                    isServiceNeedApproved = serviceUsed.IsNeedApproved;
+                                }
+                                else
+                                {
+                                    //adding a new service type if type Not Exist
+                                    ServiceUsed addingServiceUsed = new ServiceUsed
+                                    {
+                                        ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
+                                        ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
+                                        IsCalculatedValue = true,
+                                        IsNeedApproved = false
+                                    };
+
+                                    _unitOfWork.GetRepository<ServiceUsed>().Insert(addingServiceUsed);
+
+                                    if (!_unitOfWork.SaveChanges())
+                                    {
+                                        throw new Exception("Error occurred when inserting a new service");
+                                    }
+
+                                    serviceTypeId = addingServiceUsed.Id;
+                                    isServiceNeedApproved = addingServiceUsed.IsNeedApproved;
+                                }
+
+
+                                //when this service is INTERNET
+                                if (Convert.ToString(dataTable.Rows[index]["Column5"]).Trim().Contains("Data"))
+                                {
+                                    dataUsage = Convert.ToString(dataTable.Rows[index]["Column4"]).Trim();
+                                    callDuration = "-";
+                                }
+                                else
+                                {
+                                    dataUsage = "-";
+                                    callDuration = LebanonUtilites.GetMinutesFromDateTime(Convert.ToString(dataTable.Rows[index]["Column4"]).Trim());
+                                }
+
+                                //chicking if current bill is Exist
+                                if (!IsBillExist(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId))
+                                {
+                                    billsDetails.Add(new BillDetails
+                                    {
+                                        PhoneBookId = phoneBookId,
+                                        CallDuration = callDuration,
+                                        CallDateTime = LebanonUtilites.GetCallDateTime(dataTable.Rows[index]["Column1"].ToString(), dataTable.Rows[index]["Column2"].ToString()),
+                                        CallNetPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
+                                        CallRetailPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
+                                        PhoneNumber = dialedNumber,
+                                        TypePhoneNumberId = TypePhoneNumberId,
+                                        ServiceUsedId = serviceTypeId,
+                                        IsServiceUsedNeedApproved = isServiceNeedApproved,
+                                        TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                        StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
+                                        OperatorId = operatrId,
+                                        DataUsage = dataUsage,
+                                    });
+                                }
+                                else
+                                {
+                                    //added this because lebanon unicef have multi file 
+                                    BillModel billModel = GetBill(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId);
+
+                                    if (!IsBillDetailsExist(dialedNumber, LebanonUtilites.GetCallDateTime(dataTable.Rows[index]["Column1"].ToString(), dataTable.Rows[index]["Column2"].ToString()), billModel.Id))
+                                    {
+                                        billsDetails.Add(new BillDetails
+                                        {
+                                            PhoneBookId = phoneBookId,
+                                            CallDuration = callDuration,
+                                            CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column1"] + " " + dataTable.Rows[index]["Column2"], enUsDateFormat),
+                                            CallNetPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
+                                            CallRetailPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
+                                            PhoneNumber = dialedNumber,
+                                            TypePhoneNumberId = TypePhoneNumberId,
+                                            ServiceUsedId = serviceTypeId,
+                                            IsServiceUsedNeedApproved = isServiceNeedApproved,
+                                            TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                            StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
+                                            OperatorId = operatrId,
+                                            DataUsage = dataUsage,
+                                            BillId = billModel.Id
+                                        });
+                                    }
+                                }
+
+                                //To avoid error index out of range... when read last row
+                                if (index + 1 < dataTable.Rows.Count)
+                                {
+                                    // Adding this condition to check if next row is a new number,
+                                    if (LebanonUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column0"].ToString().Trim()) != LebanonUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column0"].ToString().Trim()))
+                                    {
+                                        //chicking if current bill is Exist
+                                        if (!IsBillExist(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId))
+                                        {
+                                            bills.Add(new Bill
+                                            {
+                                                UserId = userId,
+                                                BillDate = LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)),
+                                                SubmittedByAdmin = false,
+                                                SubmittedByUser = false,
+                                                IsPaid = false,
+                                                IsTerminal = false,
+                                                StatusBillId = (int)SystemEnum.StatusCycleBills.Upload,
+                                                BillDetails = billsDetails
+                                            });
+                                        }
+                                        else
+                                        {
+                                            BillModel billModel = GetBill(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId);
+
+                                            _unitOfWork.GetRepository<BillDetails>().InsertRange(billsDetails);
+                                            _unitOfWork.SaveChanges();
+                                        }
+                                        //this means the next row contains a new  Number, Must reset bills details list
+                                        billsDetails = new List<BillDetails>();
+                                        userId = 0;
+                                    }
+                                }
+                                else
+                                {
+                                    //chicking if current bill is added
+                                    if (!IsBillExist(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId))
+                                    {
+                                        bills.Add(new Bill
+                                        {
+                                            UserId = userId,
+                                            BillDate = LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)),
+                                            SubmittedByAdmin = false,
+                                            SubmittedByUser = false,
+                                            IsPaid = false,
+                                            IsTerminal = false,
+                                            StatusBillId = (int)SystemEnum.StatusCycleBills.Upload,
+                                            BillDetails = billsDetails
+                                        });
+                                    }
+                                    //this means the next row contains a new  Number, Must reset bills details list
+                                    billsDetails = new List<BillDetails>();
+                                    userId = 0;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                _unitOfWork.GetRepository<Bill>().InsertRange(bills);
+                _unitOfWork.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool UploadDataRoamingLebanon(List<DocumentModel> filesUploaded, int currentUserId)
+        {
+            try
+            {
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public bool UploadDataLebanon(List<DocumentModel> filesUploaded, int currentUserId)
+        {
+            try
+            {
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<List<string>> ReminderUsersAddedBills()
+        {
+            try
+            {
+                List<string> usersIDUplodedBills = new List<string>();
+                bool isReminderBySyatem = _unitOfWork.GeneralSettingsRepository.IsReminderBySystem();
+
+                usersIDUplodedBills = await _unitOfWork.BillsRepository.GetbillsGreaterThanServicesPrices();
+
+                if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                {
+                    usersIDUplodedBills.ForEach(userId =>
+                    {
+                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                    });
+                }
+                return (isReminderBySyatem) ? usersIDUplodedBills : new List<string>();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        #endregion
+
+        #region Sheard ...
 
         private bool IsBillExist(DateTime billDateTime, int userId)
         {
@@ -525,5 +835,35 @@ namespace Acorna.Service.Project.BillingSystem
                 throw ex;
             }
         }
+
+        private BillModel GetBill(DateTime billDateTime, int userId)
+        {
+            try
+            {
+                Bill bill = _unitOfWork.GetRepository<Bill>().FirstOrDefault(x => x.BillDate == billDateTime && x.UserId == userId);
+
+                return _mapper.Map<BillModel>(bill);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        private bool IsBillDetailsExist(string dialedNumber, DateTime callDateTime, int billId)
+        {
+            try
+            {
+                BillDetails bill = _unitOfWork.GetRepository<BillDetails>().FirstOrDefault(x => x.BillId == billId && x.CallDateTime == callDateTime && x.PhoneNumber == dialedNumber);
+
+                return (bill != null) ? true : false;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        #endregion
+
     }
 }

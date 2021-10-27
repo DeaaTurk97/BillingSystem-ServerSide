@@ -22,6 +22,58 @@ namespace Acorna.Repository.Repository.Notification
             _mapper = mapper;
         }
 
+        public async Task<List<string>> SendNotificationAddedBills()
+        {
+            try
+            {
+                List<string> usersIDNewUplodedBills = new List<string>();
+
+                var allocatedUsersService = await (from aus in _dbFactory.DataContext.AllocatedUsersService
+                                                   join u in _dbFactory.DataContext.ServiceUsed on aus.ServiceUsedId equals u.Id
+                                                   group u by new { aus.UserId } into gServicesPrices
+                                                   select new
+                                                   {
+                                                       UserId = gServicesPrices.Key.UserId,
+                                                       SumServicesPrices = gServicesPrices.Sum(s => s.ServicePrice).Value
+                                                   }).ToListAsync();
+
+                var bills = await (from b in _dbFactory.DataContext.Bill
+                                   join bd in _dbFactory.DataContext.BillDetails on b.Id equals bd.BillId
+                                   where b.SubmittedByUser == false
+                                   group bd by new { b.Id, b.UserId } into gSumPrice
+                                   select new
+                                   {
+                                       BillId = gSumPrice.Key.Id,
+                                       UserId = gSumPrice.Key.UserId,
+                                       SumNetPrice = gSumPrice.Sum(s => s.CallNetPrice),
+                                   }).ToListAsync();
+
+
+                var billsGreaterThanServicesPrices = (from aus in allocatedUsersService
+                                                      join b in bills on aus.UserId equals b.UserId
+                                                      where b.SumNetPrice > 0 // aus.SumServicesPrices
+                                                      select new
+                                                      {
+                                                          UserId = aus.UserId,
+                                                      }).ToList();
+
+
+                foreach (var bill in billsGreaterThanServicesPrices)
+                {
+                    if (!usersIDNewUplodedBills.Contains(bill.UserId.ToString()))
+                    {
+                        usersIDNewUplodedBills.Add(bill.UserId.ToString());
+                    }
+                }
+
+                return usersIDNewUplodedBills;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public int AddNotificationItem(NotificationItemModel model)
         {
             try
@@ -54,8 +106,8 @@ namespace Acorna.Repository.Repository.Notification
                 IEnumerable<NotificationItemModel> notifications = await (from n in _dbFactory.DataContext.Notifications
                                                                           join nd in _dbFactory.DataContext.NotificationsDetails
                                                                           on n.Id equals nd.NotificationsId
-                                                                          where n.IsRead == false && n.Deleted == false 
-                                                                          &&  n.RecipientRoleId == (int)enumRoleName
+                                                                          where n.IsRead == false && n.Deleted == false
+                                                                          && n.RecipientRoleId == (int)enumRoleName
                                                                           select new NotificationItemModel
                                                                           {
                                                                               Id = n.Id,

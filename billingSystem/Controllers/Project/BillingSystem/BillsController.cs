@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace billingSystem.Controllers.Project.BillingSystem
 {
@@ -44,6 +45,62 @@ namespace billingSystem.Controllers.Project.BillingSystem
             catch (Exception ex)
             {
                 return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("UploadCallsAndRoamingLebanon")]
+        public IActionResult UploadCallsAndRoamingLebanon(List<DocumentModel> filesUploaded, string billType)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillService.UploadCallsAndRoamingLebanon(filesUploaded, billType, CurrentUserId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("UploadDataRoamingLebanon")]
+        public IActionResult UploadDataRoamingLebanon(List<DocumentModel> filesUploaded)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillService.UploadDataRoamingLebanon(filesUploaded, CurrentUserId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
+        [Route("UploadDataLebanon")]
+        public IActionResult UploadDataLebanon(List<DocumentModel> filesUploaded)
+        {
+            try
+            {
+                return Ok(_unitOfWorkService.BillService.UploadDataLebanon(filesUploaded, CurrentUserId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpGet]
+        [Route("ReminderUsersAddedBills")]
+        public async Task<IActionResult> ReminderUsersAddedBills()
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.BillService.ReminderUsersAddedBills());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
             }
         }
     }

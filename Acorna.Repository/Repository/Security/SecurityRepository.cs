@@ -539,7 +539,7 @@ internal class SecurityRepository : ISecurityRepository
             }
             else
             {
-                userRegister.PasswordHash = Utilites.GetRandomPassword(9);
+                userRegister.PasswordHash = SyriaUtilites.GetRandomPassword(9);
             }
 
             userRegister.IsActive = true;
@@ -646,7 +646,7 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<int> CreateUserUsingPhoneNumber(string phoneNumber)
+    public async Task<int> CreateUserUsingPhoneNumber(string phoneNumber, int simTypeId, int simProfileId)
     {
         try
         {
@@ -660,11 +660,13 @@ internal class SecurityRepository : ISecurityRepository
                 Email = string.Format(phoneNumber + "{0}", "@unicef.com"),
                 EmailConfirmed = true,
                 PhoneNumber = phoneNumber,
-                PasswordHash = (isDefaultPassword) ? defaultPassword : Utilites.GetRandomPassword(9),
+                PasswordHash = (isDefaultPassword) ? defaultPassword : SyriaUtilites.GetRandomPassword(9),
                 SecurityStamp = Guid.NewGuid().ToString(),
                 IsActive = true,
                 LanguageId = 1,
                 GroupId = 2,
+                SimCardTypeId = simTypeId,
+                SimProfileId = simProfileId
             };
 
             var resultCreateUser = await _userManager.CreateAsync(user, user.PasswordHash);

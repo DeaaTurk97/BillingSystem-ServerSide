@@ -48,7 +48,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                 }).Distinct().ToListAsync();
 
                 //Adding this to return numbers only
-                billsSummary = billsSummary.Where(x => Utilites.IsStringNumber(x.DialledNumber) == true).ToList();
+                billsSummary = billsSummary.Where(x => SyriaUtilites.IsStringNumber(x.DialledNumber) == true).ToList();
 
 
                 if (billsSummary.Count > 0)
@@ -106,7 +106,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                     }).ToListAsync();
 
                 //Adding this to return numbers only
-                billsSummary = billsSummary.Where(x => Utilites.IsStringNumber(x.DialledNumber) == true).ToList();
+                billsSummary = billsSummary.Where(x => SyriaUtilites.IsStringNumber(x.DialledNumber) == true).ToList();
 
 
                 if (billsSummary.Count > 0)

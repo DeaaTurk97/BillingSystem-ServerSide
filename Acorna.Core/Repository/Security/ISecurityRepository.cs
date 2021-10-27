@@ -34,7 +34,7 @@ public interface ISecurityRepository
     Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister);
     Task<bool> IsUserExistsByPhoneNumber(string phoneNumber);
     Task<int> SearchByPhoneNumber(string phoneNumber);
-    Task<int> CreateUserUsingPhoneNumber(string phoneNumber);
+    Task<int> CreateUserUsingPhoneNumber(string phoneNumber, int simTypeId, int simProfileId);
     Task<User> FindUserByPhoneNumber(string phoneNumber);
     Task<string> GetEmailByUserId(string userId);
     Task<List<string>> GetSuperAdminWithAdminGropByUserId(int userId);

@@ -1,9 +1,8 @@
-using Acorna.Core.Models;
-using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System;
 using Acorna.Core.Models.Chat;
+using Microsoft.AspNetCore.SignalR;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Acorna.Hubs
 {

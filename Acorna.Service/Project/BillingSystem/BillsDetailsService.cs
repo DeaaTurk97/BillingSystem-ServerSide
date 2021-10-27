@@ -42,6 +42,7 @@ namespace Acorna.Service.Project.BillingSystem
                 List<PhoneBook> updatePhoneBookOfficial = new List<PhoneBook>();
                 List<PhoneBook> updatePhoneBookPrivate = new List<PhoneBook>();
                 List<string> usersId = new List<string>();
+                bool isAutomatedApprovalOfNumbers = _unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalOfNumbers();
 
                 phoneNumbers.ForEach(item =>
                 {
@@ -51,14 +52,15 @@ namespace Acorna.Service.Project.BillingSystem
                     {
                         if (phoneBook == null)
                         {
-                            //adding a new phone number
+                            //add a new phone number
                             addPhoneBookOfficial.Add(new PhoneBook
                             {
                                 PhoneNumber = item.DialledNumber,
                                 PhoneName = item.PhoneName,
                                 TypePhoneNumberId = item.TypePhoneNumberId,
                                 PersonalUserId = 0,
-                                StatusNumberId = (int)StatusCycleBills.Submit,
+                                StatusNumberId = (isAutomatedApprovalOfNumbers) ? (int)StatusCycleBills.Approved
+                                 : (int)StatusCycleBills.Submit,
                                 ReferanceNotificationId = Convert.ToInt32(billId)
                             });
                         }
@@ -68,7 +70,7 @@ namespace Acorna.Service.Project.BillingSystem
                             phoneBook.TypePhoneNumberId = item.TypePhoneNumberId;
                             phoneBook.PersonalUserId = 0;
 
-                            //updating exists phone number
+                            //update exists phone number
                             updatePhoneBookOfficial.Add(phoneBook);
                         }
                     }
@@ -77,14 +79,15 @@ namespace Acorna.Service.Project.BillingSystem
                     {
                         if (phoneBook == null)
                         {
-                            //adding a new phone number
+                            //add a new phone number
                             addPhoneBookPrivate.Add(new PhoneBook
                             {
                                 PhoneNumber = item.DialledNumber,
                                 PhoneName = item.PhoneName,
                                 TypePhoneNumberId = item.TypePhoneNumberId,
                                 PersonalUserId = currentUserId,
-                                StatusNumberId = (int)StatusCycleBills.Submit,
+                                StatusNumberId = (isAutomatedApprovalOfNumbers) ? (int)StatusCycleBills.Approved
+                                 : (int)StatusCycleBills.Submit,
                                 ReferanceNotificationId = Convert.ToInt32(billId)
                             });
                         }
@@ -94,7 +97,7 @@ namespace Acorna.Service.Project.BillingSystem
                             phoneBook.TypePhoneNumberId = item.TypePhoneNumberId;
                             phoneBook.PersonalUserId = currentUserId;
 
-                            //updating exists phone number
+                            //update exists phone number
                             updatePhoneBookPrivate.Add(phoneBook);
                         }
                     }
@@ -108,36 +111,40 @@ namespace Acorna.Service.Project.BillingSystem
 
                 _unitOfWork.SaveChanges();
 
-                if (addPhoneBookOfficial.Count > 0 || updatePhoneBookOfficial.Count > 0)
+                if (!isAutomatedApprovalOfNumbers)
                 {
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+                    if (addPhoneBookOfficial.Count > 0 || updatePhoneBookOfficial.Count > 0)
                     {
-                        usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
-
-                        usersId.ForEach(userId =>
+                        if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
                         {
-                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
+
+                            usersId.ForEach(userId =>
                             {
-                                MessageText = "NewPhoneNumbersWasSubmitted",
-                                IsRead = false,
-                                Deleted = false,
-                                ReferenceMassageId = Convert.ToInt32(billId),
-                                NotificationTypeId = (int)SystemEnum.NotificationType.PhoneNumbersSubmitted,
-                                RecipientId = Convert.ToInt32(userId)
+                                _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                                {
+                                    MessageText = "NewPhoneNumbersWasSubmitted",
+                                    IsRead = false,
+                                    Deleted = false,
+                                    ReferenceMassageId = Convert.ToInt32(billId),
+                                    NotificationTypeId = (int)SystemEnum.NotificationType.PhoneNumbersSubmitted,
+                                    RecipientId = Convert.ToInt32(userId)
+                                });
                             });
-                        });
 
-                    }
+                        }
 
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
-                    {
-                        usersId.ForEach(userId =>
+                        if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                         {
-                            _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                            usersId.ForEach(userId =>
+                            {
+                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
 
-                        });
+                            });
+                        }
                     }
                 }
+
                 return usersId;
             }
             catch (Exception ex)
@@ -146,21 +153,22 @@ namespace Acorna.Service.Project.BillingSystem
             }
         }
 
-        public List<string> ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproved, string billId, int currentUserId)
+        public List<string> ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproval, string billId, int currentUserId)
         {
             try
             {
                 List<BillDetails> updateCallDetails = new List<BillDetails>();
                 List<string> usersId = new List<string>();
+                bool isAutomatedApprovalServices = _unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalServices();
 
-                servicesNeedApproved.ForEach(callDetails =>
+                servicesNeedApproval.ForEach(callDetails =>
                 {
                     BillDetails billDetails = _unitOfWork.GetRepository<BillDetails>().GetSingleAsync(callDetails.Id).Result;
 
                     if (billDetails != null && callDetails.TypeServiceUsedId != (int)TypesPhoneNumber.Unknown)
                     {
                         billDetails.TypeServiceUsedId = callDetails.TypeServiceUsedId;
-                        billDetails.StatusServiceUsedId = (int)StatusCycleBills.Submit;
+                        billDetails.StatusServiceUsedId = (isAutomatedApprovalServices) ? (int)StatusCycleBills.Approved : (int)StatusCycleBills.Submit;
                         updateCallDetails.Add(billDetails);
                     }
                 });
@@ -168,36 +176,40 @@ namespace Acorna.Service.Project.BillingSystem
                 _unitOfWork.GetRepository<BillDetails>().UpdateRange(updateCallDetails);
                 _unitOfWork.SaveChanges();
 
-                if (updateCallDetails.Count > 0)
+                if (!isAutomatedApprovalServices)
                 {
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+                    if (updateCallDetails.Count > 0)
                     {
-                        usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
-
-                        usersId.ForEach(userId =>
+                        if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
                         {
-                            _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                            usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(currentUserId).Result;
+
+                            usersId.ForEach(userId =>
                             {
-                                MessageText = "NewServicesWasSubmitted",
-                                IsRead = false,
-                                Deleted = false,
-                                ReferenceMassageId = Convert.ToInt32(billId),
-                                NotificationTypeId = (int)SystemEnum.NotificationType.ServicesSubmitted,
-                                RecipientId = Convert.ToInt32(userId)
+                                _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                                {
+                                    MessageText = "NewServicesWasSubmitted",
+                                    IsRead = false,
+                                    Deleted = false,
+                                    ReferenceMassageId = Convert.ToInt32(billId),
+                                    NotificationTypeId = (int)SystemEnum.NotificationType.ServicesSubmitted,
+                                    RecipientId = Convert.ToInt32(userId)
+                                });
                             });
-                        });
 
-                    }
+                        }
 
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
-                    {
-                        usersId.ForEach(userId =>
+                        if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                         {
-                            _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                            usersId.ForEach(userId =>
+                            {
+                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
 
-                        });
+                            });
+                        }
                     }
                 }
+
                 return usersId;
             }
             catch (Exception ex)

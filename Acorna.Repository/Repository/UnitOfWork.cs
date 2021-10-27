@@ -48,6 +48,7 @@ namespace Acorna.Repository.Repository
         Lazy<IComingBillsRepository> LazyComingBillsRepository => new Lazy<IComingBillsRepository>(() => new ComingBillsRepository(_dbFactory, _mapper));
         Lazy<IEmailRepository> LazyEmailRepository => new Lazy<IEmailRepository>(() => new EmailRepository(_dbFactory));
         Lazy<IComingServicesRepository> LazyComingServicesRepository => new Lazy<IComingServicesRepository>(() => new ComingServicesRepository(_dbFactory));
+        Lazy<IBillsRepository> LazyBillsRepository => new Lazy<IBillsRepository>(() => new BillRepository(_dbFactory, _mapper));
 
         public IGovernorateRepository GovernorateRepository => LazyGovernorateRepository.Value;
         public IPhoneBookRepository PhoneBookRepository => LazyPhoneBookRepository.Value;
@@ -59,6 +60,7 @@ namespace Acorna.Repository.Repository
         public IComingBillsRepository ComingBillsRepository => LazyComingBillsRepository.Value;
         public IEmailRepository EmailRepository => LazyEmailRepository.Value;
         public IComingServicesRepository ComingServicesRepository => LazyComingServicesRepository.Value;
+        public IBillsRepository BillsRepository => LazyBillsRepository.Value;
 
         //base
         Lazy<IChatRepository> LazyChatRepository => new Lazy<IChatRepository>(() => new ChatRepository(_dbFactory));

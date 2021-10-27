@@ -8,5 +8,6 @@ namespace Acorna.Core.IServices.Project
     {
         Task<List<GeneralSettingModel>> GetAllAsync();
         Task<bool> UpdateGeneralSettingsAsync(List<GeneralSettingModel> generalSettings);
+        Task<string> GetSettingValueFromSettingName(string settingName);
     }
 }

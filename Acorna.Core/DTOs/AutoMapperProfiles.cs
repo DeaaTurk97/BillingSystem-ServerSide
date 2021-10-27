@@ -80,6 +80,7 @@ namespace Acorna.DTOs
 
             CreateMap<SimCardType, SimCardTypeModel>().ReverseMap();
             CreateMap<SimProfile, SimProfileModel>().ReverseMap();
+            CreateMap<Bill, BillModel>().ReverseMap();
 
 
 

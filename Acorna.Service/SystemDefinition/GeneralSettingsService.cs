@@ -68,6 +68,18 @@ namespace Acorna.Service.SystemDefinition
                 throw ex;
             }
         }
+
+        public async Task<string> GetSettingValueFromSettingName(string settingName)
+        {
+            try
+            {
+                return await _unitOfWork.GeneralSettingsRepository.GetSettingValueFromSettingName(settingName);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
 
