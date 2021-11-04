@@ -258,7 +258,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     usersIDUplodedBills.ForEach(userId =>
                     {
-                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
                     });
                 }
 
@@ -504,7 +504,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     usersIDUplodedBills.ForEach(userId =>
                     {
-                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
                     });
                 }
 
@@ -529,6 +529,7 @@ namespace Acorna.Service.Project.BillingSystem
             int TypePhoneNumberId = 0;
             int serviceTypeId = 0;
             bool isServiceNeedApproved = false;
+            bool nonOfficial = false;
             int operatrId = 0;
             string operatorKey = string.Empty;
             string dataUsage = string.Empty;
@@ -615,29 +616,34 @@ namespace Acorna.Service.Project.BillingSystem
                                 {
                                     serviceTypeId = serviceUsed.Id;
                                     isServiceNeedApproved = serviceUsed.IsNeedApproved;
+                                    nonOfficial = serviceUsed.NonOfficial;
                                 }
                                 else
                                 {
-                                    //adding a new service type if type Not Exist
-                                    ServiceUsed addingServiceUsed = new ServiceUsed
+                                    if (!string.IsNullOrEmpty(Convert.ToString(dataTable.Rows[index]["Column5"]).Trim()))
                                     {
-                                        ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
-                                        ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
-                                        IsCalculatedValue = true,
-                                        IsNeedApproved = false
-                                    };
+                                        //adding a new service type if type Not Exist
+                                        ServiceUsed addingServiceUsed = new ServiceUsed
+                                        {
+                                            ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
+                                            ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim(),
+                                            IsCalculatedValue = true,
+                                            IsNeedApproved = false,
+                                            NonOfficial = false
+                                        };
 
-                                    _unitOfWork.GetRepository<ServiceUsed>().Insert(addingServiceUsed);
+                                        _unitOfWork.GetRepository<ServiceUsed>().Insert(addingServiceUsed);
 
-                                    if (!_unitOfWork.SaveChanges())
-                                    {
-                                        throw new Exception("Error occurred when inserting a new service");
+                                        if (!_unitOfWork.SaveChanges())
+                                        {
+                                            throw new Exception("Error occurred when inserting a new service");
+                                        }
+
+                                        serviceTypeId = addingServiceUsed.Id;
+                                        isServiceNeedApproved = addingServiceUsed.IsNeedApproved;
+                                        nonOfficial = addingServiceUsed.NonOfficial;
                                     }
-
-                                    serviceTypeId = addingServiceUsed.Id;
-                                    isServiceNeedApproved = addingServiceUsed.IsNeedApproved;
                                 }
-
 
                                 //when this service is INTERNET
                                 if (Convert.ToString(dataTable.Rows[index]["Column5"]).Trim().Contains("Data"))
@@ -665,7 +671,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         TypePhoneNumberId = TypePhoneNumberId,
                                         ServiceUsedId = serviceTypeId,
                                         IsServiceUsedNeedApproved = isServiceNeedApproved,
-                                        TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                        TypeServiceUsedId = (nonOfficial) ? (int)TypesPhoneNumber.Personal : (int)TypesPhoneNumber.Unknown,
                                         StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
                                         OperatorId = operatrId,
                                         DataUsage = dataUsage,
@@ -682,14 +688,14 @@ namespace Acorna.Service.Project.BillingSystem
                                         {
                                             PhoneBookId = phoneBookId,
                                             CallDuration = callDuration,
-                                            CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column1"] + " " + dataTable.Rows[index]["Column2"], enUsDateFormat),
+                                            CallDateTime = LebanonUtilites.GetCallDateTime(dataTable.Rows[index]["Column1"].ToString(), dataTable.Rows[index]["Column2"].ToString()),
                                             CallNetPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
                                             CallRetailPrice = (billType == "Calls") ? Convert.ToDecimal(dataTable.Rows[index]["Column7"]) : Convert.ToDecimal(dataTable.Rows[index]["Column6"]),
                                             PhoneNumber = dialedNumber,
                                             TypePhoneNumberId = TypePhoneNumberId,
                                             ServiceUsedId = serviceTypeId,
                                             IsServiceUsedNeedApproved = isServiceNeedApproved,
-                                            TypeServiceUsedId = (int)TypesPhoneNumber.Unknown,
+                                            TypeServiceUsedId = (nonOfficial) ? (int)TypesPhoneNumber.Personal : (int)TypesPhoneNumber.Unknown,
                                             StatusServiceUsedId = (int)SystemEnum.StatusCycleBills.Upload,
                                             OperatorId = operatrId,
                                             DataUsage = dataUsage,
@@ -798,19 +804,40 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                List<string> usersIDUplodedBills = new List<string>();
+                List<Bill> usersUplodedBills = new List<Bill>();
+                List<string> usersIdsBillUploded = new List<string>();
                 bool isReminderBySyatem = _unitOfWork.GeneralSettingsRepository.IsReminderBySystem();
 
-                usersIDUplodedBills = await _unitOfWork.BillsRepository.GetbillsGreaterThanServicesPrices();
+                usersUplodedBills = await _unitOfWork.BillsRepository.GetbillsGreaterThanServicesPrices();
+
+                if (isReminderBySyatem)
+                {
+                    foreach (Bill bill in usersUplodedBills)
+                    {
+                        _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+                        {
+                            MessageText = "NewBillsWasUploaded",
+                            IsRead = false,
+                            Deleted = false,
+                            RecipientId = bill.UserId,
+                            ReferenceMassageId = bill.Id,
+                            NotificationTypeId = (int)SystemEnum.NotificationType.BillUploaded,
+                            RecipientRoleId = 0
+                        });
+
+                        //added this to get userId only
+                        usersIdsBillUploded.Add(Convert.ToString(bill.UserId));
+                    }
+                }
 
                 if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                 {
-                    usersIDUplodedBills.ForEach(userId =>
+                    usersUplodedBills.ForEach(bill =>
                     {
-                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(bill.UserId).Result);
                     });
                 }
-                return (isReminderBySyatem) ? usersIDUplodedBills : new List<string>();
+                return (isReminderBySyatem) ? usersIdsBillUploded : new List<string>();
             }
             catch (Exception ex)
             {

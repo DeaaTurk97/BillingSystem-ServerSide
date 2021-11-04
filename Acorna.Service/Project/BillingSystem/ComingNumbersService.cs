@@ -258,7 +258,7 @@ namespace Acorna.Service.Project.BillingSystem
                     {
                         usersIdToSendRejected.ForEach(userId =>
                         {
-                            _unitOfWork.EmailRepository.RejectNumberEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                            _unitOfWork.EmailRepository.RejectNumberEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
                         });
                     }
                 }

@@ -89,22 +89,27 @@ namespace Acorna.CommonMember
         {
             try
             {
-                DateTime dateTime = Convert.ToDateTime(durationDate); 
-                int hours = dateTime.Hour;
-                int minutes = dateTime.Minute;
-                int seconds = dateTime.Second;
+                int minutes = 0;
 
-
-                if (seconds > 0)
+                if (!string.IsNullOrEmpty(durationDate))
                 {
-                    minutes = minutes + 1;
+                    DateTime dateTime = Convert.ToDateTime(durationDate);
+                    int hours = dateTime.Hour;
+                    minutes = dateTime.Minute;
+                    int seconds = dateTime.Second;
+
+                    if (seconds > 0)
+                    {
+                        minutes = minutes + 1;
+                    }
                 }
 
                 return Convert.ToString(minutes);
             }
             catch (Exception ex)
             {
-                throw ex;
+                //throw ex;
+                return string.Empty;
             }
         }
 

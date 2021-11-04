@@ -8,7 +8,7 @@ namespace Acorna.Core.Repository.ICustomRepsitory
     {
 
         #region Lebanon....
-        Task<List<string>> GetbillsGreaterThanServicesPrices();
+        Task<List<Bill>> GetbillsGreaterThanServicesPrices();
         #endregion
     }
 }

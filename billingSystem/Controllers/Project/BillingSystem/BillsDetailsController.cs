@@ -51,11 +51,11 @@ namespace billingSystem.Controllers.Project.BillingSystem
 
         [HttpPost]
         [Route("ServicesSubmitted")]
-        public IActionResult ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproved, string billId)
+        public IActionResult ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproval, string billId)
         {
             try
             {
-                return Ok(_unitOfWorkService.BillsDetailsService.ServicesSubmitted(servicesNeedApproved, billId, CurrentUserId));
+                return Ok(_unitOfWorkService.BillsDetailsService.ServicesSubmitted(servicesNeedApproval, billId, CurrentUserId));
             }
             catch (Exception ex)
             {

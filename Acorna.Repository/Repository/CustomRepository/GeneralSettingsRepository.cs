@@ -23,7 +23,7 @@ namespace Acorna.Repository.Repository.CustomRepository
         {
             get
             {
-                return  _dbFactory.DataContext.GeneralSetting.ToList();
+                return _dbFactory.DataContext.GeneralSetting.ToList();
             }
         }
 
@@ -128,6 +128,18 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 return await _dbFactory.DataContext.GeneralSetting.Where(x => x.SettingName == settingName).Select(x => x.SettingValue).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public bool IsAutomatedApprovalBills()
+        {
+            try
+            {
+                return Convert.ToBoolean(GeneralSettings.Find(x => x.SettingName == "IsAutomatedApprovalBills")?.SettingValue);
             }
             catch (Exception ex)
             {

@@ -14,6 +14,7 @@ namespace Acorna.Core.Repository.ICustomRepsitory
         string GetDefaultPassword();
         bool IsDeleteFreeTypeNumber();
         Task<string> GetSettingValueFromSettingName(string settingName);
+        bool IsAutomatedApprovalBills();
         bool IsAutomatedApprovalOfNumbers();
         bool IsAutomatedApprovalServices();
     }

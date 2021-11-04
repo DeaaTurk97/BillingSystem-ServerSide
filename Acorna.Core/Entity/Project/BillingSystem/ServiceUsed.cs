@@ -14,6 +14,7 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public decimal? ServicePrice { get; set; }
         public bool IsCalculatedValue { get; set; }
         public bool IsNeedApproved { get; set; }
+        public bool NonOfficial { get; set; }
 
         public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }
     }

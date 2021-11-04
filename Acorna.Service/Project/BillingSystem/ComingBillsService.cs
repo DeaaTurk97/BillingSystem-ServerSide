@@ -286,7 +286,7 @@ namespace Acorna.Service.Project.BillingSystem
                     {
                         usersIdToSendPaid.ForEach(userId =>
                         {
-                            _unitOfWork.EmailRepository.PaidEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                            _unitOfWork.EmailRepository.PaidEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
                         });
                     }
                 }

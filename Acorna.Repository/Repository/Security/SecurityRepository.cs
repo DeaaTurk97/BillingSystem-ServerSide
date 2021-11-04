@@ -716,11 +716,11 @@ internal class SecurityRepository : ISecurityRepository
         }
     }
 
-    public async Task<string> GetEmailByUserId(string userId)
+    public async Task<string> GetEmailByUserId(int userId)
     {
         try
         {
-            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == Convert.ToInt32(userId));
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.Id == userId);
             return user.Email;
         }
         catch (Exception ex)
@@ -777,9 +777,9 @@ internal class SecurityRepository : ISecurityRepository
             });
 
             await _dbFactory.DataContext.AllocatedUsersService.AddRangeAsync(addUserServices);
-           int saveServices = await _dbFactory.DataContext.SaveChangesAsync();
+            int saveServices = await _dbFactory.DataContext.SaveChangesAsync();
 
-            return (saveServices > 0) ?  true : false;
+            return (saveServices > 0) ? true : false;
         }
         catch (Exception ex)
         {

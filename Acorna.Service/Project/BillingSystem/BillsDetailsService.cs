@@ -138,7 +138,7 @@ namespace Acorna.Service.Project.BillingSystem
                         {
                             usersId.ForEach(userId =>
                             {
-                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
 
                             });
                         }
@@ -203,7 +203,7 @@ namespace Acorna.Service.Project.BillingSystem
                         {
                             usersId.ForEach(userId =>
                             {
-                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                                _unitOfWork.EmailRepository.ReminderIdentifyNewNumbersEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
 
                             });
                         }
@@ -227,14 +227,25 @@ namespace Acorna.Service.Project.BillingSystem
 
                 if (bill != null)
                 {
-                    bill.SubmittedByUser = true;
-                    bill.StatusBillId = (int)SystemEnum.StatusCycleBills.Submit;
-                    bill.SubmittedDate = DateTime.Now;
+                    if (_unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalBills())
+                    {
+                        bill.SubmittedByUser = true;
+                        bill.SubmittedByAdmin = true;
+                        bill.StatusBillId = (int)SystemEnum.StatusCycleBills.Approved;
+                        bill.SubmittedDate = DateTime.Now;
+                    }
+                    else
+                    {
+                        bill.SubmittedByUser = true;
+                        bill.StatusBillId = (int)SystemEnum.StatusCycleBills.Submit;
+                        bill.SubmittedDate = DateTime.Now;
+                    }
+
 
                     _unitOfWork.GetRepository<Bill>().Update(bill);
                     _unitOfWork.SaveChanges();
 
-                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem() && !_unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalBills())
                     {
                         usersId = _unitOfWork.SecurityRepository.GetSuperAdminWithAdminGropByUserId(bill.UserId).Result;
 
@@ -253,11 +264,11 @@ namespace Acorna.Service.Project.BillingSystem
                     }
                 }
 
-                if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail() && !_unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalBills())
                 {
                     usersId.ForEach(userId =>
                     {
-                        _unitOfWork.EmailRepository.SubmittedBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(userId).Result);
+                        _unitOfWork.EmailRepository.SubmittedBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
 
                     });
                 }

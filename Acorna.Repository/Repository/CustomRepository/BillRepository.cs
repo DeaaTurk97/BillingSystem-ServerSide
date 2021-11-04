@@ -20,13 +20,13 @@ namespace Acorna.Repository.Repository.CustomRepository
             _mapper = mapper;
         }
 
-        public async Task<List<string>> GetbillsGreaterThanServicesPrices()
+        public async Task<List<Bill>> GetbillsGreaterThanServicesPrices()
         {
             try
             {
                 Bill billContainer = new Bill();
                 List<Bill> billsLessThanServicePrice = new List<Bill>();
-                List<string> usersIDgraterThanServicePrice = new List<string>();
+                List<Bill> usersIDgraterThanServicePrice = new List<Bill>();
 
                 var allocatedUsersService = await (from aus in _dbFactory.DataContext.AllocatedUsersService
                                                    join u in _dbFactory.DataContext.ServiceUsed on aus.ServiceUsedId equals u.Id
@@ -66,7 +66,8 @@ namespace Acorna.Repository.Repository.CustomRepository
                     }
                     else if (billCheckPrices != null && bill.SumNetPrice > billCheckPrices.SumServicesPrices)
                     {
-                        usersIDgraterThanServicePrice.Add(Convert.ToString(bill.UserId));
+                        Bill billsGraterThanServicePrice = await _dbFactory.DataContext.Bill.Where(x => x.Id == bill.BillId).SingleAsync();
+                        usersIDgraterThanServicePrice.Add(billsGraterThanServicePrice);
                     }
                 }
 
