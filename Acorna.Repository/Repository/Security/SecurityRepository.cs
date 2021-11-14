@@ -786,4 +786,25 @@ internal class SecurityRepository : ISecurityRepository
             throw ex;
         }
     }
+
+    public async Task<bool> ChangePassword(int userId, string oldPassword, string newPassword)
+    {
+        try
+        {
+            bool isSucceeded = false;
+            User user = await _userManager.FindByIdAsync(userId.ToString());
+
+            if(user != null)
+            {
+                IdentityResult result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+                isSucceeded = result.Succeeded;
+            }
+
+            return isSucceeded;
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
 }

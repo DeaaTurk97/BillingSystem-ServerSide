@@ -320,4 +320,16 @@ internal class SecurityService : ISecurityService
             throw ex;
         }
     }
+
+    public async Task<bool> ChangePassword(int userId, string oldPassword, string newPassword)
+    {
+        try
+        {
+            return await _unitOfWork.SecurityRepository.ChangePassword(userId, oldPassword, newPassword);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
 }

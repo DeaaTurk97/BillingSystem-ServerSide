@@ -38,4 +38,5 @@ public interface ISecurityRepository
     Task<User> FindUserByPhoneNumber(string phoneNumber);
     Task<string> GetEmailByUserId(int userId);
     Task<List<string>> GetSuperAdminWithAdminGropByUserId(int userId);
+    Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
 }

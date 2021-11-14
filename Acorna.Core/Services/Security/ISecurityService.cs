@@ -35,4 +35,5 @@ public interface ISecurityService
     Task<List<UserModel>> GetUsersByGroupId(int groupId);
     Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole);
     Task<bool> IsUserExistsByPhoneNumber(string userPhoneNumber);
+    Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
 }

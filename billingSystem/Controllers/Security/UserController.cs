@@ -200,5 +200,20 @@ namespace Acorna.Controllers.Security
             }
         }
 
+        [HttpPost]
+        [Route("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(string oldPassword, string newPassword)
+        {
+            try
+            {
+                var list = await _unitOfWorkService.SecurityService.ChangePassword(CurrentUserId, oldPassword, newPassword);
+                return Ok(list);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
     }
 }
