@@ -794,7 +794,7 @@ internal class SecurityRepository : ISecurityRepository
             bool isSucceeded = false;
             User user = await _userManager.FindByIdAsync(userId.ToString());
 
-            if(user != null)
+            if (user != null)
             {
                 IdentityResult result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
                 isSucceeded = result.Succeeded;
@@ -806,5 +806,60 @@ internal class SecurityRepository : ISecurityRepository
         {
             throw ex;
         }
+    }
+
+    public async Task<string> GenerateOtpEmailCodeWithUpdateUser(string email)
+    {
+        try
+        {
+            Random generator = new Random();
+            string otpEmailCode = generator.Next(0, 1000).ToString("D4");
+
+            User user = await _userManager.FindByEmailAsync(email);
+
+            user.EmailOtpCode = otpEmailCode;
+            user.OtpEmailExpiryTime = DateTime.Now.AddMinutes(3);
+
+            IdentityResult userUpdated = await _userManager.UpdateAsync(user);
+
+            if (userUpdated.Succeeded)
+                return Convert.ToString(otpEmailCode);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+
+        return string.Empty;
+    }
+
+    public async Task<VerificationCodeResponseModel> VerifyEmailCode(VerificationCodeModel verificationCodeModel)
+    {
+        string passwordResetToken = string.Empty;
+        bool isVerifiedOtp = false;
+        string errorMessage = string.Empty;
+
+        User user = await _userManager.FindByEmailAsync(verificationCodeModel.Email);
+
+        if (user != null && DateTime.Now <= user.OtpEmailExpiryTime)
+        {
+            if (user.EmailOtpCode.ToString() == verificationCodeModel.VerificationCode)
+            {
+                await _userManager.UpdateAsync(user);
+
+                isVerifiedOtp = true;
+                passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            }
+        }
+
+        VerificationCodeResponseModel verificationCodeResponseModel = new VerificationCodeResponseModel
+        {
+            IsVerifiedOtp = isVerifiedOtp,
+            Email = verificationCodeModel.Email,
+            TokenCode = passwordResetToken,
+            ErrorMessage = errorMessage,
+        };
+
+        return verificationCodeResponseModel;
     }
 }

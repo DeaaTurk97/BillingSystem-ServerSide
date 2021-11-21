@@ -36,4 +36,6 @@ public interface ISecurityService
     Task<List<UserModel>> GetUsersByCurrentRole(int currentUserId, string currentUserRole);
     Task<bool> IsUserExistsByPhoneNumber(string userPhoneNumber);
     Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
+    Task<string> GenerateOtpEmailCodeWithUpdateUser(string email);
+    Task<VerificationCodeResponseModel> VerifyEmailCode(VerificationCodeModel verificationCodeModel);
 }

@@ -332,4 +332,22 @@ internal class SecurityService : ISecurityService
             throw ex;
         }
     }
+
+    public Task<string> GenerateOtpEmailCodeWithUpdateUser(string userEmail)
+    {
+        return _unitOfWork.SecurityRepository.GenerateOtpEmailCodeWithUpdateUser(userEmail);
+    }
+
+    public Task<VerificationCodeResponseModel> VerifyEmailCode(VerificationCodeModel verificationCodeModel)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.VerifyEmailCode(verificationCodeModel);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
 }

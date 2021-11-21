@@ -36,6 +36,8 @@ namespace Acorna.Core.Entity.Security
         public int SimProfileId { get; set; }
         [ForeignKey("SimProfileId")]
         public virtual SimProfile SimProfile { get; set; }
+        public string? EmailOtpCode { get; set; }
+        public DateTime? OtpEmailExpiryTime { get; set; }
 
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }

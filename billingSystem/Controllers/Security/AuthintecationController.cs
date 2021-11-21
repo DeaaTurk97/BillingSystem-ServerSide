@@ -1,15 +1,14 @@
 ﻿using Acorna.Core.DTOs.Security;
 using Acorna.Core.Entity.Security;
+using Acorna.Core.Models.Security;
 using Acorna.Core.Services;
 using Acorna.DTOs.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Acorna.Controllers.Security
@@ -167,6 +166,60 @@ namespace Acorna.Controllers.Security
         }
 
         [HttpPost]
+        [Route("ForgotPassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(string userEmail)
+        {
+            try
+            {
+                bool isOtpSent = false;
+                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(userEmail);
+
+                if (user == null)
+                {
+                    throw new Exception("User Not Exist!");
+                }
+
+                string emailOtpCode = await _unitOfWorkService.SecurityService.GenerateOtpEmailCodeWithUpdateUser(user.Email);
+
+                if (!string.IsNullOrEmpty(emailOtpCode))
+                {
+                    string emailSubject = user.LanguageId == 1 ? " رمز التحقق من البريد الالكتروني" : "The Verification Code number ";
+                    string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
+                    string template = $"{emailSubject}:{emailOtpCode}";
+
+                    if (await _unitOfWorkService.EmailService.SendEmailForgotPasswordAsync(user.Email, emailSubject, template))
+                    {
+                        isOtpSent = true;
+                    }
+                }
+
+                return Ok(isOtpSent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpPost]
+        [Route("VerifyEmailCode")]
+        [AllowAnonymous]
+        public async Task<IActionResult> VerifyEmailCode(VerificationCodeModel verificationCodeModel)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.SecurityService.VerifyEmailCode(verificationCodeModel));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return BadRequest(ex.ToString());
+            }
+        }
+
+        [HttpPost]
         [Route("ResetPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword(UserResetPassword userResetPassword)
@@ -187,33 +240,9 @@ namespace Acorna.Controllers.Security
                     throw new Exception("User Not Exist!");
                 }
 
-                var decodeToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(userResetPassword.Token));
-                IdentityResult result = await _unitOfWorkService.SecurityService.ResetPasswordAsync(user, decodeToken, userResetPassword.Password);
+                IdentityResult result = await _unitOfWorkService.SecurityService.ResetPasswordAsync(user, userResetPassword.Token, userResetPassword.Password);
 
-                return Ok(true);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return BadRequest(ex.ToString());
-            }
-        }
-
-        [HttpPost]
-        [Route("ForgotPassword")]
-        [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword(UserResetPassword userResetPassword)
-        {
-            try
-            {
-                User user = await _unitOfWorkService.SecurityService.FindByEmailAsync(userResetPassword.Email);
-                string token = await _unitOfWorkService.SecurityService.GeneratePasswordResetTokenAsync(user);
-                token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                string emailSubject = user.LanguageId == 1 ? "إعادة ضبط كلمة المرور" : "Reset Password";
-                string userLanguage = user.LanguageId == 1 ? "Arabic" : "English";
-                string template = $"{_configuration.GetSection("AllowedClient").Value}/auth/reset-password/{token}/{user.Email}";
-
-                return Ok(await _unitOfWorkService.EmailService.SendEmailForgotPasswordAsync(user.Email, emailSubject, template));
+                return Ok(result.Succeeded);
             }
             catch (Exception ex)
             {

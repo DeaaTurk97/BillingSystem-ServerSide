@@ -39,4 +39,6 @@ public interface ISecurityRepository
     Task<string> GetEmailByUserId(int userId);
     Task<List<string>> GetSuperAdminWithAdminGropByUserId(int userId);
     Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
+    Task<string> GenerateOtpEmailCodeWithUpdateUser(string email);
+    Task<VerificationCodeResponseModel> VerifyEmailCode(VerificationCodeModel verificationCodeModel);
 }
