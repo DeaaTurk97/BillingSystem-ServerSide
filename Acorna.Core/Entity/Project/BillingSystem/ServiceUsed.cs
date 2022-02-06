@@ -16,6 +16,7 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public bool IsNeedApproved { get; set; }
         public bool NonOfficial { get; set; }
 
+        public virtual ICollection<PlanService> PlanServices { get; set; }
         public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }
     }
 }

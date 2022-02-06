@@ -549,7 +549,6 @@ namespace Acorna.Service.Project.BillingSystem
                             DataSet datasetBills = reader.AsDataSet();
                             DataTable dataTable = datasetBills.Tables[0];
 
-
                             dataTable = dataTable.AsEnumerable()
                                                  .GroupBy(r => r.Field<object>("Column0"))
                                                  .SelectMany(x => x)

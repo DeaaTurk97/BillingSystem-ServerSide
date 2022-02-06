@@ -128,6 +128,7 @@ internal class SecurityRepository : ISecurityRepository
                 GroupId = x.GroupId,
                 GroupName = x.Group.GroupNameEn,
                 LanguageId = x.LanguageId,
+                PlanId = x.PlanId,
                 SimCardTypeId = x.SimCardTypeId,
                 SimProfileId = x.SimProfileId,
                 RoleId = x.UserRoles.Select(x => x.RoleId).FirstOrDefault(),
@@ -501,32 +502,25 @@ internal class SecurityRepository : ISecurityRepository
 
     public async Task<object> Login(UserLogin userLogin)
     {
-        try
-        {
-            var userManager = await FindUserByPhoneNumber(userLogin.PhoneNumber);
+        var userManager = await FindUserByPhoneNumber(userLogin.PhoneNumber);
 
-            if (userManager == null)
-            {
-                return null;
-            }
-            var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
-
-            if (!result.Succeeded)
-            {
-                return null;
-            }
-            var appUser = _userManager.Users.FirstOrDefault(u => u.PhoneNumber.ToUpper() == userLogin.PhoneNumber.ToUpper());
-            var userToReturn = _mapper.Map<UserList>(appUser);
-            return new
-            {
-                token = GenerateJwtTokenAsync(appUser).Result,
-                user = userToReturn
-            };
-        }
-        catch (Exception ex)
+        if (userManager == null)
         {
-            throw ex;
+            return null;
         }
+        var result = await _signInManager.CheckPasswordSignInAsync(userManager, userLogin.Password, false);
+
+        if (!result.Succeeded)
+        {
+            return null;
+        }
+        var appUser = _userManager.Users.FirstOrDefault(u => u.PhoneNumber.ToUpper() == userLogin.PhoneNumber.ToUpper());
+        var userToReturn = _mapper.Map<UserList>(appUser);
+        return new
+        {
+            token = GenerateJwtTokenAsync(appUser).Result,
+            user = userToReturn
+        };
     }
 
     public async Task<IdentityResult> AddUserAsync(UserRegister userRegister)
@@ -577,6 +571,7 @@ internal class SecurityRepository : ISecurityRepository
             userRegister.SecurityStamp = user.SecurityStamp;
             user.SimCardTypeId = userRegister.SimCardTypeId;
             user.SimProfileId = userRegister.SimProfileId;
+            user.PlanId = userRegister.PlanId;
 
             IdentityResult result = _userManager.UpdateAsync(user).Result;
 
@@ -706,14 +701,7 @@ internal class SecurityRepository : ISecurityRepository
 
     public async Task<User> FindUserByPhoneNumber(string userPhoneNumber)
     {
-        try
-        {
-            return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == userPhoneNumber);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
+        return await _dbFactory.DataContext.Users.FirstOrDefaultAsync(x => x.PhoneNumber == userPhoneNumber);
     }
 
     public async Task<string> GetEmailByUserId(int userId)

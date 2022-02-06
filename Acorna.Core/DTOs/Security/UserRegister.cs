@@ -34,5 +34,7 @@ namespace Acorna.DTOs.Security
         public int SimCardTypeId { get; set; }
         public int SimProfileId { get; set; }
 
+        public int PlanId { get; set; }
+
     }
 }

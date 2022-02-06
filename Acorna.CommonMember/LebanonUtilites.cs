@@ -117,8 +117,8 @@ namespace Acorna.CommonMember
         {
             try
             {
-                string date = Convert.ToDateTime(callDate).ToString("dd/MM/yyyy");
-                string time = Convert.ToDateTime(callTime).ToString("H:mm:ss t");
+                string date = Convert.ToDateTime(callDate).ToString("yyyy-MM-dd");
+                string time = Convert.ToDateTime(callTime).ToString("HH:mm:ss.fff");
 
                 DateTime callDateTime = Convert.ToDateTime(date + " " + time);
 

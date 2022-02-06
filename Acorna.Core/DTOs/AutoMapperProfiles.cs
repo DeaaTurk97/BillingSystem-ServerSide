@@ -41,6 +41,9 @@ namespace Acorna.DTOs
             CreateMap<PhoneBook, PhoneBookModel>().ReverseMap();
             CreateMap<Governorate, GovernorateModel>().ReverseMap();
             CreateMap<ServiceUsed, ServiceUsedModel>().ReverseMap();
+            CreateMap<PlanService, PlanServiceModel>().ForMember(e => e.PlanService, dist => dist.MapFrom(src => src.ServiceUsedId)).ReverseMap();
+            CreateMap<Plan, PlanModel>().ReverseMap();
+            CreateMap<History, HistoryModel>().ReverseMap();
             CreateMap<Bill, BillsSummaryDTO>().ForMember(dest => dest.BillMonth, s => s.MapFrom(x => CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month)))
                                               .ForMember(dest => dest.BillYear, s => s.MapFrom(x => x.BillDate.Year))
                                               .ForMember(dest => dest.IsPaid, s => s.MapFrom(x => x.IsPaid))

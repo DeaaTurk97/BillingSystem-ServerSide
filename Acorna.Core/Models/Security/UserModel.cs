@@ -18,5 +18,7 @@ namespace Acorna.Core.Models.Security
         public string? RoleName { get; set; }
         public int? SimCardTypeId { get; set; }
         public int? SimProfileId { get; set; }
+
+        public int? PlanId { get; set; }
     }
 }

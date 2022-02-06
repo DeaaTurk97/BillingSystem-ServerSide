@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20220201111347_Added-Plan-To-User.cs" />
+    <Compile Remove="Migrations\20220201111347_Added-Plan-To-User.Designer.cs" />
+    <Compile Remove="Migrations\20220201113815_change-Uesr-model.cs" />
+    <Compile Remove="Migrations\20220201113815_change-Uesr-model.Designer.cs" />
+    <Compile Remove="Migrations\20220201131659_init.cs" />
+    <Compile Remove="Migrations\20220201131659_init.Designer.cs" />
+    <Compile Remove="Migrations\20220201132222_init.cs" />
+    <Compile Remove="Migrations\20220201132222_init.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.8">
       <PrivateAssets>all</PrivateAssets>
@@ -21,6 +32,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Acorna.CommonMember\Acorna.CommonMember.csproj" />
     <ProjectReference Include="..\Acorna.Core\Acorna.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

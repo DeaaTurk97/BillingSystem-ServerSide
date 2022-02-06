@@ -103,6 +103,17 @@ namespace Acorna.Repository.DataContext
                 }
             );
 
+                builder.Entity<PlanService>()
+                      .HasKey(bc => new { bc.PlanId, bc.ServiceUsedId });
+                builder.Entity<PlanService>()
+                     .HasOne(bc => bc.Plan)
+                     .WithMany(b => b.PlanServices)
+                     .HasForeignKey(bc => bc.PlanId);
+                builder.Entity<PlanService>()
+                    .HasOne(bc => bc.ServiceUsed)
+                    .WithMany(c => c.PlanServices)
+                    .HasForeignKey(bc => bc.ServiceUsedId);
+
             //Create New Roles
             builder.Entity<Role>().ToTable("Roles").HasData(new List<Role>
             {
@@ -415,6 +426,10 @@ namespace Acorna.Repository.DataContext
         public DbSet<Notifications> Notifications { get; set; }
         public DbSet<NotificationsDetails> NotificationsDetails { get; set; }
         public DbSet<Bill> Bill { get; set; }
+        public DbSet<Plan> Plan { get; set; }
+
+        public DbSet<PlanService> PlanService { get; set; }
+
         public DbSet<BillDetails> BillDetails { get; set; }
         public DbSet<ServiceUsed> ServiceUsed { get; set; }
         public DbSet<TypePhoneNumber> TypePhoneNumber { get; set; }

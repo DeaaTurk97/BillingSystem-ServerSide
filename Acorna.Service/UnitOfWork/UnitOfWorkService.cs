@@ -49,6 +49,8 @@ namespace Acorna.Service.UnitOfWork
         Lazy<ISimCardTypeService> LazySimCardTypeService => new Lazy<ISimCardTypeService>(() => new SimCardTypeService(_unitOfWork, _mapper));
         Lazy<ISimProfileService> LazySimProfileService => new Lazy<ISimProfileService>(() => new SimProfileService(_unitOfWork, _mapper));
 
+        Lazy<IPlanService> LazyPlanService => new Lazy<IPlanService>(() => new PlansService(_unitOfWork, _mapper));
+        Lazy<IHistoryServices> LazyHistoryService => new Lazy<IHistoryServices>(() => new HistoryServices(_unitOfWork, _mapper));
         Lazy<IReportService> LazyReportService => new Lazy<IReportService>(() => new ReportService(_unitOfWork, _mapper));
 
         //base
@@ -78,6 +80,9 @@ namespace Acorna.Service.UnitOfWork
         public IAllocatedServicesService AllocatedServicesService => LazyAllocatedServicesService.Value;
         public ISimCardTypeService SimCardTypeService => LazySimCardTypeService.Value;
         public ISimProfileService SimProfileService => LazySimProfileService.Value;
+
+        public IPlanService PlanService => LazyPlanService.Value;
+        public IHistoryServices HistoryService => LazyHistoryService.Value;
 
         public IReportService ReportService => LazyReportService.Value;
 

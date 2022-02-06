@@ -210,14 +210,7 @@ internal class SecurityService : ISecurityService
 
     public Task<object> Login(UserLogin userLogin)
     {
-        try
-        {
-            return _unitOfWork.SecurityRepository.Login(userLogin);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
+        return _unitOfWork.SecurityRepository.Login(userLogin);
     }
 
     public Task<IdentityResult> AddUserAsync(UserRegister userRegister)
