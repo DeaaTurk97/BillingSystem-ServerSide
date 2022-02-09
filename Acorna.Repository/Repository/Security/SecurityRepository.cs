@@ -572,6 +572,7 @@ internal class SecurityRepository : ISecurityRepository
             user.SimCardTypeId = userRegister.SimCardTypeId;
             user.SimProfileId = userRegister.SimProfileId;
             user.PlanId = userRegister.PlanId;
+            user.EffectiveDate = userRegister.EffectiveDate;
 
             IdentityResult result = _userManager.UpdateAsync(user).Result;
 
@@ -587,6 +588,22 @@ internal class SecurityRepository : ISecurityRepository
         {
             throw ex;
         }
+    }
+
+
+    public async Task<IdentityResult> UpdateUserNameAsync(UserRegister userRegister)
+    {
+        
+            User user = _userManager.FindByIdAsync(Convert.ToString(userRegister.Id)).Result;
+
+            user.UserName = userRegister.UserName;
+
+            IdentityResult result = _userManager.UpdateAsync(user).Result;
+            
+
+            return result;
+       
+  
     }
 
     public async Task<bool> IsUserExistsByPhoneNumber(string phoneNumber)
@@ -849,5 +866,18 @@ internal class SecurityRepository : ISecurityRepository
         };
 
         return verificationCodeResponseModel;
+    }
+
+    public async Task<UserModel> GetUserByPhoneNumber(string phoneNumber)
+    {
+        try
+        {
+            User user = await _dbFactory.DataContext.Users.FirstOrDefaultAsync(a => a.PhoneNumber == phoneNumber);
+            return _mapper.Map<UserModel>(user);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 }

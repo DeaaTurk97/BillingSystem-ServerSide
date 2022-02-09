@@ -43,6 +43,8 @@ namespace Acorna.Core.Entity.Security
         [ForeignKey("PlanId")]
         public virtual Plan Plan { get; set; }
 
+        public DateTime? EffectiveDate { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }
     }

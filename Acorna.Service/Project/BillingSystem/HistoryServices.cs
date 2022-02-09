@@ -1,11 +1,15 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
+using Acorna.Core.Services;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
+using Acorna.Repository.Repository;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +19,6 @@ namespace Acorna.Service.Project.BillingSystem
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-
         public HistoryServices(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -61,6 +64,21 @@ namespace Acorna.Service.Project.BillingSystem
             {
                 History history = await _unitOfWork.GetRepository<History>().GetSingleAsync(historyId);
                 HistoryModel historyModel = _mapper.Map<HistoryModel>(history);
+                return historyModel;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<HistoryModel>> GetHistoriesByPhoneNumber(string phoneNumber)
+        {
+            try
+            {
+                List<History> history = await _unitOfWork.GetRepository<History>().GetAllAsync();
+              
+                var historyModel = _mapper.Map<List<HistoryModel>>(history.Where(x => x.PhoneNumber.Equals(phoneNumber)));
                 return historyModel;
             }
             catch (Exception)

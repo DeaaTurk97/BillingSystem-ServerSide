@@ -161,6 +161,25 @@ namespace Acorna.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "History",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    UpdatedDate = table.Column<DateTime>(nullable: true),
+                    UpdatedBy = table.Column<int>(nullable: true),
+                    OldUserName = table.Column<string>(nullable: true),
+                    NewUserName = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_History", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Jobs",
                 columns: table => new
                 {
@@ -773,8 +792,8 @@ namespace Acorna.Repository.Migrations
                 columns: new[] { "Id", "CreatedBy", "CreatedDate", "LanguageCode", "LanguageDefaultDisply", "LanguageDirection", "LanguageFlag", "UpdatedBy", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 2, 1, new DateTime(2022, 2, 6, 12, 45, 25, 129, DateTimeKind.Local).AddTicks(8181), "EN", "English", "LTR", "", null, null },
-                    { 1, 1, new DateTime(2022, 2, 6, 12, 45, 25, 124, DateTimeKind.Local).AddTicks(3892), "AR", "العربية", "RTL", "", null, null }
+                    { 2, 1, new DateTime(2022, 2, 7, 12, 54, 37, 213, DateTimeKind.Local).AddTicks(4299), "EN", "English", "LTR", "", null, null },
+                    { 1, 1, new DateTime(2022, 2, 7, 12, 54, 37, 209, DateTimeKind.Local).AddTicks(5395), "AR", "العربية", "RTL", "", null, null }
                 });
 
             migrationBuilder.InsertData(
@@ -804,10 +823,10 @@ namespace Acorna.Repository.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName", "PowerLevel" },
                 values: new object[,]
                 {
-                    { 4, "84c0ce61-cb35-43c2-9dbd-923c40d78b6e", "Finance", "FINANCE", 96 },
-                    { 3, "6bdeda4e-fa7f-41ba-bd85-36389205c84d", "Employee", "EMPLOYEE", 97 },
-                    { 2, "6f919296-0f4e-46a8-a3f7-2f91ce6d853e", "AdminGroup", "ADMINGROUP", 98 },
-                    { 1, "670443ff-d43f-42ff-b951-5278c5843e90", "SuperAdmin", "SUPERADMIN", 99 }
+                    { 4, "2d89b723-16d8-4b75-b2ca-fe4d8c99a940", "Finance", "FINANCE", 96 },
+                    { 3, "05f7db40-46eb-4bad-a6d0-735576ab34dd", "Employee", "EMPLOYEE", 97 },
+                    { 2, "42cda499-65ee-4ebc-aa9f-0c48d0d78d88", "AdminGroup", "ADMINGROUP", 98 },
+                    { 1, "510d4f36-74a9-4749-9a8d-c0605835ebf4", "SuperAdmin", "SUPERADMIN", 99 }
                 });
 
             migrationBuilder.InsertData(
@@ -852,17 +871,17 @@ namespace Acorna.Repository.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "City", "ConcurrencyStamp", "Country", "CreateDate", "DateOfBirth", "Email", "EmailConfirmed", "EmailOtpCode", "Gender", "GroupId", "IsActive", "LanguageId", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpEmailExpiryTime", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PhotoURL", "PlanId", "SecurityStamp", "SimCardTypeId", "SimProfileId", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, (byte)0, "f153eff2-9b7f-418a-992c-b1457df15d8a", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SuperAdmin@a.com", false, null, null, 1, true, 2, false, null, "SUPERADMIN@A.COM", "SUPERADMIN", null, "AQAAAAEAACcQAAAAEJhixZI5vOb7zwvURrWFkqz5nu2cbdgNZvruUQyhkN2XPOIAZnqbAlakWBCDcgvBbA==", "superAdmin", false, null, null, "fdc0495f-7b24-43cd-bc23-fd9954d25ae2", 1, 1, false, "superAdmin" });
+                values: new object[] { 1, 0, (byte)0, "19d5411d-9719-491c-9e12-5ea55e82c17e", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SuperAdmin@a.com", false, null, null, 1, true, 2, false, null, "SUPERADMIN@A.COM", "SUPERADMIN", null, "AQAAAAEAACcQAAAAEOOaoMScvkr3l1xTJs6aqbsSYEerblKrG3ecjsAy7QMkTOJFnY4XawGpNT4+rqVLYg==", "superAdmin", false, null, null, "3d0dca42-fcb4-4579-832e-616a01a5dbdf", 1, 1, false, "superAdmin" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "City", "ConcurrencyStamp", "Country", "CreateDate", "DateOfBirth", "Email", "EmailConfirmed", "EmailOtpCode", "Gender", "GroupId", "IsActive", "LanguageId", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpEmailExpiryTime", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PhotoURL", "PlanId", "SecurityStamp", "SimCardTypeId", "SimProfileId", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 2, 0, (byte)0, "e45f55ba-0c70-4309-9df4-2d981706e7f9", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "AdminGroup@a.com", false, null, null, 1, true, 2, false, null, "ADMINGROUP@A.COM", "ADMINGROUP", null, "AQAAAAEAACcQAAAAEMajzB0pH7eb7SnbewNJiTFyHq0CSXcMGbDKvPQjbMS/chZqUCnHnXI/p8ipX0eSPQ==", "adminGroup", false, null, null, "987a7c04-9995-4a95-8df2-c08693b06c43", 1, 1, false, "adminGroup" });
+                values: new object[] { 2, 0, (byte)0, "79c75a17-a3cc-4f92-a87f-0347d13b3fd1", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "AdminGroup@a.com", false, null, null, 1, true, 2, false, null, "ADMINGROUP@A.COM", "ADMINGROUP", null, "AQAAAAEAACcQAAAAEIsrvCgbf+hs+m+yfoc92fMLfLHuY12bg1nXjiavTI43Eq/6IB3ipsyrOrtAz0266w==", "adminGroup", false, null, null, "af08eee2-5f37-43a6-90bd-adf110d0f6a4", 1, 1, false, "adminGroup" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "AccessFailedCount", "City", "ConcurrencyStamp", "Country", "CreateDate", "DateOfBirth", "Email", "EmailConfirmed", "EmailOtpCode", "Gender", "GroupId", "IsActive", "LanguageId", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "OtpEmailExpiryTime", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "PhotoURL", "PlanId", "SecurityStamp", "SimCardTypeId", "SimProfileId", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 3, 0, (byte)0, "fe727327-5976-44fc-b498-6dc741b3bba5", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Employee@a.com", false, null, null, 2, true, 2, false, null, "EMPLOYEE@A.COM", "EMPLOYEE", null, "AQAAAAEAACcQAAAAEM8RgvZ5HET3wP4e+xMzqorwrvIc+7pk507YpQeQmlYPY22PI65w6VoSieNrW8pBng==", "employee", false, null, null, "c3222cd1-bddf-4062-af21-c09ae3f61c97", 1, 1, false, "employee" });
+                values: new object[] { 3, 0, (byte)0, "f51d96f3-006d-44fa-9841-3c69c5b5cf27", (byte)0, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Employee@a.com", false, null, null, 2, true, 2, false, null, "EMPLOYEE@A.COM", "EMPLOYEE", null, "AQAAAAEAACcQAAAAEB6D0zOaBPo7s8Qsyn1nXiJk1XEx+trI2QBr2crXMMbD/0mxoR5N9ic4B5rXc3jfLw==", "employee", false, null, null, "b3a6cb4a-87cb-4a42-9923-b74e0539cbf3", 1, 1, false, "employee" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
@@ -1009,6 +1028,9 @@ namespace Acorna.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Governorate");
+
+            migrationBuilder.DropTable(
+                name: "History");
 
             migrationBuilder.DropTable(
                 name: "Jobs");

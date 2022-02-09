@@ -47,6 +47,20 @@ namespace billingSystem.Controllers.Project.BillingSystem
             }
         }
 
+        [HttpGet]
+        [Route("GetHistoriesByPhoneNumber/{phoneNumber}")]
+        public async Task<IActionResult> GetHistoriesByPhoneNumber(string phoneNumber)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.HistoryService.GetHistoriesByPhoneNumber(phoneNumber));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
 
 
         [HttpGet]

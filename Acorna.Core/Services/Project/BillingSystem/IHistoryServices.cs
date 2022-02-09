@@ -15,5 +15,6 @@ namespace Acorna.Core.Services.Project.BillingSystem
         int AddHistory(HistoryModel historyModel);
         bool UpdateHistory(HistoryModel historyModel);
         bool DeleteHistory(int id);
+        Task<List<HistoryModel>> GetHistoriesByPhoneNumber(string phoneNumber);
     }
 }

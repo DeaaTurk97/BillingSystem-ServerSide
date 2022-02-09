@@ -30,6 +30,7 @@ public interface ISecurityService
     Task<object> Login(UserLogin userLogin);
     Task<IdentityResult> AddUserAsync(UserRegister userRegister);
     Task<IdentityResult> UpdateUserAsync(UserRegister userRegister);
+    Task<IdentityResult> UpdateUserNameAsync(UserRegister userRegister);
     Task AddToRoleAsync(UserRegister userRegister, string roleName);
     Task<string> GenerateEmailConfirmationTokenAsync(UserRegister userRegister);
     Task<List<UserModel>> GetUsersByGroupId(int groupId);
@@ -38,4 +39,5 @@ public interface ISecurityService
     Task<bool> ChangePassword(int userId, string oldPassword, string newPassword);
     Task<string> GenerateOtpEmailCodeWithUpdateUser(string email);
     Task<VerificationCodeResponseModel> VerifyEmailCode(VerificationCodeModel verificationCodeModel);
+    Task<UserModel> GetUserByPhoneNumber(string phoneNumber);
 }

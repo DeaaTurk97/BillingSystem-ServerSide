@@ -237,6 +237,18 @@ internal class SecurityService : ISecurityService
         }
     }
 
+    public Task<IdentityResult> UpdateUserNameAsync(UserRegister userRegister)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.UpdateUserNameAsync(userRegister);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
+    }
+
     public Task AddToRoleAsync(UserRegister userRegister, string roleName)
     {
         return _unitOfWork.SecurityRepository.AddToRoleAsync(userRegister, roleName);
@@ -341,6 +353,19 @@ internal class SecurityService : ISecurityService
         {
 
             throw;
+        }
+    }
+
+    //deaa
+    public Task<UserModel> GetUserByPhoneNumber(string phoneNumber)
+    {
+        try
+        {
+            return _unitOfWork.SecurityRepository.GetUserByPhoneNumber(phoneNumber);
+        }
+        catch (Exception ex)
+        {
+            throw ex;
         }
     }
 }

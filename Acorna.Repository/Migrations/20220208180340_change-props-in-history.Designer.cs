@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Acorna.Repository.Migrations
 {
     [DbContext(typeof(AcornaDbContext))]
-    [Migration("20220206111141_add-history")]
-    partial class addhistory
+    [Migration("20220208180340_change-props-in-history")]
+    partial class changepropsinhistory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -730,6 +730,42 @@ namespace Acorna.Repository.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Acorna.Core.Entity.Project.BillingSystem.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EffectiveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OldUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("History");
+                });
+
             modelBuilder.Entity("Acorna.Core.Entity.Project.BillingSystem.Job", b =>
                 {
                     b.Property<int>("Id")
@@ -1200,7 +1236,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "7f0e95b4-ac9d-41de-97c7-b2a93b3c2026",
+                            ConcurrencyStamp = "1c4318ee-7497-416c-b744-aa83cb5e3539",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN",
                             PowerLevel = 99
@@ -1208,7 +1244,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "5520012c-4bc2-4d90-8aaf-1ac7e9af2bb1",
+                            ConcurrencyStamp = "aad3f268-cca3-4488-83b3-35c9f62e6863",
                             Name = "AdminGroup",
                             NormalizedName = "ADMINGROUP",
                             PowerLevel = 98
@@ -1216,7 +1252,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "6f673da4-1b49-44b3-8489-ec86203ea875",
+                            ConcurrencyStamp = "51a6181d-9e4f-4aa8-ac89-5fcef6949233",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE",
                             PowerLevel = 97
@@ -1224,7 +1260,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "a636845f-2e5d-4249-8b9a-84dfdc269669",
+                            ConcurrencyStamp = "ca576732-e49e-4693-81b2-c7a9a64a8eb5",
                             Name = "Finance",
                             NormalizedName = "FINANCE",
                             PowerLevel = 96
@@ -1256,6 +1292,9 @@ namespace Acorna.Repository.Migrations
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("date");
+
+                    b.Property<DateTime?>("EffectiveDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
@@ -1355,7 +1394,7 @@ namespace Acorna.Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "61724d34-be1b-488f-9b28-bf3c56d621cb",
+                            ConcurrencyStamp = "68c12d04-d355-4d8e-b95e-eb1a387e3c59",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1367,10 +1406,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN@A.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEDGIdabGsRHuP8ZZMxSabvW6V4rY52hNXSxLkYLp9r+GcMHDD9VNsuCqqGdYYFENDA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIqwoGpNqmDZIUqbbJPc9r/t5j/lTeHqFMA/mMivu8/hLj8ebb7R9WinoVyr/7r9ZA==",
                             PhoneNumber = "superAdmin",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "a4e36dff-b5e9-461e-878f-d96232b763de",
+                            SecurityStamp = "5b1f34ce-c200-486f-8c53-15484bd9a43d",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1381,7 +1420,7 @@ namespace Acorna.Repository.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "5045d452-8b60-4716-9c31-44af9ed60f36",
+                            ConcurrencyStamp = "bfaea0a0-5605-497d-b309-7cc72eb49c7c",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1393,10 +1432,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMINGROUP@A.COM",
                             NormalizedUserName = "ADMINGROUP",
-                            PasswordHash = "AQAAAAEAACcQAAAAEGhLn2D/JydkYdDVr7qr1BOlIeLdSG3QcsuvfRtwOAtHNWR+tbAfmqGI8XfbT2B1zw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKiawRHLoUAEIzfmq2NqZc4A+BnCXn9ePqZIRqK0dhaBW3PvS1cYBKApyRLUYj5DCA==",
                             PhoneNumber = "adminGroup",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ed7e433e-ec3e-4347-b20f-45098d663ca7",
+                            SecurityStamp = "43838ade-b9d9-4fb4-8574-2d09f2c2e4a7",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1407,7 +1446,7 @@ namespace Acorna.Repository.Migrations
                             Id = 3,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "d87f5b31-a072-4dd9-9ce7-e20d1eb99bee",
+                            ConcurrencyStamp = "4b8c9814-5e9c-4145-8813-8983a013fdfb",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1419,10 +1458,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPLOYEE@A.COM",
                             NormalizedUserName = "EMPLOYEE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE7m/g4mdB5KvuFg+jOwU9EzMMmr+b85clt6EJ1HgiKs+z/NE4/kBJqgQJ9sJPR/Ig==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEBYO7lYLTzxWp9fQzhwb6ayBvYkBsMtlmGPNuG4Q135uNtdikLfUZMUKagldv8e34Q==",
                             PhoneNumber = "employee",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "fd53454d-77f6-4df1-8463-64b8e3519ed2",
+                            SecurityStamp = "028c7914-c563-4224-850c-19cf78f69fe6",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1544,7 +1583,7 @@ namespace Acorna.Repository.Migrations
                         {
                             Id = 1,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 2, 6, 13, 11, 41, 147, DateTimeKind.Local).AddTicks(6638),
+                            CreatedDate = new DateTime(2022, 2, 8, 20, 3, 39, 196, DateTimeKind.Local).AddTicks(1014),
                             LanguageCode = "AR",
                             LanguageDefaultDisply = "العربية",
                             LanguageDirection = "RTL",
@@ -1554,7 +1593,7 @@ namespace Acorna.Repository.Migrations
                         {
                             Id = 2,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 2, 6, 13, 11, 41, 151, DateTimeKind.Local).AddTicks(92),
+                            CreatedDate = new DateTime(2022, 2, 8, 20, 3, 39, 201, DateTimeKind.Local).AddTicks(2805),
                             LanguageCode = "EN",
                             LanguageDefaultDisply = "English",
                             LanguageDirection = "LTR",

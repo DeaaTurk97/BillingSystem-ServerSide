@@ -29,12 +29,12 @@ namespace Acorna.DTOs.Security
         public int AccessFailedCount { get; set; }
         public int GroupId { get; set; }
         public int LanguageId { get; set; }
-        public int RoleId { get; set; }
+        public int? RoleId { get; set; }
         public int[] ServicesUsedId { get; set; }
         public int SimCardTypeId { get; set; }
         public int SimProfileId { get; set; }
-
-        public int PlanId { get; set; }
+        public int? PlanId { get; set; }
+        public DateTime? EffectiveDate { get; set; }
 
     }
 }

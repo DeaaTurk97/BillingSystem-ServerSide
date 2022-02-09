@@ -428,6 +428,8 @@ namespace Acorna.Repository.DataContext
         public DbSet<Bill> Bill { get; set; }
         public DbSet<Plan> Plan { get; set; }
 
+        public DbSet<History> History { get; set; }
+
         public DbSet<PlanService> PlanService { get; set; }
 
         public DbSet<BillDetails> BillDetails { get; set; }

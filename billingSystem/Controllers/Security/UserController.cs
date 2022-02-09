@@ -84,6 +84,46 @@ namespace Acorna.Controllers.Security
             }
         }
 
+        [HttpGet]
+        [Route("GetUsersByPhoneNumber/{phoneNumber}")]
+        public async Task<IActionResult> GetUserByPhoneNumber(string phoneNumber)
+        {
+            try
+            {
+                if (String.IsNullOrEmpty(phoneNumber))
+                {
+                    return BadRequest(400);
+                }
+
+                var a = await _unitOfWorkService.SecurityService.GetUserByPhoneNumber(phoneNumber);
+                return Ok(a);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        //[HttpGet]
+        //[Route("GetUsersByPhoneNumber/{userPhoneNumber}")]
+        //public async Task<IActionResult> IsUserExistsByPhoneNumber(string userPhoneNumber)
+        //{
+        //    try
+        //    {
+        //        if (String.IsNullOrEmpty(userPhoneNumber))
+        //        {
+        //            return BadRequest(400);
+        //        }
+
+        //        var a = await _unitOfWorkService.SecurityService.GetUserByPhoneNumber(userPhoneNumber);
+        //        return Ok();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
         [HttpPost]
         [Route("AddUser")]
         public async Task<IActionResult> AddUser([FromBody] UserRegister userRegister)
@@ -105,6 +145,21 @@ namespace Acorna.Controllers.Security
             try
             {
                 return Ok(await _unitOfWorkService.SecurityService.UpdateUserAsync(userRegister));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+        [HttpPut]
+        [Route("UpdateUserName")]
+        public async Task<IActionResult> UpdateUserName([FromBody] UserRegister userRegister)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.SecurityService.UpdateUserNameAsync(userRegister));
             }
             catch (Exception ex)
             {

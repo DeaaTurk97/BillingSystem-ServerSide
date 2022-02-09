@@ -14,11 +14,12 @@ namespace Acorna.Core.Models.Security
         public int GroupId { get; set; }
         public string GroupName { get; set; }
         public int LanguageId { get; set; }
-        public int RoleId { get; set; }
-        public string? RoleName { get; set; }
+        public int? RoleId { get; set; }
+        public string RoleName { get; set; }
         public int? SimCardTypeId { get; set; }
         public int? SimProfileId { get; set; }
 
         public int? PlanId { get; set; }
+        public DateTime? EffectiveDate { get; set; }
     }
 }

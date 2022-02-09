@@ -34,8 +34,4 @@
     <ProjectReference Include="..\Acorna.Core\Acorna.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
-
 </Project>
