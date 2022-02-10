@@ -7,10 +7,10 @@ namespace Acorna.Core.Models.Project.BillingSystem
     public class PlanServiceModel 
     {
 
-        public int Limit { get; set; }
+        public float Limit { get; set; }
         public string Unit { get; set; }
         public string AdditionalUnit { get; set; }
-        public int AdditionalUnitPrice { get; set; }
+        public float AdditionalUnitPrice { get; set; }
         public int PlanService { get; set; }
     }
 }

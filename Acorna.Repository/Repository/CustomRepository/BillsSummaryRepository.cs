@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -47,10 +48,15 @@ namespace Acorna.Repository.Repository.CustomRepository
                 }
                 else if (rolesType == RolesType.Employee)
                 {
-                    predicateProperties = new Expression<Func<Bill, bool>>[] { x => x.UserId == currentUserId };
+                    var userName = _userManager.FindByIdAsync(Convert.ToString(currentUserId)).Result.UserName;
+                    var history = _dbFactory.DataContext.History.Where(e => e.UserName == userName).ToList();
+                    predicateProperties = new Expression<Func<Bill, bool>>[] {
+                        x => x.UserId == currentUserId
+                        && (!history.Any() || x.BillDate >= history.Last().EffectiveDate)
+                    };
                 }
 
-                
+
                 foreach (var predicate in predicateProperties)
                 {
                     bills = bills.Where(predicate);
@@ -59,8 +65,29 @@ namespace Acorna.Repository.Repository.CustomRepository
                 countBills = bills.Count();
 
                 IEnumerable<BillsSummaryDTO> billsSummary = await bills
-                                                                 .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
                                                                  .OrderByDescending(s => s.Id)
+                                                                 .Select(x => new BillsSummaryDTO
+                                                                 {
+                                                                     BillMonth = CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month),
+                                                                     BillYear = x.BillDate.Year.ToString(),
+                                                                     IsPaid = x.IsPaid,
+                                                                     BillNote = x.Note,
+                                                                     BillStatus = (x.SubmittedByUser == true && x.SubmittedByAdmin == false) ? "Submitted"
+                                              : x.SubmittedByUser == false ? "Not Submitted"
+                                              : (x.SubmittedByUser == true && x.SubmittedByAdmin == true) ? "Approved" : "",
+                                                                     GroupId = x.User.Group.Id,
+                                                                     GroupName = x.User.Group.GroupNameEn,
+                                                                     userName =!_dbFactory.DataContext.History.Any(e=> e.EffectiveDate <= x.BillDate
+                                                                                && (e.ExpiryDate == null || e.ExpiryDate >= x.BillDate)
+                                                                                && e.PhoneNumber == x.User.PhoneNumber) ? x.User.PhoneNumber : 
+                                                                     _dbFactory.DataContext.History
+                                                                            .OrderByDescending(e=>e.EffectiveDate)
+                                                                            .FirstOrDefault(e => e.EffectiveDate <= x.BillDate 
+                                                                                && (e.ExpiryDate == null || e.ExpiryDate >= x.BillDate) 
+                                                                                && e.PhoneNumber == x.User.PhoneNumber).UserName,
+
+
+                                                                 })
                                                                  .Skip(pageSize * (pageIndex - 1))
                                                                  .Take(pageSize)
                                                                  .ToListAsync();

@@ -21,5 +21,7 @@ namespace Acorna.Core.Models.Security
 
         public int? PlanId { get; set; }
         public DateTime? EffectiveDate { get; set; }
+
+        public string Notes { get; set; }
     }
 }

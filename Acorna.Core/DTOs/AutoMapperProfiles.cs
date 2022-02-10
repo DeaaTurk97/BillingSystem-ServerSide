@@ -49,7 +49,7 @@ namespace Acorna.DTOs
                                               .ForMember(dest => dest.IsPaid, s => s.MapFrom(x => x.IsPaid))
                                               .ForMember(dest => dest.BillNote, s => s.MapFrom(x => x.Note))
                                               .ForMember(dest => dest.BillStatus, s => s.MapFrom(x => (x.SubmittedByUser == true && x.SubmittedByAdmin == false) ? "Submitted"
-                                              : x.SubmittedByUser == false || x.SubmittedByUser == null ? "Not Submitted"
+                                              : x.SubmittedByUser == false ? "Not Submitted"
                                               : (x.SubmittedByUser == true && x.SubmittedByAdmin == true) ? "Approved" : ""))
                                               .ForMember(dest => dest.userName, s => s.MapFrom(x => x.User.UserName))
                                               .ForMember(dest => dest.GroupId, s => s.MapFrom(x => x.User.Group.Id))

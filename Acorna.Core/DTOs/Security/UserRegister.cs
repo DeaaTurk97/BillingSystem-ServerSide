@@ -35,6 +35,7 @@ namespace Acorna.DTOs.Security
         public int SimProfileId { get; set; }
         public int? PlanId { get; set; }
         public DateTime? EffectiveDate { get; set; }
+        public string Notes { get; set; }
 
     }
 }
