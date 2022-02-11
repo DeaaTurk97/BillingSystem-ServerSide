@@ -77,7 +77,7 @@ namespace Acorna.Service.Project.BillingSystem
             try
             {
                 List<History> history = await _unitOfWork.GetRepository<History>().GetAllAsync();
-              
+
                 var historyModel = _mapper.Map<List<HistoryModel>>(history.Where(x => x.PhoneNumber.Equals(phoneNumber)));
                 return historyModel;
             }
@@ -107,6 +107,15 @@ namespace Acorna.Service.Project.BillingSystem
 
                 if (history != null)
                 {
+                    var lastRecord = _unitOfWork.GetRepository<History>()
+                            .GetWhere(e => e.PhoneNumber == history.PhoneNumber)
+                            .OrderBy(e => e.EffectiveDate)
+                            .LastOrDefault();
+                    if (lastRecord != null)
+                    {
+                        lastRecord.ExpiryDate = history.EffectiveDate;
+                    }
+
                     _unitOfWork.GetRepository<History>().Insert(history);
 
                     _unitOfWork.SaveChanges();
@@ -127,6 +136,14 @@ namespace Acorna.Service.Project.BillingSystem
 
             if (history != null)
             {
+                var lastRecord = _unitOfWork.GetRepository<History>()
+                        .GetWhere(e => e.PhoneNumber == history.PhoneNumber)
+                        .OrderBy(e => e.EffectiveDate)
+                        .LastOrDefault();
+                if (lastRecord != null)
+                {
+                    lastRecord.ExpiryDate = history.EffectiveDate;
+                }
                 _unitOfWork.GetRepository<History>().Update(history);
                 _unitOfWork.SaveChanges();
             }
@@ -139,7 +156,7 @@ namespace Acorna.Service.Project.BillingSystem
             try
             {
                 History history = _unitOfWork.GetRepository<History>().GetSingle(id);
-              
+
                 if (history != null)
                 {
                     _unitOfWork.GetRepository<History>().Delete(history);

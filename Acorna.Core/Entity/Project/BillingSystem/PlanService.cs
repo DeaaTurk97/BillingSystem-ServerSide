@@ -15,9 +15,9 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         [ForeignKey(nameof(ServiceUsedId))]
         public ServiceUsed ServiceUsed { get; set; }
 
-        public int Limit { get; set; }
+        public float Limit { get; set; }
         public string Unit { get; set; }
         public string AdditionalUnit { get; set; }
-        public int AdditionalUnitPrice { get; set; }
+        public float AdditionalUnitPrice { get; set; }
     }
 }

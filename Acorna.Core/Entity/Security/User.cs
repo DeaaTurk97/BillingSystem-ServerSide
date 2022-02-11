@@ -45,6 +45,8 @@ namespace Acorna.Core.Entity.Security
 
         public DateTime? EffectiveDate { get; set; }
 
+        public string Notes { get; set; }
+
         public virtual ICollection<UserRole> UserRoles { get; set; }
         public virtual ICollection<AllocatedUsersService> AllocatedUsersServices { get; set; }
     }

@@ -11,5 +11,6 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public string PhoneNumber { get; set; }
 
         public DateTime? EffectiveDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
     }
 }

@@ -573,6 +573,7 @@ internal class SecurityRepository : ISecurityRepository
             user.SimProfileId = userRegister.SimProfileId;
             user.PlanId = userRegister.PlanId;
             user.EffectiveDate = userRegister.EffectiveDate;
+            user.Notes = userRegister.Notes;
 
             IdentityResult result = _userManager.UpdateAsync(user).Result;
 
