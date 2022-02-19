@@ -68,6 +68,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                  .OrderByDescending(s => s.Id)
                                                                  .Select(x => new BillsSummaryDTO
                                                                  {
+                                                                     Id = x.Id,
                                                                      BillMonth = CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(x.BillDate.Month),
                                                                      BillYear = x.BillDate.Year.ToString(),
                                                                      IsPaid = x.IsPaid,

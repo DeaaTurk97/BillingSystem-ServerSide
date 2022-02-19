@@ -342,5 +342,65 @@ namespace Acorna.Repository.Repository.Email
                 throw ex;
             }
         }
+
+        public async Task<bool> NewServiceAdded(string ToEmail)
+        {
+            try
+            {
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = ToEmail,
+                    Subject = "New service added",
+                    CC = "",
+                    Body = "You have new service added",
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ServiceRemoved(string ToEmail)
+        {
+            try
+            {
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = ToEmail,
+                    Subject = "service removed",
+                    CC = "",
+                    Body = "You have new service removed",
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ServicePriceGraterThanServicePlan(string ToEmail)
+        {
+            try
+            {
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = ToEmail,
+                    Subject = "Service Price Grater Than Service Plan",
+                    CC = "",
+                    Body = "You have service price grater than plan service",
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

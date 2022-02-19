@@ -1,4 +1,6 @@
-﻿using Acorna.Core.Entity.Project.BillingSystem;
+﻿using Acorna.Core.DTOs;
+using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Models.Notification;
 using Acorna.Core.Repository.ICustomRepsitory;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -20,66 +22,166 @@ namespace Acorna.Repository.Repository.CustomRepository
             _mapper = mapper;
         }
 
-        public async Task<List<Bill>> GetbillsGreaterThanServicesPrices()
+        //Tuple<string (users Ids) that have notification, List<NotificationItemModel> (newServicesAdded) , List<NotificationItemModel> (servicesRemoved), List<NotificationItemModel> (servicesGraterThanPlanServies)>
+        public async Task<Tuple<List<string>, List<NotificationItemModel>, List<NotificationItemModel>, List<NotificationItemModel>>> GetbillsGreaterThanServicesPrices()
         {
             try
             {
-                Bill billContainer = new Bill();
-                List<Bill> billsLessThanServicePrice = new List<Bill>();
-                List<Bill> usersIDgraterThanServicePrice = new List<Bill>();
+                List<NotificationItemModel> newServicesAdded = new List<NotificationItemModel>();
+                List<NotificationItemModel> servicesRemoved = new List<NotificationItemModel>();
+                List<NotificationItemModel> servicesGraterThanPlanServies = new List<NotificationItemModel>();
+                List<string> acceptedBills = new List<string>();
+                List<string> userIds = new List<string>();
 
-                var allocatedUsersService = await (from aus in _dbFactory.DataContext.AllocatedUsersService
-                                                   join u in _dbFactory.DataContext.ServiceUsed on aus.ServiceUsedId equals u.Id
-                                                   group u by new { aus.UserId } into gServicesPrices
-                                                   select new
-                                                   {
-                                                       UserId = gServicesPrices.Key.UserId,
-                                                       SumServicesPrices = gServicesPrices.Sum(s => s.ServicePrice).Value
-                                                   }).ToListAsync();
-
+                //get all bills not submitted
                 var bills = await (from b in _dbFactory.DataContext.Bill
-                                   join bd in _dbFactory.DataContext.BillDetails on b.Id equals bd.BillId
-                                   where b.SubmittedByUser == false
-                                   group bd by new { b.Id, b.UserId } into gSumPrice
+                                   join usr in _dbFactory.DataContext.Users on b.UserId equals usr.Id
+                                   where b.SubmittedByUser == false && (usr.PlanId != 0 || usr.PlanId != null)
                                    select new
                                    {
-                                       BillId = gSumPrice.Key.Id,
-                                       UserId = gSumPrice.Key.UserId,
-                                       SumNetPrice = gSumPrice.Sum(s => s.CallNetPrice),
+                                       BillId = b.Id,
+                                       UserId = usr.Id,
+                                       PlanId = usr.PlanId
+                                   }).ToListAsync();
+
+                //get all bills with sum services per user
+                var userBillServices = await (from b in _dbFactory.DataContext.Bill
+                                   join bd in _dbFactory.DataContext.BillDetails on b.Id equals bd.BillId
+                                   where b.SubmittedByUser == false
+                                   group bd by new { b.Id, b.UserId, bd.ServiceUsedId } into gServiceSumPrice
+                                   select new
+                                   {
+                                       BillId = gServiceSumPrice.Key.Id,
+                                       UserId = gServiceSumPrice.Key.UserId,
+                                       ServiceId = gServiceSumPrice.Key.ServiceUsedId,
+                                       SumServiceNetPrice = Convert.ToDouble(gServiceSumPrice.Sum(s => s.CallNetPrice)),
                                    }).ToListAsync();
 
 
                 foreach (var bill in bills)
                 {
-                    var billCheckPrices = allocatedUsersService.Find(x => x.UserId == bill.UserId);
+                    //get 
+                    var userBillService = userBillServices.Where(x => x.UserId == bill.UserId).ToList();
+                    var planService = _dbFactory.DataContext.PlanService.Where(item => item.PlanId == bill.PlanId)
+                                                                        .Select(item => new
+                                                                        {
+                                                                            ServiceUsedId = item.ServiceUsedId,
+                                                                            ServicePrice = item.Limit
+                                                                        })
+                                                                        .ToList();
 
-                    if (billCheckPrices != null && bill.SumNetPrice <= billCheckPrices.SumServicesPrices)
+                    var planServiceCount = planService?.Count();
+                    var userBillServiceCount = userBillService?.Count();
+
+                    if (userBillServiceCount > planServiceCount)
                     {
-                        billContainer = await _dbFactory.DataContext.Bill.Where(x => x.Id == bill.BillId).SingleAsync();
+                        //you have service excloude from user bills details service.
+                        newServicesAdded.Add(new NotificationItemModel
+                        {
+                            MessageText = "NewServiceAdded",
+                            IsRead = false,
+                            Deleted = false,
+                            RecipientId = bill.UserId,
+                            ReferenceMassageId = bill.BillId,
+                            NotificationTypeId = (int)SystemEnum.NotificationType.NewServiceAdded,
+                            RecipientRoleId = 0
+                        });
 
-                        billContainer.SubmittedByUser = true;
-                        billContainer.SubmittedByAdmin = true;
-                        billContainer.IsPaid = true;
-                        billContainer.StatusBillId = 3;
+                        foreach (var billService in userBillService)
+                        {
+                            var newServiceAdded = planService.Where(r => r.ServiceUsedId == billService.ServiceId).FirstOrDefault();
 
-                        billsLessThanServicePrice.Add(billContainer);
+                            if(newServiceAdded == null)
+                            {
+                                UpdateServiceNeedApproval(billService.BillId, billService.ServiceId);
+                            }
+                        }
+
+                        userIds.Add(bill.UserId.ToString());
                     }
-                    else if (billCheckPrices != null && bill.SumNetPrice > billCheckPrices.SumServicesPrices)
+                    else if (planServiceCount > userBillServiceCount)
                     {
-                        Bill billsGraterThanServicePrice = await _dbFactory.DataContext.Bill.Where(x => x.Id == bill.BillId).SingleAsync();
-                        usersIDgraterThanServicePrice.Add(billsGraterThanServicePrice);
+                        //you have new service added for user
+                        servicesRemoved.Add(new NotificationItemModel 
+                        {
+                            MessageText = "ServiceRemoved",
+                            IsRead = false,
+                            Deleted = false,
+                            RecipientId = bill.UserId,
+                            ReferenceMassageId = bill.BillId,
+                            NotificationTypeId = (int)SystemEnum.NotificationType.ServiceRemoved,
+                            RecipientRoleId = 0
+                        });
+
+                        if (!userIds.Contains(bill.UserId.ToString()))
+                        {
+                            userIds.Add(bill.UserId.ToString());
+                        }
+                    }
+
+
+                    foreach (var billService in userBillService)
+                    {
+                        //when paln service equal user bills details service
+                        var limitPrice = planService.Find(f => f.ServiceUsedId == billService.ServiceId);
+
+                        if (limitPrice != null && billService.SumServiceNetPrice > Convert.ToDouble(limitPrice))
+                        {
+                            //you have service in bill details grater than plan service
+                            servicesGraterThanPlanServies.Add(new NotificationItemModel
+                            {
+                                MessageText = "ServicePriceGraterThanServicePlan",
+                                IsRead = false,
+                                Deleted = false,
+                                RecipientId = bill.UserId,
+                                ReferenceMassageId = bill.BillId,
+                                NotificationTypeId = (int)SystemEnum.NotificationType.ServicePriceGraterThanServicePlan,
+                                RecipientRoleId = 0
+                            });
+
+                            UpdateServiceNeedApproval(billService.BillId, billService.ServiceId);
+
+                            if (!userIds.Contains(bill.UserId.ToString()))
+                            {
+                                userIds.Add(bill.UserId.ToString());
+                            }
+                        }
+                    }
+
+                    //approve bill 
+                    if (!userIds.Contains(bill.UserId.ToString()))
+                    {
+                        var userBill = _dbFactory.DataContext.Bill.Where(r => r.Id == bill.BillId).FirstOrDefault();
+
+                        userBill.SubmittedByAdmin = true;
+                        userBill.SubmittedByUser = true;
+                        userBill.IsPaid = true;
+                        userBill.SubmittedDate = DateTime.Now;
+
+                        _dbFactory.DataContext.Bill.UpdateRange(userBill);
+                        _dbFactory.DataContext.SaveChanges();
                     }
                 }
 
-                _dbFactory.DataContext.UpdateRange(billsLessThanServicePrice);
-                await _dbFactory.DataContext.SaveChangesAsync();
-
-                return usersIDgraterThanServicePrice;
+                return Tuple.Create(userIds, newServicesAdded, servicesRemoved, servicesGraterThanPlanServies);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+        }
+
+        private void UpdateServiceNeedApproval(int billId, int serviceId)
+        {
+            var billDetails = _dbFactory.DataContext.BillDetails.Where(r => r.BillId == billId && r.ServiceUsedId == serviceId).ToList();
+
+            foreach (var billDetail in billDetails)
+            {
+                billDetail.IsServiceUsedNeedApproved = true;
+            }
+
+            _dbFactory.DataContext.BillDetails.UpdateRange(billDetails);
+            _dbFactory.DataContext.SaveChanges();
         }
     }
 }

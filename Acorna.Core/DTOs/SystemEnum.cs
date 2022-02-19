@@ -18,7 +18,10 @@
             ServicesSubmitted = 120,
             ServicesApproved = 130,
             ServicesInProgress = 140,
-            ServicesRejected = 150
+            ServicesRejected = 150,
+            NewServiceAdded = 160,
+            ServiceRemoved = 170,
+            ServicePriceGraterThanServicePlan = 180
         }
 
         public enum TypesPhoneNumber

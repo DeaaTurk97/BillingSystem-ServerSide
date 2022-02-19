@@ -314,6 +314,21 @@ namespace Acorna.Repository.DataContext
                     Id = 150,
                     Name = "ServicesRejected",
                 },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 160,
+                    Name = "NewServiceAdded",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 170,
+                    Name = "ServiceRemoved",
+                },
+                 new NotificationType {
+                    CreatedBy = 1,
+                    Id = 180,
+                    Name = "ServicePriceGraterThanServicePlan",
+                },
             });
 
             //Create New Groups

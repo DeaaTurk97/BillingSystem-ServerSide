@@ -803,7 +803,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                List<Bill> usersUplodedBills = new List<Bill>();
+                var usersUplodedBills = new Tuple<List<string>, List<NotificationItemModel>, List<NotificationItemModel>, List<NotificationItemModel>>(null,null,null,null);
                 List<string> usersIdsBillUploded = new List<string>();
                 bool isReminderBySyatem = _unitOfWork.GeneralSettingsRepository.IsReminderBySystem();
 
@@ -811,32 +811,33 @@ namespace Acorna.Service.Project.BillingSystem
 
                 if (isReminderBySyatem)
                 {
-                    foreach (Bill bill in usersUplodedBills)
+                    //add notification new services added
+                    foreach (var notification in usersUplodedBills.Item2)
                     {
-                        _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
-                        {
-                            MessageText = "NewBillsWasUploaded",
-                            IsRead = false,
-                            Deleted = false,
-                            RecipientId = bill.UserId,
-                            ReferenceMassageId = bill.Id,
-                            NotificationTypeId = (int)SystemEnum.NotificationType.BillUploaded,
-                            RecipientRoleId = 0
-                        });
+                        _unitOfWork.NotificationRepository.AddNotificationItem(notification);
+                    }
 
-                        //added this to get userId only
-                        usersIdsBillUploded.Add(Convert.ToString(bill.UserId));
+                    //add notification removed services
+                    foreach (var notification in usersUplodedBills.Item3)
+                    {
+                        _unitOfWork.NotificationRepository.AddNotificationItem(notification);
+                    }
+
+                    //add notification services Grater Than Plan Servies
+                    foreach (var notification in usersUplodedBills.Item4)
+                    {
+                        _unitOfWork.NotificationRepository.AddNotificationItem(notification);
                     }
                 }
 
                 if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
                 {
-                    usersUplodedBills.ForEach(bill =>
+                    foreach (string user in usersUplodedBills.Item1)
                     {
-                        _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(bill.UserId).Result);
-                    });
+                      await  _unitOfWork.EmailRepository.ImportBillEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(user)).Result);
+                    }
                 }
-                return (isReminderBySyatem) ? usersIdsBillUploded : new List<string>();
+                return (isReminderBySyatem) ? usersUplodedBills.Item1 : new List<string>();
             }
             catch (Exception ex)
             {

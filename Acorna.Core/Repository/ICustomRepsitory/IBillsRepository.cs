@@ -1,4 +1,6 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Models.Notification;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,7 +10,7 @@ namespace Acorna.Core.Repository.ICustomRepsitory
     {
 
         #region Lebanon....
-        Task<List<Bill>> GetbillsGreaterThanServicesPrices();
+        Task<Tuple<List<string>, List<NotificationItemModel>, List<NotificationItemModel>, List<NotificationItemModel>>> GetbillsGreaterThanServicesPrices();
         #endregion
     }
 }
