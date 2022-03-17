@@ -33,6 +33,13 @@ namespace billingSystem.Controllers.Project.BillingSystem
             }
         }
 
+        [HttpGet]
+        [Route("GetBillsSummaryAmounts")]
+        public async Task<IActionResult> GetBillsSummaryAmounts(int billId)
+        {
+            return Ok(await _unitOfWorkService.BillsSummaryService.GetBillsSummaryAmounts(billId));
+        }
+
         [HttpPut]
         [Route("UpdatePayBill")]
         public IActionResult UpdatePayBill(string billId, string isPaid)

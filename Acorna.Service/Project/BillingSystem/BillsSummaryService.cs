@@ -70,5 +70,13 @@ namespace Acorna.Service.Project.BillingSystem
                 throw ex;
             }
         }
+
+        public async Task<BillsSummaryModel> GetBillsSummaryAmounts(int billId)
+        {
+                BillsSummaryDTO billsSummaryDTO = await _unitOfWork.BillsSummaryRepository.GetBillsSummaryAmounts(billId);
+
+                return _mapper.Map<BillsSummaryModel>(billsSummaryDTO);
+            
+        }
     }
 }

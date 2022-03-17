@@ -80,7 +80,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                      GroupName = x.User.Group.GroupNameEn,
                                                                      userName =!_dbFactory.DataContext.History.Any(e=> e.EffectiveDate <= x.BillDate
                                                                                 && (e.ExpiryDate == null || e.ExpiryDate >= x.BillDate)
-                                                                                && e.PhoneNumber == x.User.PhoneNumber) ? x.User.PhoneNumber : 
+                                                                                && e.PhoneNumber == x.User.PhoneNumber) ? x.User.UserName : 
                                                                      _dbFactory.DataContext.History
                                                                             .OrderByDescending(e=>e.EffectiveDate)
                                                                             .FirstOrDefault(e => e.EffectiveDate <= x.BillDate 
@@ -122,6 +122,17 @@ namespace Acorna.Repository.Repository.CustomRepository
             {
                 throw ex;
             }
+        }
+
+        public async Task<BillsSummaryDTO> GetBillsSummaryAmounts(int billId)
+        {
+ 
+                BillsSummaryDTO billsSummary = await _dbFactory.DataContext.Bill
+                                                                     .Where(x => x.Id == billId)
+                                                                     .ProjectTo<BillsSummaryDTO>(_mapper.ConfigurationProvider)
+                                                                     .OrderByDescending(s => s.Id).FirstOrDefaultAsync();
+
+                return billsSummary;
         }
     }
 }

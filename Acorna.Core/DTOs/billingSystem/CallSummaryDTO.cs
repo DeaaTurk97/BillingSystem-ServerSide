@@ -19,6 +19,8 @@ namespace Acorna.Core.Entity.Project.BillingSystem
         public decimal PersonalSum { get; set; }
         [Column(TypeName = "decimal(18, 3)")]
         public decimal UnknownSum { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
+        public decimal FixedAmount { get; set; }
 
     }
 }

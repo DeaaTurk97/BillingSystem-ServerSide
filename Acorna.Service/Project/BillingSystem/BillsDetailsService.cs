@@ -156,7 +156,7 @@ namespace Acorna.Service.Project.BillingSystem
         public List<string> ServicesSubmitted(List<ServicesNeedApprovedDTO> servicesNeedApproval, string billId, int currentUserId)
         {
             try
-            {
+            {   
                 List<BillDetails> updateCallDetails = new List<BillDetails>();
                 List<string> usersId = new List<string>();
                 bool isAutomatedApprovalServices = _unitOfWork.GeneralSettingsRepository.IsAutomatedApprovalServices();

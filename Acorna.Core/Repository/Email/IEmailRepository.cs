@@ -18,5 +18,8 @@ namespace Acorna.Core.Repository.Email
         Task<bool> SendEmailForgotPasswordAsync(string toEmails, string emailSubject, string emailBody);
 
         Task<bool> SendTestEmail();
+        Task<bool> ServicePriceGraterThanServicePlan(string ToEmail);
+        Task<bool> ServiceRemoved(string ToEmail);
+        Task<bool> NewServiceAdded(string ToEmail);
     }
 }

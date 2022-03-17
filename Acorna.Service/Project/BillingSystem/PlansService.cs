@@ -1,9 +1,11 @@
 ﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Entity.Security;
 using Acorna.Core.Models.Project.BillingSystem;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
 using Acorna.Core.Sheard;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,11 +18,13 @@ namespace Acorna.Service.Project.BillingSystem
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
         public PlansService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+
         }
 
         public async Task<List<PlanModel>> GetAllPlans()
@@ -124,22 +128,63 @@ namespace Acorna.Service.Project.BillingSystem
                 plan.Code = planModel.Code;
                 plan.Description = planModel.Description;
                 plan.Price = planModel.Price;
-                var deleted = _unitOfWork.GetRepository<PlanService>().GetWhere(e => e.PlanId == plan.Id);
-                _unitOfWork.GetRepository<PlanService>().DeleteRange(deleted.ToList());
+                var dbServices = _unitOfWork.GetRepository<PlanService>().GetWhere(e => e.PlanId == plan.Id);
+                var toBeDeleted = dbServices.Where(e => !planModel.PlanServices.Any(p => p.PlanService == e.ServiceUsedId) && e.PlanId == planModel.Id);
+                if (toBeDeleted.Any())
+                {
+                    _unitOfWork.GetRepository<PlanService>().DeleteRange(toBeDeleted.ToList());
+                    //var users = _userManager.Users.Where(e => e.PlanId == plan.Id);
+                    //// send emails
+                    //foreach (var user in users)
+                    //{
+                    //    foreach (var item in toBeDeleted)
+                    //    {
+                    //        _unitOfWork.EmailRepository.ServiceRemoved(user.Email);
+                    //    }
+                    //}
+                }
                 _unitOfWork.SaveChanges();
-                _unitOfWork.GetRepository<PlanService>().InsertRange(
-                 planModel.PlanServices.Select(e => new PlanService
-                 {
-                     ServiceUsedId = e.PlanService,
-                     Limit = e.Limit,
-                     Unit = e.Unit,
-                     AdditionalUnit = e.AdditionalUnit,
-                     AdditionalUnitPrice = e.AdditionalUnitPrice,
-                     PlanId = plan.Id,
-                     Id = 0,
-                     CreatedBy = 1,
-                     CreatedDate = DateTime.Now
-                 }).ToList());
+                var toBeAdded = planModel.PlanServices.Where(e => !dbServices.Any(db => db.ServiceUsedId == e.PlanService));
+                var toBeUpdatedd = planModel.PlanServices.Where(e => dbServices.Any(db => db.ServiceUsedId == e.PlanService));
+                if (toBeAdded.Any())
+                {
+                    _unitOfWork.GetRepository<PlanService>().InsertRange(
+                         toBeAdded.Select(e => new PlanService
+                         {
+                             ServiceUsedId = e.PlanService,
+                             Limit = e.Limit,
+                             Unit = e.Unit,
+                             AdditionalUnit = e.AdditionalUnit,
+                             AdditionalUnitPrice = e.AdditionalUnitPrice,
+                             PlanId = plan.Id,
+                             Id = 0,
+                             CreatedBy = 1,
+                             CreatedDate = DateTime.Now
+                         }).ToList());
+
+                    //var users = _userManager.Users.Where(e => e.PlanId == plan.Id);
+                    //// send emails
+                    //foreach (var user in users)
+                    //{
+                    //    foreach (var item in toBeDeleted)
+                    //    {
+                    //        _unitOfWork.EmailRepository.NewServiceAdded(user.Email);
+                    //    }
+                    //}
+                }
+                _unitOfWork.GetRepository<PlanService>().UpdateRange(
+                     toBeUpdatedd.Select(e => new PlanService
+                     {
+                         ServiceUsedId = e.PlanService,
+                         Limit = e.Limit,
+                         Unit = e.Unit,
+                         AdditionalUnit = e.AdditionalUnit,
+                         AdditionalUnitPrice = e.AdditionalUnitPrice,
+                         PlanId = plan.Id,
+                         Id = 0,
+                         CreatedBy = 1,
+                         CreatedDate = DateTime.Now
+                     }).ToList());
                 plan.PlanServices = null;
                 _unitOfWork.GetRepository<Plan>().Update(plan);
                 _unitOfWork.SaveChanges();

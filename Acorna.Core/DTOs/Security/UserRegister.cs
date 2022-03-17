@@ -36,6 +36,7 @@ namespace Acorna.DTOs.Security
         public int? PlanId { get; set; }
         public DateTime? EffectiveDate { get; set; }
         public string Notes { get; set; }
+        public decimal FixedAmount { get; set; }
 
     }
 }

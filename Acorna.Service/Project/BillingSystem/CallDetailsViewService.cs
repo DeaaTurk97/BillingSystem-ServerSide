@@ -18,7 +18,7 @@ using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-	public class CallDetailsViewService : ICallDetailsViewService
+	public class CallDetailsViewService :		ICallDetailsViewService
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;

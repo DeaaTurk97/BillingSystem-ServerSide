@@ -88,7 +88,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
             catch (Exception ex)
             {
                 return BadRequest(ex);
-            }
+            } 
         }
     }
 }

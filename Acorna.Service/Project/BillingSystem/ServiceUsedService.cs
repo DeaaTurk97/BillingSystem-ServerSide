@@ -88,6 +88,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     _unitOfWork.GetRepository<ServiceUsed>().Insert(serviceUsed);
                     _unitOfWork.SaveChanges();
+                    //_unitOfWork.EmailRepository.NewServiceAdded("").Wait();
                 }
 
                 return serviceUsed.Id;

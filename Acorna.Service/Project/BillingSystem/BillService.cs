@@ -590,7 +590,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
                                         operatorKey = LebanonUtilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column3"]).Trim());
-                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
+                                        Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt64(operatorKey));
                                         operatrId = operatr != null ? operatr.Id : 0;
                                     }
                                     else

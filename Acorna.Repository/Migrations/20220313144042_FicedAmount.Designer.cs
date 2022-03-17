@@ -4,14 +4,16 @@ using Acorna.Repository.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Acorna.Repository.Migrations
 {
     [DbContext(typeof(AcornaDbContext))]
-    partial class AcornaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220313144042_FicedAmount")]
+    partial class FicedAmount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1261,7 +1263,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "efacdda1-8fd9-44d7-8dcc-c99185ea08ae",
+                            ConcurrencyStamp = "8b0deb2c-5f19-4f87-921d-d40510750006",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN",
                             PowerLevel = 99
@@ -1269,7 +1271,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "9e45e2f8-a6bc-476f-a98d-811bf779532e",
+                            ConcurrencyStamp = "535f3ae5-702b-44dd-8f64-ca1ec319219f",
                             Name = "AdminGroup",
                             NormalizedName = "ADMINGROUP",
                             PowerLevel = 98
@@ -1277,7 +1279,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "1a09c3ac-cbcf-4181-a4af-07f071c0e50c",
+                            ConcurrencyStamp = "8feeb3a7-b663-4d14-ab13-880ac1691b33",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE",
                             PowerLevel = 97
@@ -1285,7 +1287,7 @@ namespace Acorna.Repository.Migrations
                         new
                         {
                             Id = 4,
-                            ConcurrencyStamp = "db69fa0f-a868-4c4d-bf01-ff33365d43b4",
+                            ConcurrencyStamp = "934edb9b-cbc9-4f22-baf6-cd177fabd482",
                             Name = "Finance",
                             NormalizedName = "FINANCE",
                             PowerLevel = 96
@@ -1425,7 +1427,7 @@ namespace Acorna.Repository.Migrations
                             Id = 1,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "650f6f0b-bdd4-4943-8d76-e2aca7a6ae40",
+                            ConcurrencyStamp = "23942f0c-5139-45e3-b8e8-158d0266e725",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1438,10 +1440,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN@A.COM",
                             NormalizedUserName = "SUPERADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE7NPbHs3ckSnuXqTFDQKXrVs38RRQ3YRVtcJ+DJNTljDBQbLc7ufnx9Vb7MeocmVA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGHY45cDA0RwbKJfjvH+WX0+joUlpoS/qOZ6RFE/Yk8+ui2wGdA8drwfDU03CUHq9A==",
                             PhoneNumber = "superAdmin",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3fe3d32f-8939-4fc0-b0a0-eedd04998092",
+                            SecurityStamp = "bdff4f0c-8d8f-4b87-bde3-51b334f38436",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1452,7 +1454,7 @@ namespace Acorna.Repository.Migrations
                             Id = 2,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "9211f3b5-b89d-401c-b4f5-115c23f3e781",
+                            ConcurrencyStamp = "6b62b7be-dec3-4583-9bff-d607ce2d2065",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1465,10 +1467,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMINGROUP@A.COM",
                             NormalizedUserName = "ADMINGROUP",
-                            PasswordHash = "AQAAAAEAACcQAAAAEHR7FW5Q64jgzZ7NLY9AK2Rvj11MgAVJaQF/b0uSy1dApECqtwSFlvth0FMdZUBIng==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEIatrZ96nplnecTXAZ3RgNY0uGlUBx6UnotDeC0zI1Y7xpW/poHaDM1GUGBNJ/B0iA==",
                             PhoneNumber = "adminGroup",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "bc4e0dfa-5897-44b0-be48-b3bed2506ba0",
+                            SecurityStamp = "243fe940-5bfb-41fa-b021-d979fdac3b57",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1479,7 +1481,7 @@ namespace Acorna.Repository.Migrations
                             Id = 3,
                             AccessFailedCount = 0,
                             City = (byte)0,
-                            ConcurrencyStamp = "8ef318ba-8c33-44d0-8a1d-44485c5b5b90",
+                            ConcurrencyStamp = "c65eead8-f8b3-4b82-901b-ffa86165e6c2",
                             Country = (byte)0,
                             CreateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -1492,10 +1494,10 @@ namespace Acorna.Repository.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "EMPLOYEE@A.COM",
                             NormalizedUserName = "EMPLOYEE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEJiCFuNdw7jhmamMglHwnJgnIB/tSRv8GDE0vrtVG5L7ow/641ZlGD1hZhbMLqEIwQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEHaUaldV/eExg1RSzAJHvZCm8hfBmYbX07dT6CP4UOLaVhcp299FSC1XAG5dWkqJCw==",
                             PhoneNumber = "employee",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "598ded79-c2c9-4184-8ace-bedc6c70ed43",
+                            SecurityStamp = "db51627d-ad24-409c-8799-3fd76c587a24",
                             SimCardTypeId = 1,
                             SimProfileId = 1,
                             TwoFactorEnabled = false,
@@ -1617,7 +1619,7 @@ namespace Acorna.Repository.Migrations
                         {
                             Id = 1,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 3, 17, 12, 18, 39, 596, DateTimeKind.Local).AddTicks(2716),
+                            CreatedDate = new DateTime(2022, 3, 13, 17, 40, 40, 716, DateTimeKind.Local).AddTicks(2706),
                             LanguageCode = "AR",
                             LanguageDefaultDisply = "العربية",
                             LanguageDirection = "RTL",
@@ -1627,7 +1629,7 @@ namespace Acorna.Repository.Migrations
                         {
                             Id = 2,
                             CreatedBy = 1,
-                            CreatedDate = new DateTime(2022, 3, 17, 12, 18, 39, 600, DateTimeKind.Local).AddTicks(9196),
+                            CreatedDate = new DateTime(2022, 3, 13, 17, 40, 40, 721, DateTimeKind.Local).AddTicks(8805),
                             LanguageCode = "EN",
                             LanguageDefaultDisply = "English",
                             LanguageDirection = "LTR",

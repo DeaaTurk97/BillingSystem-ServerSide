@@ -32,8 +32,10 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                 into leftJoin
                                                                 from fb in leftJoin.DefaultIfEmpty() // implement left join
                                                                 where b.Id == billId
-                                                                && (bd.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown ||
-                                                                fb.TypePhoneNumberId == (int)TypesPhoneNumber.Official)
+                                                                && (
+                                                                 //bd.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown ||
+                                                                 fb.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown
+                                                                || fb.TypePhoneNumberId == null)
                                                                 && (fb.PersonalUserId == 0 || fb.PersonalUserId == null)
                                                                 && (fb.StatusNumberId != (int)StatusCycleBills.Approved)
                                                                 select new UnDefinedNumbersDTO
@@ -43,6 +45,8 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                                         ? fb.PhoneNumber : bd.PhoneNumber,
                                                                     TypePhoneNumberId = !string.IsNullOrEmpty(Convert.ToString(fb.TypePhoneNumberId))
                                                                                         ? fb.TypePhoneNumberId : bd.TypePhoneNumberId,
+                                                                    FBTypePhoneNumberId = fb.TypePhoneNumberId,
+                                                                    BDTypePhoneNumberId = bd.TypePhoneNumberId,
                                                                     PhoneName = fb.PhoneName,
                                                                     StatusNumberId = fb.StatusNumberId,
                                                                 }).Distinct().ToListAsync();
@@ -88,7 +92,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                     where b.Id == billId
                                                                     && (bd.IsServiceUsedNeedApproved == true)
                                                                     && (bd.StatusServiceUsedId != (int)StatusCycleBills.Approved)
-                                                                    && b.StatusBillId != (int)StatusCycleBills.Approved
+                                                                    //&& b.StatusBillId != (int)StatusCycleBills.Approved
                                                                     select new ServicesNeedApprovedDTO
                                                                     {
                                                                         Id = bd.Id,
@@ -106,7 +110,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                     }).ToListAsync();
 
                 //Adding this to return numbers only
-                billsSummary = billsSummary.Where(x => SyriaUtilites.IsStringNumber(x.DialledNumber) == true).ToList();
+                billsSummary = billsSummary.Where(x => LebanonUtilites.IsStringNumber(x.DialledNumber) == true).ToList();
 
 
                 if (billsSummary.Count > 0)

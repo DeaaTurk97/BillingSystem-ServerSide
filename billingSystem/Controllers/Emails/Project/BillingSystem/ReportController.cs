@@ -85,7 +85,7 @@ namespace billingSystem.Controllers.Project.BillingSystem
                 var host = request.Host.ToString();
 
                 var urlPath = _unitOfWorkService.ReportService.GetReportUrl(reportByte, rootPath, reportName, model.ReportType, scheme, host);
-
+                int ext = (int)(DateTime.Now.Ticks >> 10);
                 return Ok(new { urlPath });
             }
             catch (Exception ex)

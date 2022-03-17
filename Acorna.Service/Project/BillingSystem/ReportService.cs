@@ -62,6 +62,7 @@ namespace Acorna.Service.Project.BillingSystem
             parameters.Add("ServiceTypeName", GetServiceTypeName(model));
             parameters.Add("CountryName", GetCountryName(model));
             parameters.Add("TypePhoneNumberName", GetTypePhoneNumberName(model));
+            int ext = (int)(DateTime.Now.Ticks >> 10);
             var result = report.Execute(GetRenderType(model.ReportType), 1, parameters);
 
             return result.MainStream;

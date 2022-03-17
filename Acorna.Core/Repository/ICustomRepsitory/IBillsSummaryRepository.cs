@@ -10,5 +10,6 @@ namespace Acorna.Core.Repository.ICustomRepsitory
     {
         Task<PaginationRecord<BillsSummaryDTO>> GetBillsSummary(int pageIndex, int pageSize, int currentUserId, string currentUserRole);
         Task<BillsSummaryDTO> GetBillSummaryById(int billId);
+        Task<BillsSummaryDTO> GetBillsSummaryAmounts(int billId);
     }
 }
