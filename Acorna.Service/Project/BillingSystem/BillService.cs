@@ -57,13 +57,14 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
                     {
+                        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
                         using (var reader = ExcelReaderFactory.CreateReader(stream))
                         {
                             DataSet datasetBills = reader.AsDataSet();
                             DataTable dataTable = datasetBills.Tables[0];
 
                             dataTable = dataTable.AsEnumerable()
-                                                 .GroupBy(r => r.Field<object>("Column5"))
+                                                 .GroupBy(r => r.Field<object>("Column9"))
                                                  .SelectMany(x => x)
                                                  .CopyToDataTable();
 
@@ -183,7 +184,7 @@ namespace Acorna.Service.Project.BillingSystem
                                 }
                                 else
                                 {
-                                    callDuration = Convert.ToString(reader.GetValue(8)).Trim();
+                                    callDuration = Convert.ToString(reader.GetValue(7)).Trim();
                                     dataUsage = "-";
                                 }
 
@@ -220,7 +221,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         IsPaid = false,
                                         IsTerminal = false,
                                         StatusBillId = (int)SystemEnum.StatusCycleBills.Upload,
-                                        BillDetails = billsDetails
+                                        BillDetails = billsDetails,
                                     });
                                 }
                             }
@@ -294,6 +295,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
                     {
+                        System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
                         using (var reader = ExcelReaderFactory.CreateReader(stream))
                         {
 
@@ -302,7 +304,7 @@ namespace Acorna.Service.Project.BillingSystem
 
 
                             dataTable = dataTable.AsEnumerable()
-                                                 .GroupBy(r => r.Field<object>("Column5"))
+                                                 .GroupBy(r => r.Field<object>("Column6"))
                                                  .SelectMany(x => x)
                                                  .CopyToDataTable();
 
@@ -311,13 +313,13 @@ namespace Acorna.Service.Project.BillingSystem
                             for (int index = 0; index < dataTable.Rows.Count; index++)
                             {
 
-                                if (Convert.ToString(dataTable.Rows[index]["Column0"]).Trim().Contains("التاريخ و الساعة"))
+                                if (Convert.ToString(dataTable.Rows[index]["Column1"]).Trim().Contains("التاريخ و الساعة"))
                                 {
                                     continue;
                                 }
 
                                 //check if this user is Exist or not
-                                userPhoneNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column5"]).Trim());
+                                userPhoneNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column6"]).Trim());
                                 if (userId == 0)
                                 {
                                     if (_unitOfWork.SecurityRepository.IsUserExistsByPhoneNumber(userPhoneNumber).Result)
@@ -331,9 +333,9 @@ namespace Acorna.Service.Project.BillingSystem
                                 }
 
                                 //check if current row for called_number column is number
-                                if (SyriaUtilites.IsStringNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim()))
+                                if (SyriaUtilites.IsStringNumber(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim()))
                                 {
-                                    dialedNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
+                                    dialedNumber = SyriaUtilites.GetNumberWithoutCountryKey(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
                                     PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().FirstOrDefault(x => x.PhoneNumber == dialedNumber);
 
                                     if (phoneBook != null)
@@ -341,7 +343,7 @@ namespace Acorna.Service.Project.BillingSystem
                                         phoneBookId = phoneBook.Id;
                                         TypePhoneNumberId = phoneBook.TypePhoneNumberId;
 
-                                        operatorKey = SyriaUtilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column1"]).Trim());
+                                        operatorKey = SyriaUtilites.GetOperatorKeyFromNumber(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
                                         Operator operatr = _unitOfWork.GetRepository<Operator>().FirstOrDefault(x => x.OperatorKey == Convert.ToInt32(operatorKey));
                                         operatrId = operatr != null ? operatr.Id : 0;
                                     }
@@ -354,15 +356,15 @@ namespace Acorna.Service.Project.BillingSystem
                                 }
                                 else
                                 {
-                                    dialedNumber = Convert.ToString(dataTable.Rows[index]["Column1"]).Trim();
+                                    dialedNumber = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim();
                                     phoneBookId = 0;
                                     TypePhoneNumberId = (int)TypesPhoneNumber.Unknown;
                                     operatrId = 0;
                                 }
 
-                                if (!string.IsNullOrEmpty(Convert.ToString(dataTable.Rows[index]["Column2"]).Trim()) && Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() != "????")
+                                if (!string.IsNullOrEmpty(Convert.ToString(dataTable.Rows[index]["Column3"]).Trim()) && Convert.ToString(dataTable.Rows[index]["Column3"]).Trim() != "????")
                                 {
-                                    ServiceUsed serviceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim() || x.ServiceUsedNameEn == Convert.ToString(dataTable.Rows[index]["Column2"]).Trim());
+                                    ServiceUsed serviceUsed = _unitOfWork.GetRepository<ServiceUsed>().FirstOrDefault(x => x.ServiceUsedNameAr == Convert.ToString(dataTable.Rows[index]["Column3"]).Trim() || x.ServiceUsedNameEn == Convert.ToString(dataTable.Rows[index]["Column3"]).Trim());
                                     if (serviceUsed != null)
                                     {
                                         serviceTypeId = serviceUsed.Id;
@@ -373,8 +375,8 @@ namespace Acorna.Service.Project.BillingSystem
                                         //adding a new service type if type Not Exist
                                         ServiceUsed addingServiceUsed = new ServiceUsed
                                         {
-                                            ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
-                                            ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column2"]).Trim(),
+                                            ServiceUsedNameAr = Convert.ToString(dataTable.Rows[index]["Column3"]).Trim(),
+                                            ServiceUsedNameEn = Convert.ToString(dataTable.Rows[index]["Column3"]).Trim(),
                                             IsCalculatedValue = true,
                                             IsNeedApproved = false
                                         };
@@ -398,24 +400,24 @@ namespace Acorna.Service.Project.BillingSystem
 
 
                                 //when this service is INTERNET
-                                if (Convert.ToString(dataTable.Rows[index]["Column2"]).Trim().Contains("حزمة"))
+                                if (Convert.ToString(dataTable.Rows[index]["Column3"]).Trim().Contains("خدمة"))
                                 {
-                                    dataUsage = Convert.ToString(dataTable.Rows[index]["Column4"]).Trim();
+                                    dataUsage = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim();
                                     callDuration = "-";
                                 }
                                 else
                                 {
                                     dataUsage = "-";
-                                    callDuration = Convert.ToString(dataTable.Rows[index]["Column4"]).Trim();
+                                    callDuration = Convert.ToString(dataTable.Rows[index]["Column5"]).Trim();
                                 }
 
                                 billsDetails.Add(new BillDetails
                                 {
                                     PhoneBookId = phoneBookId,
                                     CallDuration = callDuration,
-                                    CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat),
-                                    CallNetPrice = Convert.ToDecimal(dataTable.Rows[index]["Column3"]),
-                                    CallRetailPrice = Convert.ToDecimal(dataTable.Rows[index]["Column3"]),
+                                    CallDateTime = Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat),
+                                    CallNetPrice = Convert.ToDecimal(dataTable.Rows[index]["Column4"]),
+                                    CallRetailPrice = Convert.ToDecimal(dataTable.Rows[index]["Column4"]),
                                     PhoneNumber = dialedNumber,
                                     TypePhoneNumberId = TypePhoneNumberId,
                                     ServiceUsedId = serviceTypeId,
@@ -430,15 +432,15 @@ namespace Acorna.Service.Project.BillingSystem
                                 if (index + 1 < dataTable.Rows.Count)
                                 {
                                     // Adding this condition to check if next row is a new number,
-                                    if (SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column5"].ToString().Trim()) != SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column5"].ToString().Trim()))
+                                    if (SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index]["Column6"].ToString().Trim()) != SyriaUtilites.GetNumberWithoutCountryKey(dataTable.Rows[index + 1]["Column6"].ToString().Trim()))
                                     {
                                         //chicking if current bill is Exist
-                                        if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
+                                        if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId))
                                         {
                                             bills.Add(new Bill
                                             {
                                                 UserId = userId,
-                                                BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
+                                                BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)),
                                                 SubmittedByAdmin = false,
                                                 SubmittedByUser = false,
                                                 IsPaid = false,
@@ -455,12 +457,12 @@ namespace Acorna.Service.Project.BillingSystem
                                 else
                                 {
                                     //chicking if current bill is added
-                                    if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)), userId))
+                                    if (!IsBillExist(SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId))
                                     {
                                         bills.Add(new Bill
                                         {
                                             UserId = userId,
-                                            BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column0"], enUsDateFormat)),
+                                            BillDate = SyriaUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)),
                                             SubmittedByAdmin = false,
                                             SubmittedByUser = false,
                                             IsPaid = false,
@@ -537,8 +539,7 @@ namespace Acorna.Service.Project.BillingSystem
             string userPhoneNumber = string.Empty;
             int userId = 0;
 
-            try
-            {
+            
                 foreach (DocumentModel file in filesUploaded)
                 {
                     using (var stream = System.IO.File.Open(file.URL, FileMode.Open, FileAccess.Read))
@@ -728,8 +729,10 @@ namespace Acorna.Service.Project.BillingSystem
                                         {
                                             BillModel billModel = GetBill(LebanonUtilites.GetDateLastDayMonth(Convert.ToDateTime(dataTable.Rows[index]["Column1"], enUsDateFormat)), userId);
 
+                                        if(billsDetails.Count > 0) { 
                                             _unitOfWork.GetRepository<BillDetails>().InsertRange(billsDetails);
                                             _unitOfWork.SaveChanges();
+                                            }
                                         }
                                         //this means the next row contains a new  Number, Must reset bills details list
                                         billsDetails = new List<BillDetails>();
@@ -766,11 +769,7 @@ namespace Acorna.Service.Project.BillingSystem
                 _unitOfWork.SaveChanges();
 
                 return true;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+           
         }
 
         public bool UploadDataRoamingLebanon(List<DocumentModel> filesUploaded, int currentUserId)

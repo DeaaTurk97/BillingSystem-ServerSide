@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+//using Microsoft.Reporting.WebForms;
 
 namespace Acorna.Service.Project.BillingSystem
 {
@@ -76,6 +77,7 @@ namespace Acorna.Service.Project.BillingSystem
             var list = _unitOfWork.CallDetailsReportRepository.GetCallFinance(model, out countRecord);
 
             report.AddDataSource("ReportDataSet", list);
+            //report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
 
             Dictionary<string, string> parameters = new Dictionary<string, string>();
             parameters.Add("DateFrom", model.FromDate);

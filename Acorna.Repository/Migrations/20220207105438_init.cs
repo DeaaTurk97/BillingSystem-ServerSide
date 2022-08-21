@@ -78,7 +78,7 @@ namespace Acorna.Repository.Migrations
                     FreeSum = table.Column<decimal>(type: "decimal(18, 3)", nullable: false),
                     OfficialSum = table.Column<decimal>(type: "decimal(18, 3)", nullable: false),
                     PersonalSum = table.Column<decimal>(type: "decimal(18, 3)", nullable: false),
-                    UnknownSum = table.Column<decimal>(type: "decimal(18, 3)", nullable: false)
+                    UnknownSum = table.Column<decimal>(type: "decimal(18, 3)", nullable: false),
                 },
                 constraints: table =>
                 {

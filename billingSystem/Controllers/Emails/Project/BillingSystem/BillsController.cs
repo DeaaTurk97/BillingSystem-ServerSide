@@ -52,14 +52,9 @@ namespace billingSystem.Controllers.Project.BillingSystem
         [Route("UploadCallsAndRoamingLebanon")]
         public IActionResult UploadCallsAndRoamingLebanon(List<DocumentModel> filesUploaded, string billType)
         {
-            try
-            {
+           
                 return Ok(_unitOfWorkService.BillService.UploadCallsAndRoamingLebanon(filesUploaded, billType, CurrentUserId));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+           
         }
 
         [HttpPost]

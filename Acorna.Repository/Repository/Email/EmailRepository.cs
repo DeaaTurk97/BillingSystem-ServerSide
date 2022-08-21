@@ -68,7 +68,7 @@ namespace Acorna.Repository.Repository.Email
                     {
                         smtpClient.UseDefaultCredentials = false;
                     }
-
+                    smtpClient.UseDefaultCredentials = false;
                     smtpClient.Credentials = networkCredential;
                     smtpClient.Port = emailModel.Port;
                     smtpClient.Send(mailMessage);

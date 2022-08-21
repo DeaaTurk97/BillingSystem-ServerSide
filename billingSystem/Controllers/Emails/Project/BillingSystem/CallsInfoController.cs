@@ -43,7 +43,6 @@ namespace billingSystem.Controllers.Project.BillingSystem
             try
             {
                 this.PrepareCallsInfoFilterModel(model);
-
                 var list = _unitOfWorkService.CallDetailsViewService.GetCallSummary(model);
 
                 return Ok(list);

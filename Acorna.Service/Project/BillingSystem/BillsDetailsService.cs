@@ -28,7 +28,7 @@ namespace Acorna.Service.Project.BillingSystem
                 return await _unitOfWork.BillsDetailsRepository.GetAllUndefinedNumbers(billId);
             }
             catch (Exception ex)
-            {
+                {
                 throw ex;
             }
         }
@@ -48,7 +48,7 @@ namespace Acorna.Service.Project.BillingSystem
                 {
                     PhoneBook phoneBook = _unitOfWork.GetRepository<PhoneBook>().GetSingleAsync(item.Id).Result;
 
-                    if (!string.IsNullOrEmpty(item.PhoneName) && item.TypePhoneNumberId != (int)TypesPhoneNumber.Personal && item.TypePhoneNumberId != (int)TypesPhoneNumber.Unknown)
+                    if (!string.IsNullOrEmpty(item.PhoneName) && item.TypePhoneNumberId == (int)TypesPhoneNumber.Official)
                     {
                         if (phoneBook == null)
                         {
@@ -68,7 +68,7 @@ namespace Acorna.Service.Project.BillingSystem
                         {
                             phoneBook.PhoneName = item.PhoneName;
                             phoneBook.TypePhoneNumberId = item.TypePhoneNumberId;
-                            phoneBook.PersonalUserId = 0;
+                            phoneBook.PersonalUserId = currentUserId;
 
                             //update exists phone number
                             updatePhoneBookOfficial.Add(phoneBook);

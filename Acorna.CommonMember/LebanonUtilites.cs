@@ -115,19 +115,15 @@ namespace Acorna.CommonMember
 
         public static DateTime GetCallDateTime(string callDate, string callTime)
         {
-            try
-            {
+            
                 string date = Convert.ToDateTime(callDate).ToString("yyyy-MM-dd");
                 string time = Convert.ToDateTime(callTime).ToString("HH:mm:ss.fff");
 
                 DateTime callDateTime = Convert.ToDateTime(date + " " + time);
 
                 return callDateTime;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            
+            
         }
 
         public static string GetTimeFromDateTime(string timeDate)

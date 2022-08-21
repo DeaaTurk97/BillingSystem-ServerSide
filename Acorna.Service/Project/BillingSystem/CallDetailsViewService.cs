@@ -18,7 +18,7 @@ using static Acorna.Core.DTOs.SystemEnum;
 
 namespace Acorna.Service.Project.BillingSystem
 {
-	public class CallDetailsViewService :		ICallDetailsViewService
+	public class CallDetailsViewService : ICallDetailsViewService
 	{
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly IMapper _mapper;
@@ -50,7 +50,8 @@ namespace Acorna.Service.Project.BillingSystem
 			PaginationRecord<CallSummaryDTO> paginationRecord = new PaginationRecord<CallSummaryDTO>
 			{
 				DataRecord = list,
-				CountRecord = countRecord
+				CountRecord = countRecord,
+
 			};
 			return paginationRecord;
 		}

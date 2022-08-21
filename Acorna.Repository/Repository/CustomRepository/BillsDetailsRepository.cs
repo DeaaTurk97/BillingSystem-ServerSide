@@ -31,24 +31,25 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                 join fb in _dbFactory.DataContext.PhoneBook on bd.PhoneNumber equals fb.PhoneNumber
                                                                 into leftJoin
                                                                 from fb in leftJoin.DefaultIfEmpty() // implement left join
-                                                                where b.Id == billId
+                                                                where b.Id == billId && bd.TypePhoneNumberId == 4
                                                                 && (
-                                                                 //bd.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown ||
-                                                                 fb.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown
-                                                                || fb.TypePhoneNumberId == null)
+                                                                 bd.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown 
+                                                                || fb.TypePhoneNumberId == (int)TypesPhoneNumber.Unknown
+                                                                || fb.TypePhoneNumberId == null
+                                                                )
                                                                 && (fb.PersonalUserId == 0 || fb.PersonalUserId == null)
                                                                 && (fb.StatusNumberId != (int)StatusCycleBills.Approved)
                                                                 select new UnDefinedNumbersDTO
                                                                 {
-                                                                    Id = fb.Id,
+                                                                    Id = fb !=null ? fb.Id : 0,
                                                                     DialledNumber = !string.IsNullOrEmpty(fb.PhoneNumber)
                                                                                         ? fb.PhoneNumber : bd.PhoneNumber,
                                                                     TypePhoneNumberId = !string.IsNullOrEmpty(Convert.ToString(fb.TypePhoneNumberId))
                                                                                         ? fb.TypePhoneNumberId : bd.TypePhoneNumberId,
-                                                                    FBTypePhoneNumberId = fb.TypePhoneNumberId,
+                                                                    FBTypePhoneNumberId = fb != null ? fb.TypePhoneNumberId : 0,
                                                                     BDTypePhoneNumberId = bd.TypePhoneNumberId,
-                                                                    PhoneName = fb.PhoneName,
-                                                                    StatusNumberId = fb.StatusNumberId,
+                                                                    PhoneName = fb != null ? fb.PhoneName : "Undefined",
+                                                                    StatusNumberId = fb != null ? fb.StatusNumberId : 4,
                                                                 }).Distinct().ToListAsync();
 
                 //Adding this to return numbers only

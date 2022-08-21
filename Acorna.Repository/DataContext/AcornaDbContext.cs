@@ -103,16 +103,16 @@ namespace Acorna.Repository.DataContext
                 }
             );
 
-                builder.Entity<PlanService>()
-                      .HasKey(bc => new { bc.PlanId, bc.ServiceUsedId });
-                builder.Entity<PlanService>()
-                     .HasOne(bc => bc.Plan)
-                     .WithMany(b => b.PlanServices)
-                     .HasForeignKey(bc => bc.PlanId);
-                builder.Entity<PlanService>()
-                    .HasOne(bc => bc.ServiceUsed)
-                    .WithMany(c => c.PlanServices)
-                    .HasForeignKey(bc => bc.ServiceUsedId);
+            builder.Entity<PlanService>()
+                  .HasKey(bc => new { bc.PlanId, bc.ServiceUsedId });
+            builder.Entity<PlanService>()
+                 .HasOne(bc => bc.Plan)
+                 .WithMany(b => b.PlanServices)
+                 .HasForeignKey(bc => bc.PlanId);
+            builder.Entity<PlanService>()
+                .HasOne(bc => bc.ServiceUsed)
+                .WithMany(c => c.PlanServices)
+                .HasForeignKey(bc => bc.ServiceUsedId);
 
             //Create New Roles
             builder.Entity<Role>().ToTable("Roles").HasData(new List<Role>
@@ -454,9 +454,9 @@ namespace Acorna.Repository.DataContext
         public DbSet<SimCardType> SimCardType { get; set; }
         public DbSet<SimProfile> SimProfile { get; set; }
 
-        public DbQuery<CallDetailsDTO> CallDetails { get; set; }
-        public DbQuery<CallSummaryDTO> CallSummary { get; set; }
-        public DbQuery<CallFinanceDTO> CallFinance { get; set; }
+        public DbSet<CallDetailsDTO> CallDetails { get; set; }
+        public DbSet<CallSummaryDTO> CallSummary { get; set; }
+        public DbSet<CallFinanceDTO> CallFinance { get; set; }
 
         public new DbSet<T> Set<T>() where T : BaseEntity
         {

@@ -251,9 +251,9 @@ namespace Acorna.Service.Project.BillingSystem
                             userNotifications.Add(bill);
                         }
 
-                        if (!usersIdToSendPaid.Contains(Convert.ToString(bill.Id)))
+                        if (!usersIdToSendPaid.Contains(Convert.ToString(bill.UserId)))
                         {
-                            usersIdToSendPaid.Add(Convert.ToString(bill.Id));
+                            usersIdToSendPaid.Add(Convert.ToString(bill.UserId));
                         }
                     }
 

@@ -49,10 +49,12 @@ namespace Acorna.Repository.Repository.CustomRepository
                 else if (rolesType == RolesType.Employee)
                 {
                     var userName = _userManager.FindByIdAsync(Convert.ToString(currentUserId)).Result.UserName;
+                   
+
                     var history = _dbFactory.DataContext.History.Where(e => e.UserName == userName).ToList();
                     predicateProperties = new Expression<Func<Bill, bool>>[] {
                         x => x.UserId == currentUserId
-                        && (!history.Any() || x.BillDate >= history.Last().EffectiveDate)
+                       && (!history.Any() || x.BillDate <= history.Last().EffectiveDate)
                     };
                 }
 

@@ -33,7 +33,7 @@ namespace Acorna.Repository.Repository
         public void Dispose(bool disposing)
         {
             if(!isDisposed && disposing)
-            {
+                {
                 if(_dbContext != null)
                 {
                     _dbContext.Dispose();
