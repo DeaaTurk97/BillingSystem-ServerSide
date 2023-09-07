@@ -1,12 +1,13 @@
 ﻿using Acorna.Controllers.Base;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Services;
-using AspNetCore.Reporting;
+//using AspNetCore.Reporting;
 using billingSystem.ReportFiles.Dataset;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Reporting.NETCore;
 using System;
 using System.Collections.Generic;
 using System.Reflection;

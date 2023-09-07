@@ -57,7 +57,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Country country = await _unitOfWork.GetRepository<Country>().GetSingleAsync(countryId);
+                Country country = await _unitOfWork.GetRepository<Country>().GetAllAsync(countryId);
                 return _mapper.Map<CountryModel>(country);
             }
             catch (Exception)

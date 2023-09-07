@@ -62,7 +62,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                History history = await _unitOfWork.GetRepository<History>().GetSingleAsync(historyId);
+                History history = await _unitOfWork.GetRepository<History>().GetAllAsync(historyId);
                 HistoryModel historyModel = _mapper.Map<HistoryModel>(history);
                 return historyModel;
             }

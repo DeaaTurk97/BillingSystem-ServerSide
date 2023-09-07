@@ -1,4 +1,5 @@
-﻿using Acorna.Core.Entity.SystemDefinition;
+﻿using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Entity.SystemDefinition;
 using Acorna.Core.Models.Email;
 using Acorna.Core.Repository.Email;
 using AutoMapper;
@@ -49,7 +50,12 @@ namespace Acorna.Repository.Repository.Email
                 mailMessage.To.Add(emailModel.To);
                 if (!string.IsNullOrEmpty(emailModel.CC))
                 {
-                    mailMessage.CC.Add(emailModel.CC);
+                    string[] CC = emailModel.CC.Split(',');
+                    foreach (string CCEmail in CC)
+                    {
+                        mailMessage.CC.Add(CCEmail);
+                    }
+                    
                 }
                 mailMessage.Subject = emailModel.Subject;
                 mailMessage.Body = emailModel.Body;
@@ -174,6 +180,26 @@ namespace Acorna.Repository.Repository.Email
                     Subject = GeneralSettings.Find(x => x.SettingName.Trim() == "PaidSubject")?.SettingValue,
                     CC = GeneralSettings.Find(x => x.SettingName.Trim() == "PaidCC")?.SettingValue,
                     Body = GeneralSettings.Find(x => x.SettingName.Trim() == "PaidBody")?.SettingValue,
+                };
+
+                return await ConfigureEmail(emailModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> ApprovedEmail(string ToEmail)
+        {
+            try
+            {
+                EmailModel emailModel = new EmailModel()
+                {
+                    To = ToEmail,
+                    Subject = GeneralSettings.Find(x => x.SettingName.Trim() == "ApprovedSubject")?.SettingValue,
+                    CC = GeneralSettings.Find(x => x.SettingName.Trim() == "ApprovedCC")?.SettingValue,
+                    Body = GeneralSettings.Find(x => x.SettingName.Trim() == "ApprovedBody")?.SettingValue,
                 };
 
                 return await ConfigureEmail(emailModel);
@@ -383,16 +409,20 @@ namespace Acorna.Repository.Repository.Email
             }
         }
 
-        public async Task<bool> ServicePriceGraterThanServicePlan(string ToEmail)
+        public async Task<bool> ServicePriceGraterThanServicePlan(string ToEmail, Bill bill)
         {
             try
             {
                 EmailModel emailModel = new EmailModel()
                 {
                     To = ToEmail,
-                    Subject = "Service Price Grater Than Service Plan",
-                    CC = "",
-                    Body = "You have service price grater than plan service",
+                    Subject = GeneralSettings.Find(x => x.SettingName.Trim() == "ServicePriceGraterThanServicePlanSubject")?.SettingValue,
+                    CC = GeneralSettings.Find(x => x.SettingName.Trim() == "ServicePriceGraterThanServicePlanCC")?.SettingValue,
+                    Body = GeneralSettings.Find(x => x.SettingName.Trim() == "ServicePriceGraterThanServicePlanBody")?.SettingValue
+                    + System.Environment.NewLine
+                    +"User: "+ bill.User.UserName
+                    + System.Environment.NewLine
+                    +"Bill Date: "+ bill.CreatedDate,
                 };
 
                 return await ConfigureEmail(emailModel);

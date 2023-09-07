@@ -124,17 +124,34 @@ namespace Acorna.Service.Notification
             }
         }
 
-        public bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId)
+        public bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId, int notificationId)
         {
             try
             {
-                List<Notifications> notificationItems = _unitOfWork.NotificationRepository
-                    .GetWhere(s => s.IsRead == false && s.CreatedBy == senderId &&
-                                   (s.RecipientId == receiverId) && s.NotificationTypeId == notificationTypeId).ToList();
+                if (notificationTypeId == 50)
+                {
+                    List<Notifications> notificationItems = _unitOfWork.NotificationRepository
+                        .GetWhere(s => s.IsRead == false && s.CreatedBy == senderId &&
+                                       (s.RecipientId == receiverId) && s.NotificationTypeId == 50).ToList();
 
-                notificationItems.ForEach(read => read.IsRead = true);
-                _unitOfWork.NotificationRepository.UpdateRange(notificationItems);
+                    notificationItems.ForEach(read => read.IsRead = true);
+                    _unitOfWork.NotificationRepository.UpdateRange(notificationItems);
+                }
+                else
+                {
+                    var notification = _unitOfWork.NotificationRepository.FirstOrDefault(n => n.Id == notificationId);
 
+                    notification.IsRead = true;
+
+                    _unitOfWork.NotificationRepository.Update(notification);
+                }
+
+                //List<Notifications> notificationItems = _unitOfWork.NotificationRepository
+                //    .GetWhere(s => s.IsRead == false && s.CreatedBy == senderId &&
+                //                   (s.RecipientId == receiverId) && s.NotificationTypeId == notificationTypeId).ToList();
+
+                //notificationItems.ForEach(read => read.IsRead = true);
+                //_unitOfWork.NotificationRepository.UpdateRange(notificationItems);
                 return _unitOfWork.SaveChanges();
             }
             catch (System.Exception ex)

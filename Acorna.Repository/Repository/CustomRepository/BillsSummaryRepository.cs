@@ -41,6 +41,9 @@ namespace Acorna.Repository.Repository.CustomRepository
 
                 var bills = _dbFactory.DataContext.Bill.Include(x => x.User).Include(x => x.User.Group).AsQueryable();
 
+                bills = _dbFactory.DataContext.Bill.Include(x => x.BillDetails).AsQueryable();
+
+
                 if (rolesType == RolesType.AdminGroup)
                 {
                     User userGroup = _userManager.FindByIdAsync(Convert.ToString(currentUserId)).Result;
@@ -89,6 +92,11 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                                 && (e.ExpiryDate == null || e.ExpiryDate >= x.BillDate) 
                                                                                 && e.PhoneNumber == x.User.PhoneNumber).UserName,
 
+                                                                      TotalOfficial = x.BillDetails.Where(bd=> bd.TypePhoneNumberId == 2).Select(i => i.CallRetailPrice).Sum(),
+
+                                                                      TotalPersonal = x.BillDetails.Where(bd => bd.TypePhoneNumberId == 3).Select(i => i.CallRetailPrice).Sum(),
+
+                                                                      TotalUnknown = x.BillDetails.Where(bd => bd.TypePhoneNumberId == 4).Select(i => i.CallRetailPrice).Sum(),
 
                                                                  })
                                                                  .Skip(pageSize * (pageIndex - 1))

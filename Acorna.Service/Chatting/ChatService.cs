@@ -81,7 +81,7 @@ namespace Acorna.Service.Chatting
         {
             try
             {
-                Chat chat = await _unitOfWork.ChatRepository.GetSingleAsync(messageId);
+                Chat chat = await _unitOfWork.ChatRepository.GetAllAsync(messageId);
 
                 if (chat.RecipientId == userId)
                 {

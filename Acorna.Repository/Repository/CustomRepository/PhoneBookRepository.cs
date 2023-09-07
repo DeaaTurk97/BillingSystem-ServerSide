@@ -27,8 +27,8 @@ namespace Acorna.Repository.Repository.CustomRepository
             try
             {
                 List<PhoneBookModel> phoneBookModel = await (from phone in _dbFactory.DataContext.PhoneBook
-                                                             join usr in _dbFactory.DataContext.Users on phone.StatusAdminId equals usr.Id
-                                                             where (phone.PersonalUserId == null || phone.PersonalUserId == 0) && phone.StatusAdminId != 0
+                                                            
+                                                             where (phone.TypePhoneNumberId == 2)
                                                              select new PhoneBookModel
                                                              {
                                                                  Id = phone.Id,
@@ -36,7 +36,7 @@ namespace Acorna.Repository.Repository.CustomRepository
                                                                  PhoneNumber = phone.PhoneNumber,
                                                                  PhoneName = phone.PhoneName,
                                                                  TypePhoneNumberId = phone.TypePhoneNumberId,
-                                                                 UserName = usr.UserName,
+
                                                                  StatusNumberId = phone.StatusNumberId
 
                                                              }).OrderByDescending(s => s.Id)

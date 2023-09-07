@@ -90,6 +90,20 @@ namespace billingSystem.Controllers.Emails
         }
 
         [HttpPost]
+        [Route("PaidEmail")]
+        public async Task<IActionResult> ApprovedEmail(string toEmail)
+        {
+            try
+            {
+                return Ok(await _unitOfWorkService.EmailService.ApprovedEmail(toEmail));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
+
+        [HttpPost]
         [Route("UnpaidEmail")]
         public async Task<IActionResult> UnpaidEmail(string toEmail)
         {

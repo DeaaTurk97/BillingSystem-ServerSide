@@ -2,14 +2,15 @@
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Repository;
 using Acorna.Core.Services.Project.BillingSystem;
-using AspNetCore.Reporting;
+//using AspNetCore.Reporting;
 using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-//using Microsoft.Reporting.WebForms;
+using Microsoft.Reporting.NETCore;
+using System.Xml.Linq;
 
 namespace Acorna.Service.Project.BillingSystem
 {
@@ -20,6 +21,7 @@ namespace Acorna.Service.Project.BillingSystem
         private readonly string _baseTempFolder = "TempFiles";
         private readonly string _baseReportFolder = "ReportFiles";
         private string _rootPath = "";
+
         internal ReportService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
@@ -29,21 +31,25 @@ namespace Acorna.Service.Project.BillingSystem
         public byte[] GenerateCallSummaryReport(CallsInfoFilterModel model, string rootPath, string reportName)
         {
             var report = GetLocalReport(reportName, rootPath);
-
             int countRecord = 0;
             var list = _unitOfWork.CallDetailsReportRepository.GetCallSummary(model, out countRecord);
 
-            report.AddDataSource("ReportDataSet", list);
+            report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
 
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("DateFrom", model.FromDate);
-            parameters.Add("DateTo", model.ToDate);
-            parameters.Add("GroupName", GetGroupName(model));
-            parameters.Add("IsSubmitted", GetIsSubmitted(model));
-            var result = report.Execute(GetRenderType(model.ReportType), 1, parameters);
+            var parameters = new[] {
+              new ReportParameter("DateFrom", model.FromDate),
+              new ReportParameter("DateTo", model.ToDate),
+              new ReportParameter("GroupName", GetGroupName(model)),
+              new ReportParameter("IsSubmitted", GetIsSubmitted(model)),
+        };
+
+            report.SetParameters(parameters);
 
 
-            return result.MainStream;
+            var result = report.Render(renderRepotType(model.ReportType));
+
+
+            return result;
         }
 
         public byte[] GenerateCallDetailsReport(CallsInfoFilterModel model, string rootPath, string reportName)
@@ -53,20 +59,23 @@ namespace Acorna.Service.Project.BillingSystem
             int countRecord = 0;
             var list = _unitOfWork.CallDetailsReportRepository.GetCallDetails(model, out countRecord);
 
-            report.AddDataSource("ReportDataSet", list);
+            report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
 
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("DateFrom", model.FromDate);
-            parameters.Add("DateTo", model.ToDate);
-            parameters.Add("GroupName", GetGroupName(model));
-            parameters.Add("UserName", GetUserName(model));
-            parameters.Add("ServiceTypeName", GetServiceTypeName(model));
-            parameters.Add("CountryName", GetCountryName(model));
-            parameters.Add("TypePhoneNumberName", GetTypePhoneNumberName(model));
+            var parameters = new[] {
+            new ReportParameter("DateFrom", model.FromDate),
+            new ReportParameter("DateTo", model.ToDate),
+            new ReportParameter("GroupName", GetGroupName(model)),
+            new ReportParameter("UserName", GetUserName(model)),
+            new ReportParameter("ServiceTypeName", GetServiceTypeName(model)),
+            new ReportParameter("CountryName", GetCountryName(model)),
+            new ReportParameter("TypePhoneNumberName", GetTypePhoneNumberName(model)),
+             };
+
+            report.SetParameters(parameters);
             int ext = (int)(DateTime.Now.Ticks >> 10);
-            var result = report.Execute(GetRenderType(model.ReportType), 1, parameters);
+            var result = report.Render(renderRepotType(model.ReportType));
 
-            return result.MainStream;
+            return result;
         }
 
         public byte[] GenerateCallFinanceReport(CallsInfoFilterModel model, string rootPath, string reportName)
@@ -76,16 +85,20 @@ namespace Acorna.Service.Project.BillingSystem
             int countRecord = 0;
             var list = _unitOfWork.CallDetailsReportRepository.GetCallFinance(model, out countRecord);
 
-            report.AddDataSource("ReportDataSet", list);
-            //report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
+           // report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
+            report.DataSources.Add(new ReportDataSource("ReportDataSet", list));
 
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-            parameters.Add("DateFrom", model.FromDate);
-            parameters.Add("DateTo", model.ToDate);
-            parameters.Add("GroupName", GetGroupName(model));
-            var result = report.Execute(GetRenderType(model.ReportType), 1, parameters);
+           
+            var parameters = new[] {
+            new ReportParameter("DateFrom", model.FromDate),
+            new ReportParameter("DateTo", model.ToDate),
+            new ReportParameter("GroupName", GetGroupName(model)),
+             };
 
-            return result.MainStream;
+            report.SetParameters(parameters);
+            var result = report.Render(renderRepotType(model.ReportType));
+
+            return result;
         }
 
 
@@ -119,32 +132,44 @@ namespace Acorna.Service.Project.BillingSystem
 
         private LocalReport GetLocalReport(string reportName, string rootPath)
         {
-            string rdlcFilePath = string.Format("{0}\\{1}\\{2}.rdlc", rootPath, _baseReportFolder, reportName);
+            string reportPath = string.Format("{0}\\{1}\\{2}.rdlc", rootPath, _baseReportFolder, reportName);
 
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding.GetEncoding("windows-1252");
-            LocalReport report = new LocalReport(rdlcFilePath);
-            return report;
+
+            var document = XDocument.Load(reportPath);
+
+            var stream = new MemoryStream();
+            document.Save(stream);
+            stream.Position = 0L;
+
+            using (var fileStrem = new FileStream(reportPath, FileMode.Open, FileAccess.Read))
+            {
+                LocalReport report = new();
+                report.LoadReportDefinition(fileStrem);
+                return report;
+            }
+
+           
         }
 
-        private RenderType GetRenderType(string reportType)
+        public string renderRepotType(string reportType)
         {
-            var renderType = RenderType.Pdf;
             switch (reportType.ToLower())
             {
                 default:
                 case "pdf":
-                    renderType = RenderType.Pdf;
+                    reportType = "pdf";
                     break;
                 case "doc":
-                    renderType = RenderType.Word;
+                    reportType = "Word";
                     break;
                 case "xls":
-                    renderType = RenderType.Excel;
+                    reportType = "Excel";
                     break;
             }
 
-            return renderType;
+            return reportType;
         }
 
         private void DeleteOldTempFilesThread()

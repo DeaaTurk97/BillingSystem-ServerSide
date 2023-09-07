@@ -69,7 +69,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                PhoneBook phoneBook = await _unitOfWork.GetRepository<PhoneBook>().GetSingleAsync(phoneBookId);
+                PhoneBook phoneBook = await _unitOfWork.GetRepository<PhoneBook>().GetAllAsync(phoneBookId);
                 return _mapper.Map<PhoneBookModel>(phoneBook);
             }
             catch (Exception)

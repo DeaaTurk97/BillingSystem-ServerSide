@@ -13,7 +13,7 @@ namespace Acorna.Core.IServices.Notification
         NotificationItemModel GetNotificationItem(int id);
         int AddNotificationItem(NotificationItemModel model);
         bool ReadNotificationItem(int notificationId);
-        bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId);
+        bool UpdateReadNewNotification(int receiverId, int senderId, int notificationTypeId, int notificationId);
         bool DeleteNotificationItem(int id);
         Task<IEnumerable<NotificationItemModel>> GetNewNumbersAndBillsByRoleId(string currentUserRole);
         bool UpdateReadNewNumbersAndBills(string currentUserRole, int notificationTypeId);

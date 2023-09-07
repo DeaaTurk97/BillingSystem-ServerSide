@@ -79,6 +79,18 @@ namespace Acorna.Service.Email
             }
         }
 
+        public async Task<bool> ApprovedEmail(string ToEmail)
+        {
+            try
+            {
+                return await _unitOfWork.EmailRepository.ApprovedEmail(ToEmail);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<bool> UnpaidEmail(string ToEmail)
         {
             try

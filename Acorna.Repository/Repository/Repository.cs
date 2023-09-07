@@ -69,7 +69,7 @@ namespace Acorna.Repository.Repository
             return this.GetAllAsync(pageIndex, pageSize, keySelector, predicate, orderBy, includeProperties).Result;
         }
 
-        public Task<T> GetSingleAsync(int id)
+        public Task<T> GetAllAsync(int id)
         {
             return DbSet.FirstOrDefaultAsync(t => t.Id == id);
         }

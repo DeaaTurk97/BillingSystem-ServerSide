@@ -58,7 +58,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Group group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(groupId);
+                Group group = await _unitOfWork.GetRepository<Group>().GetAllAsync(groupId);
                 return _mapper.Map<GroupModel>(group);
             }
             catch (Exception)
@@ -77,7 +77,7 @@ namespace Acorna.Service.Project.BillingSystem
                 if (currentUser == null)
                     return null;
               
-                group = await _unitOfWork.GetRepository<Group>().GetSingleAsync(currentUser.GroupId);
+                group = await _unitOfWork.GetRepository<Group>().GetAllAsync(currentUser.GroupId);
                 return _mapper.Map<GroupModel>(group);
 			}
 			catch (Exception)

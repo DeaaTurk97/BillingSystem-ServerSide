@@ -19,7 +19,7 @@ namespace Acorna.Core.Repository
         T GetSingle(int id);
         T FirstOrDefault(Expression<Func<T, bool>> predicate);
         IEnumerable<T> GetWhere(Expression<Func<T, bool>> predicate);
-        Task<T> GetSingleAsync(int id);
+        Task<T> GetAllAsync(int id);
         bool Update(T entity);
         bool UpdateRange(List<T> entity);
         int Insert(T entity);

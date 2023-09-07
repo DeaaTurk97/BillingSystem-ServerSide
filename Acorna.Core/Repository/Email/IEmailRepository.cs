@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Acorna.Core.Entity.Project.BillingSystem;
+using System.Threading.Tasks;
 
 namespace Acorna.Core.Repository.Email
 {
@@ -9,6 +10,7 @@ namespace Acorna.Core.Repository.Email
         Task<bool> ReminderIdentifyNewNumbersEmail(string ToEmail);
         Task<bool> RejectNumberEmail(string ToEmail);
         Task<bool> PaidEmail(string ToEmail);
+        Task<bool> ApprovedEmail(string ToEmail);
         Task<bool> UnpaidEmail(string ToEmail);
         Task<bool> SubmittedBillEmail(string ToEmail);
         Task<bool> ReminderTotalDueEmail(string ToEmail);
@@ -18,7 +20,7 @@ namespace Acorna.Core.Repository.Email
         Task<bool> SendEmailForgotPasswordAsync(string toEmails, string emailSubject, string emailBody);
 
         Task<bool> SendTestEmail();
-        Task<bool> ServicePriceGraterThanServicePlan(string ToEmail);
+        Task<bool> ServicePriceGraterThanServicePlan(string ToEmail, Bill bill);
         Task<bool> ServiceRemoved(string ToEmail);
         Task<bool> NewServiceAdded(string ToEmail);
     }

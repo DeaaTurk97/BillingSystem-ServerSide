@@ -57,7 +57,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                ServiceUsed serviceUsed = await _unitOfWork.GetRepository<ServiceUsed>().GetSingleAsync(serviceTypeId);
+                ServiceUsed serviceUsed = await _unitOfWork.GetRepository<ServiceUsed>().GetAllAsync(serviceTypeId);
                 return _mapper.Map<ServiceUsedModel>(serviceUsed);
             }
             catch (Exception)

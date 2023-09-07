@@ -1,5 +1,7 @@
 ﻿using Acorna.CommonMember;
+using Acorna.Core.DTOs;
 using Acorna.Core.Entity.Project.BillingSystem;
+using Acorna.Core.Models.Notification;
 using Acorna.Core.Models.Project.BillingSystem.Report;
 using Acorna.Core.Repository;
 using Acorna.Core.Services;
@@ -31,6 +33,7 @@ namespace Acorna.Service.Project.BillingSystem
 
 		public PaginationRecord<CallDetailsDTO> GetCallDetails(CallsInfoFilterModel filter)
 		{
+			List<Bill> userNotifications = new List<Bill>();
 			int countRecord = 0;
 			SetReportLanguage(filter);
 			var list = _unitOfWork.CallDetailsReportRepository.GetCallDetails(filter, out countRecord);
@@ -39,7 +42,42 @@ namespace Acorna.Service.Project.BillingSystem
 				DataRecord = list,
 				CountRecord = countRecord
 			};
-			return paginationRecord;
+
+            //foreach (var callDetail in list)
+            //{
+            //    var totalPrice = callDetail.CallRetailPrice + callDetail.CallDiscountPrice;
+
+            //    if (totalPrice > 0)
+            //    {
+
+            //        if (_unitOfWork.GeneralSettingsRepository.IsReminderBySystem())
+            //        {
+            //            userNotifications.ForEach(info =>
+            //            {
+            //                _unitOfWork.NotificationRepository.AddNotificationItem(new NotificationItemModel
+            //                {
+            //                    MessageText = "BillPriceGraterThanServicePrice",
+            //                    IsRead = false,
+            //                    Deleted = false,
+            //                    RecipientId = info.UserId,
+            //                    NotificationTypeId = (int)SystemEnum.NotificationType.BillPaid,
+            //                    RecipientRoleId = 0,
+            //                    ReferenceMassageId = info.Id
+            //                });
+            //            });
+            //        }
+
+            //        if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+            //        {
+
+            //            _unitOfWork.EmailRepository.ServicePriceGraterThanServicePlan(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(callDetail.UserId)).Result);
+
+            //        }
+            //    }
+
+            //}
+
+            return paginationRecord;
 		}
 
 		public PaginationRecord<CallSummaryDTO> GetCallSummary(CallsInfoFilterModel filter)

@@ -58,7 +58,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Governorate governorate = await _unitOfWork.GetRepository<Governorate>().GetSingleAsync(countryId);
+                Governorate governorate = await _unitOfWork.GetRepository<Governorate>().GetAllAsync(countryId);
                 return _mapper.Map<GovernorateModel>(governorate);
             }
             catch (Exception)

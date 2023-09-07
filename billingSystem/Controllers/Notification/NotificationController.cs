@@ -39,7 +39,7 @@ namespace Acorna.Controllers.Notification
         {
             try
             {
-                return Ok(_unitOfWorkService.NotificationService.UpdateReadNewNotification(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId));
+                return Ok(_unitOfWorkService.NotificationService.UpdateReadNewNotification(CurrentUserId, notificationItemModel.CreatedBy, notificationItemModel.NotificationTypeId, notificationItemModel.Id));
             }
             catch (Exception ex)
             {

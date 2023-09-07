@@ -57,7 +57,7 @@ namespace Acorna.Service.Project
         {
             try
             {
-                Job jobModel = await _unitOfWork.GetRepository<Job>().GetSingleAsync(jobId);
+                Job jobModel = await _unitOfWork.GetRepository<Job>().GetAllAsync(jobId);
                 return _mapper.Map<JobModel>(jobModel);
             }
             catch (Exception)

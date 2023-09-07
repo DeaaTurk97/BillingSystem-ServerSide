@@ -8,6 +8,7 @@ namespace Acorna.Core.Services.Email
         Task<bool> ReminderIdentifyNewNumbersEmail(string ToEmail);
         Task<bool> RejectNumberEmail(string ToEmail);
         Task<bool> PaidEmail(string ToEmail);
+        Task<bool> ApprovedEmail(string ToEmail);
         Task<bool> UnpaidEmail(string ToEmail);
         Task<bool> SubmittedBillEmail(string ToEmail);
         Task<bool> ReminderTotalDueEmail(string ToEmail);

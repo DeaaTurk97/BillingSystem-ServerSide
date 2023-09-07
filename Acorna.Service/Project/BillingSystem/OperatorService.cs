@@ -57,7 +57,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Operator operators = await _unitOfWork.GetRepository<Operator>().GetSingleAsync(groupId);
+                Operator operators = await _unitOfWork.GetRepository<Operator>().GetAllAsync(groupId);
                 return _mapper.Map<OperatorModel>(operators);
             }
             catch (Exception)

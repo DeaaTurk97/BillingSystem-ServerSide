@@ -98,6 +98,13 @@ namespace Acorna.Service.Project.BillingSystem
                             });
                         });
                     }
+                    if (_unitOfWork.GeneralSettingsRepository.IsReminderByEmail())
+                    {
+                        usersIdToSendApproved.ForEach(userId =>
+                        {
+                            _unitOfWork.EmailRepository.ApprovedEmail(_unitOfWork.SecurityRepository.GetEmailByUserId(Convert.ToInt32(userId)).Result);
+                        });
+                    }
                 }
                 return usersIdToSendApproved;
             }

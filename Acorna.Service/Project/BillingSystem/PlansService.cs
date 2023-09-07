@@ -64,7 +64,7 @@ namespace Acorna.Service.Project.BillingSystem
         {
             try
             {
-                Plan plan = await _unitOfWork.GetRepository<Plan>().GetSingleAsync(planId);
+                Plan plan = await _unitOfWork.GetRepository<Plan>().GetAllAsync(planId);
                 PlanModel planModel = _mapper.Map<PlanModel>(plan);
                 return planModel;
             }
@@ -126,6 +126,7 @@ namespace Acorna.Service.Project.BillingSystem
             if (plan != null)
             {
                 plan.Code = planModel.Code;
+                plan.Name = planModel.Name;
                 plan.Description = planModel.Description;
                 plan.Price = planModel.Price;
                 var dbServices = _unitOfWork.GetRepository<PlanService>().GetWhere(e => e.PlanId == plan.Id);

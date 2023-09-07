@@ -86,7 +86,7 @@ namespace Acorna.Service.SystemDefinition
         {
             try
             {
-                Language language = await _unitOfWork.GetRepository<Language>().GetSingleAsync(languageModel.Id);
+                Language language = await _unitOfWork.GetRepository<Language>().GetAllAsync(languageModel.Id);
                 language.LanguageCode = languageModel.LanguageCode;
                 language.LanguageDefaultDisply = languageModel.LanguageDefaultDisply;
                 language.LanguageDirection = languageModel.LanguageDirection;

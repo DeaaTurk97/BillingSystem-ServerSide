@@ -12,5 +12,8 @@
         public int GroupId { get; set; }
         public string GroupName { get; set; }
         public bool SubmittedByAdmin { get; set; }
+        public decimal TotalOfficial  { get; set; }
+        public decimal TotalPersonal { get; set; }
+        public decimal TotalUnknown { get; set; }
     }
 }
